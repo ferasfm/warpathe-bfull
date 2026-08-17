@@ -36,9 +36,8 @@ function formatDistance(km: number): string {
 
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
-                                        
-                                            
-                                            ما هو الرابط لكي افحصة على الهاتف ايضا اريد اضافة زر في اعلى الصفحة لتنزيل شورت كت على الهاتف بشعار الشركة عند تشغيلة يدخل الى الموقع مباشرة
+
+كل تحديث امني لا يتم ظهور لا توجد محطات تطابق البحث. لمذا هذا الخلل
 */
 
 import { NewsTicker } from "@/components/news-ticker";
