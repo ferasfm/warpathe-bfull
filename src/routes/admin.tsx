@@ -413,7 +413,7 @@ function StationsTab() {
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">كل المحافظات</SelectItem>
-            {WEST_BANK_REGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            {WEST_BANK_GOVERNORATES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
           </SelectContent>
         </Select>
 
