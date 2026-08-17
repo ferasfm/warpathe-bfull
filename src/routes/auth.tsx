@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Fuel, ArrowRight } from "lucide-react";
+import { Fuel, ArrowRight, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
+import { useServerFn } from "@tanstack/react-start";
+import { trackLoginAttempt, checkIpStatus } from "@/lib/auth-security.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -21,9 +23,18 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const nav = useNavigate();
+  const trackAttempt = useServerFn(trackLoginAttempt);
+  const checkIp = useServerFn(checkIpStatus);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(false);
+
+  useEffect(() => {
+    checkIp().then((res) => {
+      if (res.isBlocked) setIsBlocked(true);
+    });
+  }, [checkIp]);
 
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
@@ -39,17 +50,42 @@ function AuthPage() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      toast.error("فشل تسجيل الدخول: " + error.message);
-      return;
+
+    try {
+      const status = await checkIp();
+      if (status.isBlocked) {
+        setIsBlocked(true);
+        toast.error("تم حظر هذا العنوان مؤقتاً بسبب محاولات دخول خاطئة متعددة.");
+        setLoading(false);
+        return;
+      }
+
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      
+      if (error) {
+        await trackAttempt({ data: { is_successful: false } });
+        // Re-check status after a failed attempt
+        const newStatus = await checkIp();
+        if (newStatus.isBlocked) setIsBlocked(true);
+        
+        toast.error("فشل تسجيل الدخول: " + error.message);
+        setLoading(false);
+        return;
+      }
+
+      await trackAttempt({ data: { is_successful: true } });
+      toast.success("مرحباً بك!");
+      
+      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
+      const r = (roles ?? []).map((x) => x.role);
+      if (r.includes("super_admin")) nav({ to: "/admin" });
+      else nav({ to: "/manager" });
+    } catch (err) {
+      toast.error("حدث خطأ أثناء محاولة تسجيل الدخول");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
-    toast.success("مرحباً بك!");
-    const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
-    const r = (roles ?? []).map((x) => x.role);
-    if (r.includes("super_admin")) nav({ to: "/admin" });
-    else nav({ to: "/manager" });
   }
 
   return (
@@ -69,22 +105,38 @@ function AuthPage() {
             <CardDescription>مديري المحطات والإدارة الرئيسية فقط</CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={onSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email">البريد الإلكتروني</Label>
-                <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
+            {isBlocked ? (
+              <div className="flex flex-col items-center justify-center space-y-4 py-6 text-center">
+                <div className="rounded-full bg-destructive/10 p-3 text-destructive">
+                  <ShieldAlert className="h-10 w-10" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-bold text-destructive">تم حظر الوصول مؤقتاً</h3>
+                  <p className="text-sm text-muted-foreground px-4">
+                    لقد تجاوزت الحد المسموح لمحاولات الدخول الخاطئة (3 محاولات).
+                    تم حظر هذا الجهاز لمدة 24 ساعة لضمان أمن النظام.
+                  </p>
+                </div>
+                <Button variant="outline" onClick={() => window.location.reload()}>تحديث الصفحة</Button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">كلمة المرور</Label>
-                <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
-              </div>
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "جاري الدخول..." : "تسجيل الدخول"}
-              </Button>
-              <p className="pt-2 text-center text-xs text-muted-foreground">
-                لا يوجد تسجيل ذاتي. يقوم الأدمن الرئيسي بإنشاء الحسابات.
-              </p>
-            </form>
+            ) : (
+              <form onSubmit={onSubmit} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="email">البريد الإلكتروني</Label>
+                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">كلمة المرور</Label>
+                  <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "جاري الدخول..." : "تسجيل الدخول"}
+                </Button>
+                <p className="pt-2 text-center text-xs text-muted-foreground">
+                  لا يوجد تسجيل ذاتي. يقوم الأدمن الرئيسي بإنشاء الحسابات.
+                </p>
+              </form>
+            )}
           </CardContent>
         </Card>
       </div>
