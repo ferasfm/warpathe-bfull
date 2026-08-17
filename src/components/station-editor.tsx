@@ -214,10 +214,9 @@ export function StationEditor({
                 </select>
               </div>
             </div>
-              <div>
-                <Label className="text-xs"><Phone className="inline h-3 w-3" /> الهاتف</Label>
-                <Input value={info.phone ?? ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} dir="ltr" />
-              </div>
+            <div>
+              <Label className="text-xs"><Phone className="inline h-3 w-3" /> الهاتف</Label>
+              <Input value={info.phone ?? ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} dir="ltr" />
             </div>
             <div>
               <Label className="text-xs"><MapPin className="inline h-3 w-3" /> العنوان</Label>
