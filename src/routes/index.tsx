@@ -314,10 +314,21 @@ function HomePage() {
 
       </main>
 
-      <footer className="mt-16 border-t bg-secondary py-6 text-center text-sm text-secondary-foreground/70">
-        <div className="flex items-center justify-center gap-2">
-          <Radio className="h-4 w-4 text-primary" />
-          © {new Date().getFullYear()} شركة الهدى للمحروقات
+      <footer className="mt-16 border-t bg-secondary py-8 text-center text-sm text-secondary-foreground/70">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="flex items-center justify-center gap-2 font-bold text-secondary-foreground mb-2">
+            <Radio className="h-4 w-4 text-primary" />
+            <span>شركة الهدى للمحروقات</span>
+          </div>
+          <p className="mb-2 text-xs">مصدرك الموثوق للوقود الممتاز والخدمات المتكاملة</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs mb-4" dir="ltr">
+            <span>02-2444444</span>
+            <span className="opacity-30">|</span>
+            <span>0598-606060</span>
+            <span className="opacity-30">|</span>
+            <span>info@alhuda.ps</span>
+          </div>
+          <p className="text-[10px] opacity-60">© {new Date().getFullYear()} جميع الحقوق محفوظة.</p>
         </div>
       </footer>
     </div>
