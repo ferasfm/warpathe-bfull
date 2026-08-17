@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            I have approved the plan
+                                            اريد مراجعة ما تم واخر ما توصلنا له
 */
 
 import { NewsTicker } from "@/components/news-ticker";
