@@ -208,72 +208,74 @@ function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-secondary text-secondary-foreground">
         <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(circle at 20% 30%, oklch(0.55 0.22 27) 0%, transparent 50%)" }} />
-        <div className="relative mx-auto max-w-6xl px-4 py-10 pb-6">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary-foreground ring-1 ring-primary/40">
+        <div className="relative mx-auto max-w-6xl px-4 py-8 sm:py-10">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1.5 text-[10px] font-bold text-primary-foreground ring-1 ring-primary/40 sm:mb-3 sm:text-xs">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
             </span>
             تحديث لحظي مباشر
           </div>
-          <h2 className="text-3xl font-black leading-tight sm:text-5xl">
+          <h2 className="text-2xl font-black leading-tight sm:text-5xl">
             وقودك <span className="text-primary">متوفر الآن</span><br />في محطات الهدى
           </h2>
 
-
-          <p className="mt-3 max-w-xl text-sm text-secondary-foreground/80 sm:text-base">
+          <p className="mt-4 max-w-xl text-xs leading-relaxed text-secondary-foreground/80 sm:mt-3 sm:text-base">
             اطلع على توفر البنزين والسولار والكاز والغاز في جميع محطاتنا بالضفة الغربية بشكل فوري.
           </p>
         </div>
       </section>
 
       {/* Search + filter */}
-      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur shadow-sm">
-        <div className="mx-auto max-w-6xl space-y-3 px-4 py-3">
-          <div className="relative">
-            <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="ابحث باسم المحطة أو المدينة..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="pr-9 text-right"
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب المنطقة</span>
-              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>الكل</FilterChip>
-                <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
-                <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
-                <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
-              </div>
+      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur shadow-sm transition-all duration-200">
+        <div className="mx-auto max-w-6xl px-4 py-4">
+          <div className="flex flex-col gap-4">
+            <div className="relative">
+              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="ابحث باسم المحطة أو المدينة..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="h-11 border-2 pr-9 text-right text-sm focus-visible:ring-primary/20"
+              />
             </div>
             
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب نوع الوقود</span>
-              <div className="flex flex-wrap gap-2 items-center">
-                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                  <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">الكل</FilterChip>
-                  {FUEL_ORDER.map((ft) => (
-                    <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
-                      {FUEL_LABELS[ft]}
-                    </FilterChip>
-                  ))}
+            <div className="space-y-4 sm:space-y-3">
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-black text-muted-foreground/60 px-1 uppercase tracking-widest">تصفية حسب المنطقة</span>
+                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                  <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>الكل</FilterChip>
+                  <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
+                  <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
+                  <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
                 </div>
-                <Button
-                  size="sm"
-                  variant={sortByNearest && userLoc ? "default" : "outline"}
-                  onClick={() => {
-                    if (userLoc) setSortByNearest((v) => !v);
-                    else requestLocation();
-                  }}
-                  disabled={locating}
-                  className="mr-auto shrink-0 h-8 text-xs"
-                >
-                  <Navigation2 className="ml-1 h-3.5 w-3.5" />
-                  {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
-                </Button>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-black text-muted-foreground/60 px-1 uppercase tracking-widest">تصفية حسب نوع الوقود</span>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">الكل</FilterChip>
+                    {FUEL_ORDER.map((ft) => (
+                      <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
+                        {FUEL_LABELS[ft]}
+                      </FilterChip>
+                    ))}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant={sortByNearest && userLoc ? "default" : "outline"}
+                    onClick={() => {
+                      if (userLoc) setSortByNearest((v) => !v);
+                      else requestLocation();
+                    }}
+                    disabled={locating}
+                    className="mr-auto shrink-0 h-9 rounded-full px-4 text-[11px] font-bold shadow-sm sm:h-8 sm:text-xs"
+                  >
+                    <Navigation2 className="ml-1.5 h-3.5 w-3.5" />
+                    {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
