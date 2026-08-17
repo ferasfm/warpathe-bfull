@@ -320,21 +320,28 @@ function HomePage() {
 
       </main>
 
-      <footer className="mt-16 border-t bg-secondary py-8 text-center text-sm text-secondary-foreground/70">
+      <footer className="mt-16 border-t bg-secondary py-12 text-center text-sm text-secondary-foreground/70 sm:py-8">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex items-center justify-center gap-2 font-bold text-secondary-foreground mb-2">
-            <Radio className="h-4 w-4 text-primary" />
-            <span>شركة الهدى للمحروقات</span>
+          <div className="flex items-center justify-center gap-2 font-black text-secondary-foreground mb-4 sm:mb-2">
+            <Radio className="h-5 w-5 text-primary animate-pulse" />
+            <span className="text-base sm:text-lg">شركة الهدى للمحروقات</span>
           </div>
-          <p className="mb-2 text-xs">مصدرك الموثوق للوقود الممتاز والخدمات المتكاملة</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs mb-4" dir="ltr">
-            <span>{'\u200E'}02-2444444</span>
-            <span className="opacity-30">|</span>
-            <span>{'\u200E'}0598-606060</span>
-            <span className="opacity-30">|</span>
-            <span>info@alhuda.ps</span>
+          <p className="mb-6 text-xs font-medium sm:mb-2">مصدرك الموثوق للوقود الممتاز والخدمات المتكاملة</p>
+          <div className="flex flex-col items-center justify-center gap-y-3 text-xs mb-8 sm:flex-row sm:gap-x-4 sm:gap-y-1 sm:mb-4" dir="ltr">
+            <a href="tel:022444444" className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
+              <Phone className="h-3.5 w-3.5" />
+              <span>{'\u200E'}02-2444444</span>
+            </a>
+            <a href="tel:0598606060" className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
+              <Phone className="h-3.5 w-3.5" />
+              <span>{'\u200E'}0598-606060</span>
+            </a>
+            <a href="mailto:info@alhuda.ps" className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span>info@alhuda.ps</span>
+            </a>
           </div>
-          <p className="text-[10px] opacity-60">© {new Date().getFullYear()} جميع الحقوق محفوظة.</p>
+          <p className="text-[10px] font-medium opacity-50 uppercase tracking-widest">© {new Date().getFullYear()} جميع الحقوق محفوظة.</p>
         </div>
       </footer>
     </div>
