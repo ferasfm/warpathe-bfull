@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PlusSquare, Share, MonitorMobile } from "lucide-react";
+import { PlusSquare, Share, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { 
@@ -70,7 +70,7 @@ export function InstallPWA() {
         <DialogContent className="max-w-[90vw] sm:max-w-[425px] rounded-2xl" dir="rtl">
           <DialogHeader className="text-right">
             <DialogTitle className="flex items-center gap-2 text-xl font-bold text-primary">
-              <MonitorMobile className="h-5 w-5" />
+              <Smartphone className="h-5 w-5" />
               إضافة التطبيق للشاشة الرئيسية
             </DialogTitle>
             <DialogDescription className="text-right pt-2 text-base">
