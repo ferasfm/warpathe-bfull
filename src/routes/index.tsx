@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            ليس هذا ما اخطط له اريد ان يكون هناك فلتر الوسط الجنوب الشمال وليس تعريف اين المحطات اريدها افضل
+                                            اسم المحطة لا يظهر عندما يكون الوضع في حالة الهاتف لان اسم المحطة طويل جدا محطة الهدى للمحروقات و اسم المنطقة مثلا سلفيت غير ظاهرة الكلمة يمكن الخاء اسم المحطة او جعل الموقع متناسب جدا مع الهاتف
 */
 
 import { NewsTicker } from "@/components/news-ticker";
@@ -371,10 +371,12 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
     <Card className="group overflow-hidden border-2 p-0 transition hover:border-primary/50 hover:shadow-lg">
       <div className={`px-4 py-3 ${anyAvailable ? "bg-success/10" : "bg-destructive/10"}`}>
         <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3 className="truncate font-bold text-foreground">{station.name}</h3>
-            <p className="mt-0.5 flex items-center gap-1 text-xs text-muted-foreground">
-              <MapPin className="h-3 w-3" /> {station.city}
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-foreground sm:truncate text-sm sm:text-base leading-tight">
+              {station.name.replace("محطة الهدى للمحروقات", "الهدى").trim()}
+            </h3>
+            <p className="mt-1 flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground font-medium">
+              <MapPin className="h-3 w-3 shrink-0" /> {station.city}
             </p>
           </div>
           <div className="flex flex-col items-end gap-1">
