@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            كل الاضافات التي موجودة بالموقع يمكن التحكم بها من خلال الداش بورد الادراة
+                                            ليس هذا ما اخطط له اريد ان يكون هناك فلتر الوسط الجنوب الشمال وليس تعريف اين المحطات اريدها افضل
 */
 
 import { NewsTicker } from "@/components/news-ticker";
