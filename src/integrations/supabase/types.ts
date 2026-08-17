@@ -38,6 +38,27 @@ export type Database = {
         }
         Relationships: []
       }
+      login_attempts: {
+        Row: {
+          attempt_time: string | null
+          id: string
+          ip_address: string
+          is_successful: boolean | null
+        }
+        Insert: {
+          attempt_time?: string | null
+          id?: string
+          ip_address: string
+          is_successful?: boolean | null
+        }
+        Update: {
+          attempt_time?: string | null
+          id?: string
+          ip_address?: string
+          is_successful?: boolean | null
+        }
+        Relationships: []
+      }
       manager_group_members: {
         Row: {
           created_at: string
@@ -335,6 +356,7 @@ export type Database = {
         Args: { _station_id: string; _user_id: string }
         Returns: boolean
       }
+      check_ip_blocked: { Args: { _ip: string }; Returns: boolean }
       get_manager_permission: {
         Args: { _perm: string; _station_id: string; _user_id: string }
         Returns: boolean
