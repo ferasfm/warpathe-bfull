@@ -352,11 +352,11 @@ function FilterChip({
   children: React.ReactNode;
   variant?: "primary" | "secondary"
 }) {
-  const baseClasses = "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition shadow-sm border";
+  const baseClasses = "shrink-0 rounded-full px-4 py-2 text-[11px] font-black transition-all shadow-sm border whitespace-nowrap sm:px-4 sm:py-1.5 sm:text-sm";
   const activeClasses = variant === "primary" 
-    ? "bg-primary text-primary-foreground border-primary" 
-    : "bg-secondary text-secondary-foreground border-primary/20";
-  const inactiveClasses = "bg-background text-muted-foreground border-border hover:bg-accent";
+    ? "bg-primary text-primary-foreground border-primary scale-105" 
+    : "bg-secondary text-secondary-foreground border-primary/40 scale-105";
+  const inactiveClasses = "bg-background text-muted-foreground border-border hover:bg-accent hover:border-muted-foreground/30";
 
   return (
     <button
