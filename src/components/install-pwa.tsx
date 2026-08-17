@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { Download, Share, PlusSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export function InstallPWA() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [isInstalled, setIsInstalled] = useState(false);
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
+
 
   useEffect(() => {
     // Check if already installed
