@@ -54,7 +54,7 @@ export function SiteHeader() {
           </div>
           <div className="min-w-0">
             <h1 className="truncate text-lg font-black leading-tight sm:text-xl">شركة الهدى للمحروقات</h1>
-            <p className="text-[11px] text-secondary-foreground/70" dir="ltr">هاتف: 02-2444444</p>
+            <p className="text-[11px] text-secondary-foreground/70" dir="ltr">هاتف: {'\u200E'}02-2444444</p>
           </div>
         </Link>
 
@@ -121,7 +121,7 @@ export function SiteHeader() {
                     </div>
                     <div>
                       <div className="text-sm font-black">شركة الهدى</div>
-                      <div className="text-[10px] text-secondary-foreground/70" dir="ltr">02-2444444</div>
+                      <div className="text-[10px] text-secondary-foreground/70" dir="ltr">{'\u200E'}02-2444444</div>
                     </div>
                   </Link>
                   <SheetClose asChild>
