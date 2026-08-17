@@ -45,135 +45,154 @@ export function SiteHeader() {
 
   return (
     <header className="border-b bg-secondary text-secondary-foreground">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-        <Link to="/" className="flex min-w-0 items-center gap-3">
-          <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20">
-            <img 
-              src={logoUrl} 
-              alt="شعار شركة الهدى" 
-              className="h-full w-full object-contain p-1"
-            />
-          </div>
-          <div className="min-w-0">
-            <h1 className="truncate text-lg font-black leading-tight sm:text-xl">شركة الهدى للمحروقات</h1>
-            <p className="text-[11px] text-secondary-foreground/70" dir="ltr">هاتف: {'\u200E'}02-2444444</p>
-          </div>
-        </Link>
-
-        {/* Desktop navigation */}
-        <nav className="hidden items-center gap-1 sm:flex sm:gap-2">
-          {navItems.map((item) => (
-            <div key={item.to} className="flex items-center gap-2">
-              <Link
-                to={item.to}
-                className={`rounded-md px-3 py-2 text-sm font-medium transition ${
-                  isActive(item.to)
-                    ? "bg-primary/10 text-primary"
-                    : "text-secondary-foreground/90 hover:bg-secondary-foreground/10"
-                }`}
-              >
-                {item.label}
-              </Link>
-              {item.to === "/" && (
-                <div className="mr-1">
-                  <InstallPWA />
-                </div>
-              )}
+      <div className="mx-auto max-w-6xl px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex min-w-0 items-center gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20 sm:h-11 sm:w-11">
+              <img 
+                src={logoUrl} 
+                alt="شعار شركة الهدى" 
+                className="h-full w-full object-contain p-1"
+              />
             </div>
-          ))}
-          <Link to="/auth">
-            <Button
-              variant="outline"
-              size="sm"
-              className="mr-2 border-secondary-foreground/20 bg-transparent text-secondary-foreground hover:bg-secondary-foreground/10"
-            >
-              <ShieldCheck className="ml-1 h-4 w-4" /> دخول الإدارة
-            </Button>
+            <div className="min-w-0">
+              <h1 className="truncate text-base font-black leading-tight sm:text-xl">شركة الهدى للمحروقات</h1>
+              <p className="text-[10px] text-secondary-foreground/70 sm:text-[11px]" dir="ltr">هاتف: {'\u200E'}02-2444444</p>
+            </div>
           </Link>
-        </nav>
 
+          {/* Desktop navigation */}
+          <nav className="hidden items-center gap-1 sm:flex sm:gap-2">
+            {navItems.map((item) => (
+              <div key={item.to} className="flex items-center gap-2">
+                <Link
+                  to={item.to}
+                  className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+                    isActive(item.to)
+                      ? "bg-primary/10 text-primary"
+                      : "text-secondary-foreground/90 hover:bg-secondary-foreground/10"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+                {item.to === "/" && (
+                  <div className="mr-1">
+                    <InstallPWA />
+                  </div>
+                )}
+              </div>
+            ))}
+            <Link to="/auth">
+              <Button
+                variant="outline"
+                size="sm"
+                className="mr-2 border-secondary-foreground/20 bg-transparent text-secondary-foreground hover:bg-secondary-foreground/10"
+              >
+                <ShieldCheck className="ml-1 h-4 w-4" /> دخول الإدارة
+              </Button>
+            </Link>
+          </nav>
 
-        {/* Mobile menu */}
-        <div className="flex items-center gap-2 sm:hidden">
-          <Link to="/auth">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-secondary-foreground/20 bg-transparent text-secondary-foreground hover:bg-secondary-foreground/10"
-            >
-              <ShieldCheck className="ml-1 h-4 w-4" />
-              <span className="sr-only">دخول الإدارة</span>
-            </Button>
-          </Link>
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
+          {/* Mobile simple menu button */}
+          <div className="flex items-center gap-2 sm:hidden">
+            <Link to="/auth">
               <Button
                 variant="outline"
                 size="icon"
-                aria-label="فتح القائمة"
-                className="border-secondary-foreground/20 bg-transparent text-secondary-foreground hover:bg-secondary-foreground/10"
+                className="h-9 w-9 border-secondary-foreground/20 bg-transparent text-secondary-foreground"
               >
-                <Menu className="h-5 w-5" />
+                <ShieldCheck className="h-4 w-4" />
+                <span className="sr-only">دخول الإدارة</span>
               </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[80%] border-l border-border bg-secondary p-0">
-              <SheetTitle className="sr-only">قائمة التنقل</SheetTitle>
-              <div className="flex h-full flex-col">
-                <div className="flex items-center justify-between border-b border-secondary-foreground/10 px-4 py-4">
-                  <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20">
-                      <img 
-                        src={logoUrl} 
-                        alt="شعار شركة الهدى" 
-                        className="h-full w-full object-contain p-1"
-                      />
-                    </div>
-                    <div>
-                      <div className="text-sm font-black">شركة الهدى</div>
-                      <div className="text-[10px] text-secondary-foreground/70" dir="ltr">{'\u200E'}02-2444444</div>
-                    </div>
-                  </Link>
-                  <SheetClose asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label="إغلاق القائمة"
-                      className="text-secondary-foreground hover:bg-secondary-foreground/10"
-                    >
-                      <X className="h-5 w-5" />
-                    </Button>
-                  </SheetClose>
-                </div>
-                <nav className="flex-1 space-y-1 p-4">
-                  {navItems.map((item) => (
-                    <SheetClose key={item.to} asChild>
-                      <Link
-                        to={item.to}
-                        className={`block rounded-lg px-4 py-3 text-base font-semibold transition ${
-                          isActive(item.to)
-                            ? "bg-primary text-primary-foreground"
-                            : "text-secondary-foreground hover:bg-secondary-foreground/10"
-                        }`}
+            </Link>
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-9 w-9 border-secondary-foreground/20 bg-transparent text-secondary-foreground"
+                >
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[80%] border-l border-border bg-secondary p-0">
+                <SheetTitle className="sr-only">قائمة التنقل</SheetTitle>
+                <div className="flex h-full flex-col">
+                  <div className="flex items-center justify-between border-b border-secondary-foreground/10 px-4 py-4">
+                    <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
+                      <div className="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20">
+                        <img 
+                          src={logoUrl} 
+                          alt="شعار شركة الهدى" 
+                          className="h-full w-full object-contain p-1"
+                        />
+                      </div>
+                      <div>
+                        <div className="text-sm font-black">شركة الهدى</div>
+                        <div className="text-[10px] text-secondary-foreground/70" dir="ltr">{'\u200E'}02-2444444</div>
+                      </div>
+                    </Link>
+                    <SheetClose asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-secondary-foreground hover:bg-secondary-foreground/10"
                       >
-                        {item.label}
+                        <X className="h-5 w-5" />
+                      </Button>
+                    </SheetClose>
+                  </div>
+                  <nav className="flex-1 space-y-1 p-4">
+                    {navItems.map((item) => (
+                      <SheetClose key={item.to} asChild>
+                        <Link
+                          to={item.to}
+                          className={`block rounded-lg px-4 py-3 text-base font-semibold transition ${
+                            isActive(item.to)
+                              ? "bg-primary text-primary-foreground"
+                              : "text-secondary-foreground hover:bg-secondary-foreground/10"
+                          }`}
+                        >
+                          {item.label}
+                        </Link>
+                      </SheetClose>
+                    ))}
+                  </nav>
+                  <div className="border-t border-secondary-foreground/10 p-4">
+                    <SheetClose asChild>
+                      <Link to="/auth">
+                        <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
+                          <ShieldCheck className="ml-2 h-4 w-4" /> دخول الإدارة
+                        </Button>
                       </Link>
                     </SheetClose>
-                  ))}
-                </nav>
-                <div className="border-t border-secondary-foreground/10 p-4">
-                  <SheetClose asChild>
-                    <Link to="/auth">
-                      <Button className="w-full bg-primary text-primary-foreground hover:bg-primary/90">
-                        <ShieldCheck className="ml-2 h-4 w-4" /> دخول الإدارة
-                      </Button>
-                    </Link>
-                  </SheetClose>
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          </div>
+        </div>
+
+        {/* Mobile secondary bar for navigation and PWA */}
+        <div className="mt-3 flex items-center justify-center gap-1 border-t border-secondary-foreground/10 pt-3 sm:hidden">
+          {navItems.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={`rounded-md px-3 py-1.5 text-xs font-bold transition ${
+                isActive(item.to)
+                  ? "bg-primary text-primary-foreground shadow-sm"
+                  : "text-secondary-foreground/80"
+              }`}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <div className="mr-1 h-4 w-[1px] bg-secondary-foreground/20" />
+          <InstallPWA />
         </div>
       </div>
     </header>
+
   );
 }
