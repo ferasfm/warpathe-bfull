@@ -378,10 +378,10 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
       <div className={`px-4 py-3 ${anyAvailable ? "bg-success/10" : "bg-destructive/10"}`}>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-foreground sm:truncate text-sm sm:text-base leading-tight">
+            <h3 className="text-[13px] font-black leading-tight text-foreground sm:truncate sm:text-base">
               {station.name.replace("محطة الهدى للمحروقات", "الهدى").trim()}
             </h3>
-            <p className="mt-1 flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground font-medium">
+            <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-muted-foreground/70 sm:text-xs">
               <MapPin className="h-3 w-3 shrink-0" /> {station.city}
             </p>
           </div>
