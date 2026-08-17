@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            كل الاضافات التي موجودة بالموقع يمكن التحكم بها من خلال الداش بورد الادراة
+                                            ليس هذا ما اخطط له اريد ان يكون هناك فلتر الوسط الجنوب الشمال وليس تعريف اين المحطات اريدها افضل
 */
 
 import { NewsTicker } from "@/components/news-ticker";
@@ -305,46 +305,10 @@ function HomePage() {
             </div>
           </section>
         ) : (
-          <div className="space-y-8">
-            {(() => {
-              const regionLabels: Record<string, string> = {
-                North: "منطقة الشمال",
-                Central: "منطقة الوسط",
-                South: "منطقة الجنوب",
-              };
-              const groups = new Map<string, { station: Station; dist: number | null }[]>();
-              filtered.forEach((item) => {
-                const key = item.station.region || "غير مصنّف";
-                if (!groups.has(key)) groups.set(key, []);
-                groups.get(key)!.push(item);
-              });
-              
-              // Sort regions: North, Central, South, then others
-              const sortedRegions = [...groups.keys()].sort((a, b) => {
-                const order = ["North", "Central", "South"];
-                const ia = order.indexOf(a);
-                const ib = order.indexOf(b);
-                if (ia !== -1 && ib !== -1) return ia - ib;
-                if (ia !== -1) return -1;
-                if (ib !== -1) return 1;
-                return a.localeCompare(b);
-              });
-
-              return sortedRegions.map((region) => (
-                <section key={region}>
-                  <div className="mb-3 flex items-center gap-2 border-r-4 border-primary pr-3">
-                    <MapPin className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-black">{regionLabels[region] || region}</h3>
-                    <span className="text-xs text-muted-foreground">({groups.get(region)!.length} محطة)</span>
-                  </div>
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {groups.get(region)!.map(({ station, dist }) => (
-                      <StationCard key={station.id} station={station} fuels={fuelsByStation.get(station.id) ?? []} distanceKm={dist} />
-                    ))}
-                  </div>
-                </section>
-              ));
-            })()}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {filtered.map(({ station, dist }) => (
+              <StationCard key={station.id} station={station} fuels={fuelsByStation.get(station.id) ?? []} distanceKm={dist} />
+            ))}
           </div>
         )}
 
