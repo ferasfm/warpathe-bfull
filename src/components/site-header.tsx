@@ -87,12 +87,16 @@ export function SiteHeader() {
               <div className="flex h-full flex-col">
                 <div className="flex items-center justify-between border-b border-secondary-foreground/10 px-4 py-4">
                   <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
-                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary shadow-lg">
-                      <Fuel className="h-5 w-5 text-primary-foreground" />
+                    <div className="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20">
+                      <img 
+                        src="https://alhuda.ps/wp-content/uploads/2025/03/cropped-cropped-434028226_889142969677554_7540231448891951221_n-1.png" 
+                        alt="شعار شركة الهدى" 
+                        className="h-full w-full object-contain p-1"
+                      />
                     </div>
                     <div>
                       <div className="text-sm font-black">شركة الهدى</div>
-                      <div className="text-[10px] text-secondary-foreground/70">للمحروقات</div>
+                      <div className="text-[10px] text-secondary-foreground/70">02-2444444</div>
                     </div>
                   </Link>
                   <SheetClose asChild>
