@@ -216,17 +216,10 @@ function HomePage() {
             </span>
             تحديث لحظي مباشر
           </div>
-          <div className="flex items-center justify-between gap-4 mb-2">
-            <h2 className="text-3xl font-black leading-tight sm:text-5xl">
-              وقودك <span className="text-primary">متوفر الآن</span><br />في محطات الهدى
-            </h2>
-            <div className="hidden sm:block">
-              <InstallPWA />
-            </div>
-          </div>
-          <div className="sm:hidden mb-4">
-            <InstallPWA />
-          </div>
+          <h2 className="text-3xl font-black leading-tight sm:text-5xl">
+            وقودك <span className="text-primary">متوفر الآن</span><br />في محطات الهدى
+          </h2>
+
 
           <p className="mt-3 max-w-xl text-sm text-secondary-foreground/80 sm:text-base">
             اطلع على توفر البنزين والسولار والكاز والغاز في جميع محطاتنا بالضفة الغربية بشكل فوري.
