@@ -4,6 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Fuel, Menu, ShieldCheck, X } from "lucide-react";
+import { InstallPWA } from "@/components/install-pwa";
+
 
 const navItems = [
   { to: "/", label: "الرئيسية" },
@@ -61,17 +63,23 @@ export function SiteHeader() {
         {/* Desktop navigation */}
         <nav className="hidden items-center gap-1 sm:flex sm:gap-2">
           {navItems.map((item) => (
-            <Link
-              key={item.to}
-              to={item.to}
-              className={`rounded-md px-3 py-2 text-sm font-medium transition ${
-                isActive(item.to)
-                  ? "bg-primary/10 text-primary"
-                  : "text-secondary-foreground/90 hover:bg-secondary-foreground/10"
-              }`}
-            >
-              {item.label}
-            </Link>
+            <div key={item.to} className="flex items-center gap-2">
+              <Link
+                to={item.to}
+                className={`rounded-md px-3 py-2 text-sm font-medium transition ${
+                  isActive(item.to)
+                    ? "bg-primary/10 text-primary"
+                    : "text-secondary-foreground/90 hover:bg-secondary-foreground/10"
+                }`}
+              >
+                {item.label}
+              </Link>
+              {item.to === "/" && (
+                <div className="mr-1">
+                  <InstallPWA />
+                </div>
+              )}
+            </div>
           ))}
           <Link to="/auth">
             <Button
@@ -83,6 +91,7 @@ export function SiteHeader() {
             </Button>
           </Link>
         </nav>
+
 
         {/* Mobile menu */}
         <div className="flex items-center gap-2 sm:hidden">
