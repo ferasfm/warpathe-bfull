@@ -1,0 +1,13 @@
+GRANT SELECT ON public.stations TO anon, authenticated;
+GRANT SELECT ON public.station_fuels TO anon, authenticated;
+GRANT SELECT ON public.announcements TO anon, authenticated;
+GRANT SELECT ON public.site_settings TO anon, authenticated;
+GRANT SELECT ON public.user_roles TO authenticated;
+GRANT SELECT ON public.profiles TO authenticated;
+GRANT SELECT ON public.manager_groups TO authenticated;
+GRANT SELECT ON public.manager_group_members TO authenticated;
+GRANT SELECT ON public.manager_group_stations TO authenticated;
+GRANT ALL ON public.stations TO service_role;
+GRANT ALL ON public.station_fuels TO service_role;
+GRANT ALL ON public.announcements TO service_role;
+GRANT ALL ON public.site_settings TO service_role;
