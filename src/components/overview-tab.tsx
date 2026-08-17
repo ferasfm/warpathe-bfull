@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Fuel, MapPin, Users, History, CheckCircle2, XCircle } from "lucide-react";
 import { FUEL_LABELS, FUEL_ORDER, type FuelType } from "@/lib/fuel-types";
+import { REGIONS } from "@/lib/regions";
 
 export function OverviewTab() {
   const [stats, setStats] = useState({
@@ -10,19 +11,20 @@ export function OverviewTab() {
     activeStations: 0,
     totalManagers: 0,
     fuelAvailability: {} as Record<FuelType, { available: number; total: number }>,
+    regionalStats: {} as Record<string, { available: number; total: number }>,
   });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
       const [s, p, f, r] = await Promise.all([
-        supabase.from("stations").select("id, is_active"),
+        supabase.from("stations").select("id, is_active, region"),
         supabase.from("profiles").select("id", { count: "exact", head: true }),
-        supabase.from("station_fuels").select("fuel_type, is_available"),
+        supabase.from("station_fuels").select("fuel_type, is_available, station_id"),
         supabase.from("user_roles").select("user_id").eq("role", "station_manager"),
       ]);
 
-      const stations = (s.data as { id: string; is_active: boolean }[]) ?? [];
+      const stations = (s.data as { id: string; is_active: boolean; region: string | null }[]) ?? [];
       const managerIds = new Set((r.data ?? []).map((x) => x.user_id));
       
       const fuelStats = {} as Record<FuelType, { available: number; total: number }>;
@@ -30,12 +32,25 @@ export function OverviewTab() {
         fuelStats[ft] = { available: 0, total: 0 };
       });
 
+      const regionStats = {} as Record<string, { available: number; total: number }>;
+      REGIONS.forEach(reg => {
+        regionStats[reg.id.charAt(0).toUpperCase() + reg.id.slice(1)] = { available: 0, total: 0 };
+      });
+      regionStats["غير مصنّف"] = { available: 0, total: 0 };
+
+      const stationRegionMap = new Map(stations.map(st => [st.id, st.region || "غير مصنّف"]));
+
       (f.data ?? []).forEach((row: any) => {
         const ft = row.fuel_type as FuelType;
         if (fuelStats[ft]) {
           fuelStats[ft].total++;
           if (row.is_available) fuelStats[ft].available++;
         }
+
+        const region = stationRegionMap.get(row.station_id) || "غير مصنّف";
+        if (!regionStats[region]) regionStats[region] = { available: 0, total: 0 };
+        regionStats[region].total++;
+        if (row.is_available) regionStats[region].available++;
       });
 
       setStats({
@@ -43,6 +58,7 @@ export function OverviewTab() {
         activeStations: stations.filter(x => x.is_active).length,
         totalManagers: managerIds.size,
         fuelAvailability: fuelStats,
+        regionalStats: regionStats,
       });
       setLoading(false);
     }
@@ -75,6 +91,35 @@ export function OverviewTab() {
                   <div className="text-2xl font-black">{percent}%</div>
                   <div className="text-[10px] text-muted-foreground">
                     متوفر في {s.available} من أصل {s.total} محطة
+                  </div>
+                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                    <div 
+                      className="h-full bg-primary transition-all" 
+                      style={{ width: `${percent}%` }}
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">حالة الوقود حسب المناطق</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {Object.entries(stats.regionalStats).map(([region, s]) => {
+              const regionLabel = REGIONS.find(r => (r.id.charAt(0).toUpperCase() + r.id.slice(1)) === region)?.label || region;
+              const percent = s.total > 0 ? Math.round((s.available / s.total) * 100) : 0;
+              return (
+                <div key={region} className="rounded-xl border p-4 text-center space-y-2">
+                  <div className="text-sm font-bold text-muted-foreground">{regionLabel}</div>
+                  <div className="text-2xl font-black">{percent}%</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    توفّر الوقود بنسبة {percent}% في هذه المنطقة
                   </div>
                   <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
                     <div 
