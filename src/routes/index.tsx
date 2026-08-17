@@ -208,72 +208,74 @@ function HomePage() {
       {/* Hero */}
       <section className="relative overflow-hidden bg-secondary text-secondary-foreground">
         <div className="absolute inset-0 opacity-20" style={{ background: "radial-gradient(circle at 20% 30%, oklch(0.55 0.22 27) 0%, transparent 50%)" }} />
-        <div className="relative mx-auto max-w-6xl px-4 py-10 pb-6">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary-foreground ring-1 ring-primary/40">
+        <div className="relative mx-auto max-w-6xl px-4 py-8 sm:py-10">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1.5 text-[10px] font-bold text-primary-foreground ring-1 ring-primary/40 sm:mb-3 sm:text-xs">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
             </span>
             تحديث لحظي مباشر
           </div>
-          <h2 className="text-3xl font-black leading-tight sm:text-5xl">
+          <h2 className="text-2xl font-black leading-tight sm:text-5xl">
             وقودك <span className="text-primary">متوفر الآن</span><br />في محطات الهدى
           </h2>
 
-
-          <p className="mt-3 max-w-xl text-sm text-secondary-foreground/80 sm:text-base">
+          <p className="mt-4 max-w-xl text-xs leading-relaxed text-secondary-foreground/80 sm:mt-3 sm:text-base">
             اطلع على توفر البنزين والسولار والكاز والغاز في جميع محطاتنا بالضفة الغربية بشكل فوري.
           </p>
         </div>
       </section>
 
       {/* Search + filter */}
-      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur shadow-sm">
-        <div className="mx-auto max-w-6xl space-y-3 px-4 py-3">
-          <div className="relative">
-            <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="ابحث باسم المحطة أو المدينة..."
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="pr-9 text-right"
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب المنطقة</span>
-              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>الكل</FilterChip>
-                <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
-                <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
-                <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
-              </div>
+      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur shadow-sm transition-all duration-200">
+        <div className="mx-auto max-w-6xl px-4 py-4">
+          <div className="flex flex-col gap-4">
+            <div className="relative">
+              <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="ابحث باسم المحطة أو المدينة..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="h-11 border-2 pr-9 text-right text-sm focus-visible:ring-primary/20"
+              />
             </div>
             
-            <div className="flex flex-col gap-1.5">
-              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب نوع الوقود</span>
-              <div className="flex flex-wrap gap-2 items-center">
-                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                  <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">الكل</FilterChip>
-                  {FUEL_ORDER.map((ft) => (
-                    <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
-                      {FUEL_LABELS[ft]}
-                    </FilterChip>
-                  ))}
+            <div className="space-y-4 sm:space-y-3">
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-black text-muted-foreground/60 px-1 uppercase tracking-widest">تصفية حسب المنطقة</span>
+                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                  <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>الكل</FilterChip>
+                  <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
+                  <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
+                  <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
                 </div>
-                <Button
-                  size="sm"
-                  variant={sortByNearest && userLoc ? "default" : "outline"}
-                  onClick={() => {
-                    if (userLoc) setSortByNearest((v) => !v);
-                    else requestLocation();
-                  }}
-                  disabled={locating}
-                  className="mr-auto shrink-0 h-8 text-xs"
-                >
-                  <Navigation2 className="ml-1 h-3.5 w-3.5" />
-                  {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
-                </Button>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <span className="text-[10px] font-black text-muted-foreground/60 px-1 uppercase tracking-widest">تصفية حسب نوع الوقود</span>
+                <div className="flex flex-wrap gap-2 items-center">
+                  <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
+                    <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">الكل</FilterChip>
+                    {FUEL_ORDER.map((ft) => (
+                      <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
+                        {FUEL_LABELS[ft]}
+                      </FilterChip>
+                    ))}
+                  </div>
+                  <Button
+                    size="sm"
+                    variant={sortByNearest && userLoc ? "default" : "outline"}
+                    onClick={() => {
+                      if (userLoc) setSortByNearest((v) => !v);
+                      else requestLocation();
+                    }}
+                    disabled={locating}
+                    className="mr-auto shrink-0 h-9 rounded-full px-4 text-[11px] font-bold shadow-sm sm:h-8 sm:text-xs"
+                  >
+                    <Navigation2 className="ml-1.5 h-3.5 w-3.5" />
+                    {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
@@ -318,21 +320,28 @@ function HomePage() {
 
       </main>
 
-      <footer className="mt-16 border-t bg-secondary py-8 text-center text-sm text-secondary-foreground/70">
+      <footer className="mt-16 border-t bg-secondary py-12 text-center text-sm text-secondary-foreground/70 sm:py-8">
         <div className="mx-auto max-w-6xl px-4">
-          <div className="flex items-center justify-center gap-2 font-bold text-secondary-foreground mb-2">
-            <Radio className="h-4 w-4 text-primary" />
-            <span>شركة الهدى للمحروقات</span>
+          <div className="flex items-center justify-center gap-2 font-black text-secondary-foreground mb-4 sm:mb-2">
+            <Radio className="h-5 w-5 text-primary animate-pulse" />
+            <span className="text-base sm:text-lg">شركة الهدى للمحروقات</span>
           </div>
-          <p className="mb-2 text-xs">مصدرك الموثوق للوقود الممتاز والخدمات المتكاملة</p>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs mb-4" dir="ltr">
-            <span>{'\u200E'}02-2444444</span>
-            <span className="opacity-30">|</span>
-            <span>{'\u200E'}0598-606060</span>
-            <span className="opacity-30">|</span>
-            <span>info@alhuda.ps</span>
+          <p className="mb-6 text-xs font-medium sm:mb-2">مصدرك الموثوق للوقود الممتاز والخدمات المتكاملة</p>
+          <div className="flex flex-col items-center justify-center gap-y-3 text-xs mb-8 sm:flex-row sm:gap-x-4 sm:gap-y-1 sm:mb-4" dir="ltr">
+            <a href="tel:022444444" className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
+              <Phone className="h-3.5 w-3.5" />
+              <span>{'\u200E'}02-2444444</span>
+            </a>
+            <a href="tel:0598606060" className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
+              <Phone className="h-3.5 w-3.5" />
+              <span>{'\u200E'}0598-606060</span>
+            </a>
+            <a href="mailto:info@alhuda.ps" className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 hover:bg-white/10 transition-colors">
+              <MessageCircle className="h-3.5 w-3.5" />
+              <span>info@alhuda.ps</span>
+            </a>
           </div>
-          <p className="text-[10px] opacity-60">© {new Date().getFullYear()} جميع الحقوق محفوظة.</p>
+          <p className="text-[10px] font-medium opacity-50 uppercase tracking-widest">© {new Date().getFullYear()} جميع الحقوق محفوظة.</p>
         </div>
       </footer>
     </div>
@@ -350,11 +359,11 @@ function FilterChip({
   children: React.ReactNode;
   variant?: "primary" | "secondary"
 }) {
-  const baseClasses = "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition shadow-sm border";
+  const baseClasses = "shrink-0 rounded-full px-4 py-2 text-[11px] font-black transition-all shadow-sm border whitespace-nowrap sm:px-4 sm:py-1.5 sm:text-sm";
   const activeClasses = variant === "primary" 
-    ? "bg-primary text-primary-foreground border-primary" 
-    : "bg-secondary text-secondary-foreground border-primary/20";
-  const inactiveClasses = "bg-background text-muted-foreground border-border hover:bg-accent";
+    ? "bg-primary text-primary-foreground border-primary scale-105" 
+    : "bg-secondary text-secondary-foreground border-primary/40 scale-105";
+  const inactiveClasses = "bg-background text-muted-foreground border-border hover:bg-accent hover:border-muted-foreground/30";
 
   return (
     <button
@@ -376,15 +385,15 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
       <div className={`px-4 py-3 ${anyAvailable ? "bg-success/10" : "bg-destructive/10"}`}>
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <h3 className="font-bold text-foreground sm:truncate text-sm sm:text-base leading-tight">
+            <h3 className="text-[13px] font-black leading-tight text-foreground sm:truncate sm:text-base">
               {station.name.replace("محطة الهدى للمحروقات", "الهدى").trim()}
             </h3>
-            <p className="mt-1 flex items-center gap-1 text-[11px] sm:text-xs text-muted-foreground font-medium">
+            <p className="mt-1 flex items-center gap-1 text-[10px] font-bold text-muted-foreground/70 sm:text-xs">
               <MapPin className="h-3 w-3 shrink-0" /> {station.city}
             </p>
           </div>
           <div className="flex flex-col items-end gap-1">
-            <Badge className={anyAvailable ? "bg-success text-success-foreground hover:bg-success/90" : "bg-destructive text-destructive-foreground"}>
+            <Badge className={`rounded-full px-2 py-0 text-[10px] font-black sm:text-xs ${anyAvailable ? "bg-success text-success-foreground hover:bg-success/90" : "bg-destructive text-destructive-foreground"}`}>
               {anyAvailable ? `متوفر ${available}/${total}` : "غير متوفر"}
             </Badge>
             {distanceKm != null && (
