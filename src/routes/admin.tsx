@@ -19,6 +19,7 @@ import { Fuel, LogOut, Plus, Trash2, ArrowRight, Shield, MapPin, Users, Search, 
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { AuditLogTab } from "@/components/audit-log-tab";
+import { OverviewTab } from "@/components/overview-tab";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -177,8 +178,9 @@ function AdminDashboard({ email }: { email: string }) {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-6">
-        <Tabs defaultValue="stations">
-          <TabsList className="grid w-full grid-cols-6">
+        <Tabs defaultValue="overview">
+          <TabsList className="grid w-full grid-cols-7">
+            <TabsTrigger value="overview"><Search className="ml-1 h-4 w-4" /> نظرة عامة</TabsTrigger>
             <TabsTrigger value="stations"><MapPin className="ml-1 h-4 w-4" /> المحطات</TabsTrigger>
             <TabsTrigger value="managers"><Users className="ml-1 h-4 w-4" /> المديرون</TabsTrigger>
             <TabsTrigger value="groups"><Shield className="ml-1 h-4 w-4" /> المجموعات</TabsTrigger>
@@ -186,6 +188,8 @@ function AdminDashboard({ email }: { email: string }) {
             <TabsTrigger value="news"><Megaphone className="ml-1 h-4 w-4" /> الأخبار</TabsTrigger>
             <TabsTrigger value="audit"><History className="ml-1 h-4 w-4" /> السجل</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="overview" className="mt-4"><OverviewTab /></TabsContent>
 
           <TabsContent value="stations" className="mt-4"><StationsTab /></TabsContent>
           <TabsContent value="managers" className="mt-4"><ManagersTab /></TabsContent>
