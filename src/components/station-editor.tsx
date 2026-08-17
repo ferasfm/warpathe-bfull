@@ -58,15 +58,23 @@ export function StationEditor({
   useEffect(() => {
     let mounted = true;
     async function load() {
-      const { data } = await supabase.from("station_fuels").select("*").eq("station_id", station.id);
+      const { data, error } = await supabase.from("station_fuels").select("*").eq("station_id", station.id);
+      if (error) {
+        toast.error("فشل تحميل بيانات الوقود: " + error.message);
+        return;
+      }
       if (!mounted) return;
       const existing = (data as FuelRow[]) ?? [];
       // ensure all fuel types exist
       const missing = FUEL_ORDER.filter((ft) => !existing.some((e) => e.fuel_type === ft));
       if (missing.length > 0 && (isSuperAdmin || perms.can_edit_fuels)) {
-        await supabase.from("station_fuels").insert(
+        const { error: insertError } = await supabase.from("station_fuels").insert(
           missing.map((ft) => ({ station_id: station.id, fuel_type: ft, is_available: false })),
         );
+        if (insertError) {
+          toast.error("فشل تهيئة أنواع الوقود: " + insertError.message);
+          return;
+        }
         const { data: refetched } = await supabase.from("station_fuels").select("*").eq("station_id", station.id);
         if (mounted) setFuels((refetched as FuelRow[]) ?? []);
       } else {
