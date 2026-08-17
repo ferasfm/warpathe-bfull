@@ -1,5 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { Fuel, Menu, ShieldCheck, X } from "lucide-react";
@@ -13,6 +14,30 @@ const navItems = [
 export function SiteHeader() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [open, setOpen] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("https://alhuda.ps/wp-content/uploads/2025/03/cropped-cropped-434028226_889142969677554_7540231448891951221_n-1.png");
+
+  useEffect(() => {
+    async function loadLogo() {
+      const { data } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "logo_url")
+        .maybeSingle();
+      if (data?.value) setLogoUrl(data.value as string);
+    }
+    loadLogo();
+    
+    const channel = supabase
+      .channel("site_settings_logo")
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "site_settings", filter: "key=eq.logo_url" }, (payload) => {
+        if (payload.new && (payload.new as any).value) {
+          setLogoUrl((payload.new as any).value);
+        }
+      })
+      .subscribe();
+      
+    return () => { supabase.removeChannel(channel); };
+  }, []);
 
   const isActive = (path: string) => pathname === path;
 
@@ -22,7 +47,7 @@ export function SiteHeader() {
         <Link to="/" className="flex min-w-0 items-center gap-3">
           <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20">
             <img 
-              src="https://alhuda.ps/wp-content/uploads/2025/03/cropped-cropped-434028226_889142969677554_7540231448891951221_n-1.png" 
+              src={logoUrl} 
               alt="شعار شركة الهدى" 
               className="h-full w-full object-contain p-1"
             />
@@ -89,7 +114,7 @@ export function SiteHeader() {
                   <Link to="/" onClick={() => setOpen(false)} className="flex items-center gap-3">
                     <div className="grid h-10 w-10 place-items-center rounded-xl bg-white shadow-lg overflow-hidden border border-primary/20">
                       <img 
-                        src="https://alhuda.ps/wp-content/uploads/2025/03/cropped-cropped-434028226_889142969677554_7540231448891951221_n-1.png" 
+                        src={logoUrl} 
                         alt="شعار شركة الهدى" 
                         className="h-full w-full object-contain p-1"
                       />

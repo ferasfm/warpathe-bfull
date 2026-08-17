@@ -15,11 +15,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Fuel, LogOut, Plus, Trash2, ArrowRight, Shield, MapPin, Users, Search, Link2, Loader2, Megaphone, History } from "lucide-react";
+import { Fuel, LogOut, Plus, Trash2, ArrowRight, Shield, MapPin, Users, Search, Link2, Loader2, Megaphone, History, Settings } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { AuditLogTab } from "@/components/audit-log-tab";
 import { OverviewTab } from "@/components/overview-tab";
+import { SettingsTab } from "@/components/settings-tab";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -179,13 +180,14 @@ function AdminDashboard({ email }: { email: string }) {
 
       <main className="mx-auto max-w-6xl px-4 py-6">
         <Tabs defaultValue="overview">
-          <TabsList className="grid w-full grid-cols-7">
+          <TabsList className="grid w-full grid-cols-8">
             <TabsTrigger value="overview"><Search className="ml-1 h-4 w-4" /> نظرة عامة</TabsTrigger>
             <TabsTrigger value="stations"><MapPin className="ml-1 h-4 w-4" /> المحطات</TabsTrigger>
             <TabsTrigger value="managers"><Users className="ml-1 h-4 w-4" /> المديرون</TabsTrigger>
             <TabsTrigger value="groups"><Shield className="ml-1 h-4 w-4" /> المجموعات</TabsTrigger>
             <TabsTrigger value="edit"><Fuel className="ml-1 h-4 w-4" /> تعديل محطة</TabsTrigger>
             <TabsTrigger value="news"><Megaphone className="ml-1 h-4 w-4" /> الأخبار</TabsTrigger>
+            <TabsTrigger value="settings"><Settings className="ml-1 h-4 w-4" /> الإعدادات</TabsTrigger>
             <TabsTrigger value="audit"><History className="ml-1 h-4 w-4" /> السجل</TabsTrigger>
           </TabsList>
 
@@ -196,6 +198,7 @@ function AdminDashboard({ email }: { email: string }) {
           <TabsContent value="groups" className="mt-4"><GroupsTab /></TabsContent>
           <TabsContent value="edit" className="mt-4"><EditStationTab /></TabsContent>
           <TabsContent value="news" className="mt-4"><NewsTab /></TabsContent>
+          <TabsContent value="settings" className="mt-4"><SettingsTab /></TabsContent>
           <TabsContent value="audit" className="mt-4"><AuditLogTab /></TabsContent>
         </Tabs>
 

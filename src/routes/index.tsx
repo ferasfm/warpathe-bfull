@@ -38,7 +38,8 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            نجربة الحساب الرئيسي
+                                            https://alhuda.ps/wp-content/uploads/2025/03/cropped-cropped-434028226_889142969677554_7540231448891951221_n-1.png
+اشف هذا الشعار واجعل بالمكان اضافة الشعار فقط من داش بورد التحكم الاداري الريسي فقط اعدادت الموقع فقط يتحكم بها الداري اما مدير المحطة فيمكن اضافة صلاحيات هل يمكنك اعطائي خيارات
 */
 
 import { NewsTicker } from "@/components/news-ticker";
