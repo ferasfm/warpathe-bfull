@@ -1,0 +1,16 @@
+GRANT SELECT ON public.stations TO anon;
+GRANT SELECT ON public.stations TO authenticated;
+GRANT SELECT ON public.station_fuels TO anon;
+GRANT SELECT ON public.station_fuels TO authenticated;
+GRANT SELECT ON public.announcements TO anon;
+GRANT SELECT ON public.announcements TO authenticated;
+GRANT SELECT ON public.site_settings TO anon;
+GRANT SELECT ON public.site_settings TO authenticated;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO anon;
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, public.app_role) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.can_manage_station(uuid, uuid) TO anon;
+GRANT EXECUTE ON FUNCTION public.can_manage_station(uuid, uuid) TO authenticated;
+GRANT SELECT ON public.user_roles TO authenticated;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO service_role;
+GRANT ALL ON ALL FUNCTIONS IN SCHEMA public TO service_role;
