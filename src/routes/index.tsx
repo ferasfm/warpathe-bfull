@@ -38,10 +38,12 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            الهاتف يحب ان يكون بهذا الشكل
+                                            ما هو الرابط لكي افحصة على الهاتف ايضا اريد اضافة زر في اعلى الصفحة لتنزيل شورت كت على الهاتف بشعار الشركة عند تشغيلة يدخل الى الموقع مباشرة
 */
 
 import { NewsTicker } from "@/components/news-ticker";
+import { InstallPWA } from "@/components/install-pwa";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -214,9 +216,18 @@ function HomePage() {
             </span>
             تحديث لحظي مباشر
           </div>
-          <h2 className="text-3xl font-black leading-tight sm:text-5xl">
-            وقودك <span className="text-primary">متوفر الآن</span><br />في محطات الهدى
-          </h2>
+          <div className="flex items-center justify-between gap-4 mb-2">
+            <h2 className="text-3xl font-black leading-tight sm:text-5xl">
+              وقودك <span className="text-primary">متوفر الآن</span><br />في محطات الهدى
+            </h2>
+            <div className="hidden sm:block">
+              <InstallPWA />
+            </div>
+          </div>
+          <div className="sm:hidden mb-4">
+            <InstallPWA />
+          </div>
+
           <p className="mt-3 max-w-xl text-sm text-secondary-foreground/80 sm:text-base">
             اطلع على توفر البنزين والسولار والكاز والغاز في جميع محطاتنا بالضفة الغربية بشكل فوري.
           </p>
