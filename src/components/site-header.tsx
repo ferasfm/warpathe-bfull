@@ -174,15 +174,15 @@ export function SiteHeader() {
         </div>
 
         {/* Mobile secondary bar for navigation and PWA */}
-        <div className="mt-3 flex items-center justify-center gap-1 border-t border-secondary-foreground/10 pt-3 sm:hidden">
+        <div className="mt-4 flex w-full flex-wrap items-center justify-center gap-1 border-t border-secondary-foreground/10 pt-4 sm:hidden">
           {navItems.map((item) => (
             <Link
               key={item.to}
               to={item.to}
-              className={`rounded-md px-3 py-1.5 text-xs font-bold transition ${
+              className={`rounded-full px-4 py-2 text-[11px] font-bold transition ${
                 isActive(item.to)
                   ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-secondary-foreground/80"
+                  : "bg-secondary-foreground/5 text-secondary-foreground"
               }`}
             >
               {item.label}
