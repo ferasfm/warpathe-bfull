@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            ليس هذا ما اخطط له اريد ان يكون هناك فلتر الوسط الجنوب الشمال وليس تعريف اين المحطات اريدها افضل
+                                            اسم المحطة لا يظهر عندما يكون الوضع في حالة الهاتف لان اسم المحطة طويل جدا محطة الهدى للمحروقات و اسم المنطقة مثلا سلفيت غير ظاهرة الكلمة يمكن الخاء اسم المحطة او جعل الموقع متناسب جدا مع الهاتف
 */
 
 import { NewsTicker } from "@/components/news-ticker";
