@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            هل انتهيت من كامل Queue لانني اراها ما زالت
+                                            الهاتف يحب ان يكون بهذا الشكل
 */
 
 import { NewsTicker } from "@/components/news-ticker";
@@ -322,9 +322,9 @@ function HomePage() {
           </div>
           <p className="mb-2 text-xs">مصدرك الموثوق للوقود الممتاز والخدمات المتكاملة</p>
           <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs mb-4" dir="ltr">
-            <span>02-2444444</span>
+            <span>{'\u200E'}02-2444444</span>
             <span className="opacity-30">|</span>
-            <span>0598-606060</span>
+            <span>{'\u200E'}0598-606060</span>
             <span className="opacity-30">|</span>
             <span>info@alhuda.ps</span>
           </div>
