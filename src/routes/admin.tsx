@@ -421,7 +421,7 @@ function StationsTab() {
           <div key={region} className="space-y-2">
             <div className="flex items-center gap-2 pt-2">
               <MapPin className="h-4 w-4 text-primary" />
-              <span className="font-bold">{region}</span>
+              <span className="font-bold">{REGIONS.find(r => (r.id.charAt(0).toUpperCase() + r.id.slice(1)) === region)?.label || region}</span>
               <span className="text-xs text-muted-foreground">({list.length})</span>
             </div>
             {list.map((s) => (
