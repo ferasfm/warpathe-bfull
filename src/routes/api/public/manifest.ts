@@ -12,16 +12,19 @@ export const Route = createFileRoute('/api/public/manifest')({
           "display": "standalone",
           "background_color": "#ffffff",
           "theme_color": "#D3302F",
+          "prefer_related_applications": false,
           "icons": [
             {
               "src": "/favicon.png",
               "sizes": "192x192",
-              "type": "image/png"
+              "type": "image/png",
+              "purpose": "any maskable"
             },
             {
               "src": "/favicon.png",
               "sizes": "512x512",
-              "type": "image/png"
+              "type": "image/png",
+              "purpose": "any maskable"
             }
           ]
         };
@@ -29,6 +32,8 @@ export const Route = createFileRoute('/api/public/manifest')({
         return new Response(JSON.stringify(manifest), {
           headers: {
             'Content-Type': 'application/manifest+json',
+            'Cache-Control': 'public, max-age=3600',
+            'X-Content-Type-Options': 'nosniff'
           },
         })
       }
