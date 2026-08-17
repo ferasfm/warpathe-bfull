@@ -38,7 +38,7 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            الهاتف معكوس يجب ان يكون من اليسار الى الشمال
+                                            الشعار قلت لك اضفة من واعضائي اماكنية رفعة او تحديد شعار
 */
 
 import { NewsTicker } from "@/components/news-ticker";
