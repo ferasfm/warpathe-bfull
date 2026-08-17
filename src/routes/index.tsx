@@ -224,7 +224,7 @@ function HomePage() {
       </section>
 
       {/* Search + filter */}
-      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
+      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur shadow-sm">
         <div className="mx-auto max-w-6xl space-y-3 px-4 py-3">
           <div className="relative">
             <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -236,35 +236,41 @@ function HomePage() {
             />
           </div>
           <div className="flex flex-col gap-3">
-            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-              <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>كل المناطق</FilterChip>
-              <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
-              <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
-              <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب المنطقة</span>
+              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>الكل</FilterChip>
+                <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
+                <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
+                <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
+              </div>
             </div>
             
-            <div className="flex flex-wrap gap-2 items-center">
-              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
-                <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">كل أنواع الوقود</FilterChip>
-                {FUEL_ORDER.map((ft) => (
-                  <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
-                    {FUEL_LABELS[ft]}
-                  </FilterChip>
-                ))}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب نوع الوقود</span>
+              <div className="flex flex-wrap gap-2 items-center">
+                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                  <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">الكل</FilterChip>
+                  {FUEL_ORDER.map((ft) => (
+                    <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
+                      {FUEL_LABELS[ft]}
+                    </FilterChip>
+                  ))}
+                </div>
+                <Button
+                  size="sm"
+                  variant={sortByNearest && userLoc ? "default" : "outline"}
+                  onClick={() => {
+                    if (userLoc) setSortByNearest((v) => !v);
+                    else requestLocation();
+                  }}
+                  disabled={locating}
+                  className="mr-auto shrink-0 h-8 text-xs"
+                >
+                  <Navigation2 className="ml-1 h-3.5 w-3.5" />
+                  {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
+                </Button>
               </div>
-              <Button
-                size="sm"
-                variant={sortByNearest && userLoc ? "default" : "outline"}
-                onClick={() => {
-                  if (userLoc) setSortByNearest((v) => !v);
-                  else requestLocation();
-                }}
-                disabled={locating}
-                className="mr-auto shrink-0"
-              >
-                <Navigation2 className="ml-1 h-4 w-4" />
-                {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب إليك" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
-              </Button>
             </div>
           </div>
         </div>
