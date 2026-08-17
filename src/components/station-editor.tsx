@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { FUEL_LABELS, FUEL_ORDER, type FuelType } from "@/lib/fuel-types";
+import { WEST_BANK_GOVERNORATES, REGIONS } from "@/lib/regions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
@@ -97,6 +98,7 @@ export function StationEditor({
       .update({
         name: info.name,
         city: info.city,
+        region: info.region,
         address: info.address,
         phone: info.phone,
         working_hours: info.working_hours,
@@ -190,13 +192,31 @@ export function StationEditor({
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               <div>
-                <Label className="text-xs">المدينة</Label>
-                <Input value={info.city} onChange={(e) => setInfo({ ...info, city: e.target.value })} />
+                <Label className="text-xs">المنطقة</Label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={info.region || ""} 
+                  onChange={(e) => setInfo({ ...info, region: e.target.value })}
+                >
+                  <option value="">اختر المنطقة</option>
+                  {REGIONS.map((r) => <option key={r.id} value={r.id.charAt(0).toUpperCase() + r.id.slice(1)}>{r.label}</option>)}
+                </select>
               </div>
               <div>
-                <Label className="text-xs"><Phone className="inline h-3 w-3" /> الهاتف</Label>
-                <Input value={info.phone ?? ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} dir="ltr" />
+                <Label className="text-xs">المحافظة</Label>
+                <select 
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={info.city} 
+                  onChange={(e) => setInfo({ ...info, city: e.target.value })}
+                >
+                  <option value="">اختر المحافظة</option>
+                  {WEST_BANK_GOVERNORATES.map((r) => <option key={r} value={r}>{r}</option>)}
+                </select>
               </div>
+            </div>
+            <div>
+              <Label className="text-xs"><Phone className="inline h-3 w-3" /> الهاتف</Label>
+              <Input value={info.phone ?? ""} onChange={(e) => setInfo({ ...info, phone: e.target.value })} dir="ltr" />
             </div>
             <div>
               <Label className="text-xs"><MapPin className="inline h-3 w-3" /> العنوان</Label>

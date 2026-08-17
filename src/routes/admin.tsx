@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useSession, useRoles } from "@/lib/auth-hooks";
 import { createManagerUser, bootstrapFirstAdmin } from "@/lib/admin.functions";
 import { searchGoogleMapsPlaces, resolveGoogleMapsUrl, type PlaceResult } from "@/lib/maps.functions";
-import { WEST_BANK_REGIONS } from "@/lib/regions";
+import { WEST_BANK_GOVERNORATES, REGIONS } from "@/lib/regions";
 import { StationEditor } from "@/components/station-editor";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -340,7 +340,7 @@ function StationsTab() {
                       <SelectTrigger><SelectValue placeholder="المحافظة (اختياري)" /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="any">كل المحافظات</SelectItem>
-                        {WEST_BANK_REGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                        {WEST_BANK_GOVERNORATES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
                       </SelectContent>
                     </Select>
                     <Button type="button" size="sm" onClick={runSearch} disabled={searchBusy || !searchQ} className="w-full">
@@ -374,15 +374,23 @@ function StationsTab() {
               <div><Label>الاسم</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
               <div className="grid gap-2 sm:grid-cols-2">
                 <div>
-                  <Label>المحافظة</Label>
+                  <Label>المنطقة (وسط، شمال، جنوب)</Label>
                   <Select value={form.region || ""} onValueChange={(v) => setForm({ ...form, region: v })}>
-                    <SelectTrigger><SelectValue placeholder="اختر" /></SelectTrigger>
+                    <SelectTrigger><SelectValue placeholder="اختر المنطقة" /></SelectTrigger>
                     <SelectContent>
-                      {WEST_BANK_REGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                      {REGIONS.map((r) => <SelectItem key={r.id} value={r.id.charAt(0).toUpperCase() + r.id.slice(1)}>{r.label}</SelectItem>)}
                     </SelectContent>
                   </Select>
                 </div>
-                <div><Label>المدينة / البلدة</Label><Input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} /></div>
+                <div>
+                  <Label>المحافظة</Label>
+                  <Select value={form.city || ""} onValueChange={(v) => setForm({ ...form, city: v })}>
+                    <SelectTrigger><SelectValue placeholder="اختر المحافظة" /></SelectTrigger>
+                    <SelectContent>
+                      {WEST_BANK_GOVERNORATES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <div><Label>الهاتف</Label><Input dir="ltr" value={form.phone ?? ""} onChange={(e) => setForm({ ...form, phone: e.target.value })} /></div>
               <div><Label>العنوان</Label><Input value={form.address ?? ""} onChange={(e) => setForm({ ...form, address: e.target.value })} /></div>
@@ -405,7 +413,7 @@ function StationsTab() {
           <SelectTrigger><SelectValue /></SelectTrigger>
           <SelectContent>
             <SelectItem value="all">كل المحافظات</SelectItem>
-            {WEST_BANK_REGIONS.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
+            {WEST_BANK_GOVERNORATES.map((r) => <SelectItem key={r} value={r}>{r}</SelectItem>)}
           </SelectContent>
         </Select>
 
@@ -413,7 +421,7 @@ function StationsTab() {
           <div key={region} className="space-y-2">
             <div className="flex items-center gap-2 pt-2">
               <MapPin className="h-4 w-4 text-primary" />
-              <span className="font-bold">{region}</span>
+              <span className="font-bold">{REGIONS.find(r => (r.id.charAt(0).toUpperCase() + r.id.slice(1)) === region)?.label || region}</span>
               <span className="text-xs text-muted-foreground">({list.length})</span>
             </div>
             {list.map((s) => (

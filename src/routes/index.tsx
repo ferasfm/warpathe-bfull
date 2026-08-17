@@ -84,6 +84,7 @@ function HomePage() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FuelType | "all">("all");
+  const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [userLoc, setUserLoc] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [sortByNearest, setSortByNearest] = useState(false);
@@ -178,6 +179,9 @@ function HomePage() {
   const filtered = withDistance.filter(({ station: s }) => {
     const q = query.trim();
     if (q && !`${s.name} ${s.city} ${s.address ?? ""}`.includes(q)) return false;
+    
+    if (selectedRegion !== "all" && s.region !== selectedRegion) return false;
+
     if (filter !== "all") {
       const sf = fuelsByStation.get(s.id) ?? [];
       const item = sf.find((x) => x.fuel_type === filter);
@@ -220,7 +224,7 @@ function HomePage() {
       </section>
 
       {/* Search + filter */}
-      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur">
+      <div className="sticky top-0 z-20 border-b bg-background/95 backdrop-blur shadow-sm">
         <div className="mx-auto max-w-6xl space-y-3 px-4 py-3">
           <div className="relative">
             <Search className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -231,28 +235,43 @@ function HomePage() {
               className="pr-9 text-right"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
-            <div className="flex gap-2 overflow-x-auto pb-1">
-              <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>الكل</FilterChip>
-              {FUEL_ORDER.map((ft) => (
-                <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)}>
-                  {FUEL_LABELS[ft]}
-                </FilterChip>
-              ))}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب المنطقة</span>
+              <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                <FilterChip active={selectedRegion === "all"} onClick={() => setSelectedRegion("all")}>الكل</FilterChip>
+                <FilterChip active={selectedRegion === "North"} onClick={() => setSelectedRegion("North")}>الشمال</FilterChip>
+                <FilterChip active={selectedRegion === "Central"} onClick={() => setSelectedRegion("Central")}>الوسط</FilterChip>
+                <FilterChip active={selectedRegion === "South"} onClick={() => setSelectedRegion("South")}>الجنوب</FilterChip>
+              </div>
             </div>
-            <Button
-              size="sm"
-              variant={sortByNearest && userLoc ? "default" : "outline"}
-              onClick={() => {
-                if (userLoc) setSortByNearest((v) => !v);
-                else requestLocation();
-              }}
-              disabled={locating}
-              className="mr-auto shrink-0"
-            >
-              <Navigation2 className="ml-1 h-4 w-4" />
-              {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب إليك" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
-            </Button>
+            
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[10px] font-bold text-muted-foreground px-1 uppercase tracking-wider">تصفية حسب نوع الوقود</span>
+              <div className="flex flex-wrap gap-2 items-center">
+                <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+                  <FilterChip active={filter === "all"} onClick={() => setFilter("all")} variant="secondary">الكل</FilterChip>
+                  {FUEL_ORDER.map((ft) => (
+                    <FilterChip key={ft} active={filter === ft} onClick={() => setFilter(ft)} variant="secondary">
+                      {FUEL_LABELS[ft]}
+                    </FilterChip>
+                  ))}
+                </div>
+                <Button
+                  size="sm"
+                  variant={sortByNearest && userLoc ? "default" : "outline"}
+                  onClick={() => {
+                    if (userLoc) setSortByNearest((v) => !v);
+                    else requestLocation();
+                  }}
+                  disabled={locating}
+                  className="mr-auto shrink-0 h-8 text-xs"
+                >
+                  <Navigation2 className="ml-1 h-3.5 w-3.5" />
+                  {locating ? "جاري التحديد..." : userLoc ? (sortByNearest ? "الأقرب" : "ترتيب حسب الأقرب") : "أقرب المحطات"}
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -288,21 +307,38 @@ function HomePage() {
         ) : (
           <div className="space-y-8">
             {(() => {
+              const regionLabels: Record<string, string> = {
+                North: "منطقة الشمال",
+                Central: "منطقة الوسط",
+                South: "منطقة الجنوب",
+              };
               const groups = new Map<string, { station: Station; dist: number | null }[]>();
               filtered.forEach((item) => {
-                const key = item.station.region || item.station.city || "غير مصنّف";
+                const key = item.station.region || "غير مصنّف";
                 if (!groups.has(key)) groups.set(key, []);
                 groups.get(key)!.push(item);
               });
-              return [...groups.entries()].map(([region, list]) => (
+              
+              // Sort regions: North, Central, South, then others
+              const sortedRegions = [...groups.keys()].sort((a, b) => {
+                const order = ["North", "Central", "South"];
+                const ia = order.indexOf(a);
+                const ib = order.indexOf(b);
+                if (ia !== -1 && ib !== -1) return ia - ib;
+                if (ia !== -1) return -1;
+                if (ib !== -1) return 1;
+                return a.localeCompare(b);
+              });
+
+              return sortedRegions.map((region) => (
                 <section key={region}>
                   <div className="mb-3 flex items-center gap-2 border-r-4 border-primary pr-3">
                     <MapPin className="h-5 w-5 text-primary" />
-                    <h3 className="text-lg font-black">{region}</h3>
-                    <span className="text-xs text-muted-foreground">({list.length} محطة)</span>
+                    <h3 className="text-lg font-black">{regionLabels[region] || region}</h3>
+                    <span className="text-xs text-muted-foreground">({groups.get(region)!.length} محطة)</span>
                   </div>
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {list.map(({ station, dist }) => (
+                    {groups.get(region)!.map(({ station, dist }) => (
                       <StationCard key={station.id} station={station} fuels={fuelsByStation.get(station.id) ?? []} distanceKm={dist} />
                     ))}
                   </div>
@@ -335,13 +371,27 @@ function HomePage() {
   );
 }
 
-function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function FilterChip({ 
+  active, 
+  onClick, 
+  children,
+  variant = "primary"
+}: { 
+  active: boolean; 
+  onClick: () => void; 
+  children: React.ReactNode;
+  variant?: "primary" | "secondary"
+}) {
+  const baseClasses = "shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition shadow-sm border";
+  const activeClasses = variant === "primary" 
+    ? "bg-primary text-primary-foreground border-primary" 
+    : "bg-secondary text-secondary-foreground border-primary/20";
+  const inactiveClasses = "bg-background text-muted-foreground border-border hover:bg-accent";
+
   return (
     <button
       onClick={onClick}
-      className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition ${
-        active ? "bg-primary text-primary-foreground shadow" : "bg-muted text-muted-foreground hover:bg-accent"
-      }`}
+      className={`${baseClasses} ${active ? activeClasses : inactiveClasses}`}
     >
       {children}
     </button>
