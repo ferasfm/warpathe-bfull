@@ -13,7 +13,7 @@ import { loadSubs, fireNotification } from "@/lib/subscriptions";
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppShare } from "@/components/WhatsAppShare";
 // CrowdStatus imported but currently disabled as per user request to remove crowd confirmations feature
-// import { CrowdStatus } from "@/components/CrowdStatus";
+// // import { CrowdStatus } from "@/components/CrowdStatus";
 
 
 function waNumber(phone: string): string {
@@ -452,14 +452,14 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
           })}
         </div>
 
-        {/* Crowd Confirmations */}
-        <div className="space-y-2">
+        {/* Crowd Confirmations disabled */}
+        {/* <div className="space-y-2">
           {FUEL_ORDER.map(ft => {
             const item = fuels.find(f => f.fuel_type === ft);
             if (!item) return null;
             return <CrowdStatus key={ft} stationId={station.id} fuelType={ft} />;
           })}
-        </div>
+        </div> */}
 
         {/* Expected arrivals */}
         {fuels.some((f) => !f.is_available && f.expected_arrival) && (
