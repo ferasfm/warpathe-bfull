@@ -40,7 +40,7 @@ function formatDistance(km: number): string {
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-ابداء بكافة الخطوات
+لا اريد ان يكون له رئي المستخدم العادي نعم متوفر او لا غير متوفر اريد هذه الامور فقط لمدير المحطة و المدير الاعلى لا اريد اي شيء سوا انه يمكنة رؤية وتفعيل النوتفاكشن فقط
 */
 
 import { NewsTicker } from "@/components/news-ticker";
