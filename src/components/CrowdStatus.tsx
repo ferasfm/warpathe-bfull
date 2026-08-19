@@ -5,10 +5,18 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { FUEL_LABELS, type FuelType } from "@/lib/fuel-types";
 
+import { useRoles, useSession } from "@/lib/auth-hooks";
+
 export function CrowdStatus({ stationId, fuelType }: { stationId: string; fuelType: FuelType }) {
+  const { user } = useSession();
+  const { isSuperAdmin, isManager } = useRoles(user?.id);
   const [stats, setStats] = useState({ available: 0, unavailable: 0 });
   const [myVote, setMyVote] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // If user is admin or manager, they shouldn't see/interact with crowd status
+  // as they have the official status control in their dashboard.
+  if (isSuperAdmin || isManager) return null;
 
   useEffect(() => {
     async function load() {
