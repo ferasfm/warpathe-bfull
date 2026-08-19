@@ -12,7 +12,8 @@ import { SubscribeButton } from "@/components/subscribe-button";
 import { loadSubs, fireNotification } from "@/lib/subscriptions";
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppShare } from "@/components/WhatsAppShare";
-import { CrowdStatus } from "@/components/CrowdStatus";
+// CrowdStatus imported but currently disabled as per user request to remove crowd confirmations feature
+// import { CrowdStatus } from "@/components/CrowdStatus";
 
 
 function waNumber(phone: string): string {
