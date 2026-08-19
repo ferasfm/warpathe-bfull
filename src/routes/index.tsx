@@ -434,6 +434,15 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
           })}
         </div>
 
+        {/* Crowd Confirmations */}
+        <div className="space-y-2">
+          {FUEL_ORDER.map(ft => {
+            const item = fuels.find(f => f.fuel_type === ft);
+            if (!item) return null;
+            return <CrowdStatus key={ft} stationId={station.id} fuelType={ft} />;
+          })}
+        </div>
+
         {/* Expected arrivals */}
         {fuels.some((f) => !f.is_available && f.expected_arrival) && (
           <div className="rounded-lg bg-warning/10 p-2 text-xs text-foreground">
