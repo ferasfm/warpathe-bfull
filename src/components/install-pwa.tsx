@@ -60,7 +60,7 @@ export function InstallPWA() {
         variant="outline"
         size="sm"
         onClick={handleInstallClick}
-        className="gap-2 h-8 text-[11px] font-bold border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary animate-pulse shadow-sm"
+        className="gap-2 h-8 text-[11px] font-bold border-primary/30 bg-primary/5 hover:bg-primary/10 text-primary animate-bounce shadow-sm"
       >
         <PlusSquare className="h-3.5 w-3.5" />
         تثبيت التطبيق

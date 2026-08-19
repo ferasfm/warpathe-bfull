@@ -29,7 +29,7 @@ ${mapUrl ? `🗺️ *الموقع:* ${mapUrl}` : ""}
       variant="ghost"
       size="sm"
       onClick={share}
-      className="h-8 gap-1.5 rounded-full px-3 text-[10px] font-bold text-success hover:bg-success/10 hover:text-success"
+      className="flex-1 h-8 gap-1.5 rounded-lg border-success/30 text-success hover:bg-success/10 hover:text-success"
     >
       <MessageCircle className="h-3.5 w-3.5" />
       مشاركة واتساب

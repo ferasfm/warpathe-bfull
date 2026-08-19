@@ -13,6 +13,7 @@ import { loadSubs, fireNotification } from "@/lib/subscriptions";
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppShare } from "@/components/WhatsAppShare";
 import { CrowdStatus } from "@/components/CrowdStatus";
+import { StationsMap } from "@/components/StationsMap";
 
 function waNumber(phone: string): string {
   let d = phone.replace(/\D/g, "");
@@ -39,7 +40,7 @@ function formatDistance(km: number): string {
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-نعم ولاكن هل هي معقدة
+ابداء بكافة الخطوات
 */
 
 import { NewsTicker } from "@/components/news-ticker";
@@ -283,10 +284,13 @@ function HomePage() {
         </div>
       </div>
 
-
-
-
-      {/* Stations grid */}
+      <div className="mx-auto max-w-6xl px-4 mt-6">
+        <StationsMap 
+          stations={filtered.map(f => f.station)} 
+          fuels={fuels} 
+          apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""} 
+        />
+      </div>
       <main className="mx-auto max-w-6xl px-4 py-6">
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -403,7 +407,21 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
                 <Navigation2 className="h-3 w-3" /> {formatDistance(distanceKm)}
               </span>
             )}
-            <SubscribeButton stationId={station.id} stationName={station.name} />
+            <div className="flex gap-1 items-center">
+              <SubscribeButton stationId={station.id} stationName={station.name} />
+              {station.google_maps_url && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 rounded-full text-primary hover:bg-primary/10"
+                  asChild
+                >
+                  <a href={station.google_maps_url} target="_blank" rel="noopener noreferrer">
+                    <Navigation2 className="h-4 w-4" />
+                  </a>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -495,23 +513,24 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
 
         </div>
 
-        {station.google_maps_url && (
-          <a
-            href={station.google_maps_url}
-            target="_blank"
-            rel="noreferrer"
-            className="block rounded-lg bg-secondary py-2 text-center text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/90"
-          >
-            📍 فتح في خرائط جوجل
-          </a>
-        )}
-
-        <WhatsAppShare 
-          stationName={station.name} 
-          city={station.city} 
-          availableFuels={availableFuels.map(f => f.fuel_type)} 
-          mapUrl={station.google_maps_url} 
-        />
+        <div className="flex gap-2">
+          {station.google_maps_url && (
+            <a
+              href={station.google_maps_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 rounded-lg bg-secondary py-2 text-center text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/90"
+            >
+              📍 فتح في خرائط جوجل
+            </a>
+          )}
+          <WhatsAppShare 
+            stationName={station.name} 
+            city={station.city} 
+            availableFuels={availableFuels.map(f => f.fuel_type)} 
+            mapUrl={station.google_maps_url} 
+          />
+        </div>
       </div>
     </Card>
   );
