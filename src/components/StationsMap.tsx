@@ -36,7 +36,17 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
   if (stationsWithCoords.length === 0) return null;
 
   // Default center: West Bank area
-  const defaultCenter = { lat: 32.0, lng: 35.2 };
+  const defaultCenter = useMemo(() => {
+    if (stationsWithCoords.length === 0) return { lat: 32.0, lng: 35.2 };
+    const lats = stationsWithCoords.map(s => Number(s.latitude));
+    const lngs = stationsWithCoords.map(s => Number(s.longitude));
+    return {
+      lat: (Math.min(...lats) + Math.max(...lats)) / 2,
+      lng: (Math.min(...lngs) + Math.max(...lngs)) / 2,
+    };
+  }, [stationsWithCoords]);
+
+  const defaultZoom = stationsWithCoords.length > 1 ? 9 : 12;
 
   const getStationStatus = (stationId: string) => {
     const stationFuels = fuels.filter((f) => f.station_id === stationId);
