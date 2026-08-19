@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesRouteImport } from './routes/services'
-import { Route as MapRouteImport } from './routes/map'
 import { Route as ManagerRouteImport } from './routes/manager'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -21,11 +20,6 @@ import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manif
 const ServicesRoute = ServicesRouteImport.update({
   id: '/services',
   path: '/services',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MapRoute = MapRouteImport.update({
-  id: '/map',
-  path: '/map',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManagerRoute = ManagerRouteImport.update({
@@ -65,7 +59,6 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/manager': typeof ManagerRoute
-  '/map': typeof MapRoute
   '/services': typeof ServicesRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
 }
@@ -75,7 +68,6 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/manager': typeof ManagerRoute
-  '/map': typeof MapRoute
   '/services': typeof ServicesRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
 }
@@ -86,7 +78,6 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/auth': typeof AuthRoute
   '/manager': typeof ManagerRoute
-  '/map': typeof MapRoute
   '/services': typeof ServicesRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
 }
@@ -98,7 +89,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/manager'
-    | '/map'
     | '/services'
     | '/api/public/manifest'
   fileRoutesByTo: FileRoutesByTo
@@ -108,7 +98,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/manager'
-    | '/map'
     | '/services'
     | '/api/public/manifest'
   id:
@@ -118,7 +107,6 @@ export interface FileRouteTypes {
     | '/admin'
     | '/auth'
     | '/manager'
-    | '/map'
     | '/services'
     | '/api/public/manifest'
   fileRoutesById: FileRoutesById
@@ -129,7 +117,6 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AuthRoute: typeof AuthRoute
   ManagerRoute: typeof ManagerRoute
-  MapRoute: typeof MapRoute
   ServicesRoute: typeof ServicesRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
 }
@@ -141,13 +128,6 @@ declare module '@tanstack/react-router' {
       path: '/services'
       fullPath: '/services'
       preLoaderRoute: typeof ServicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/map': {
-      id: '/map'
-      path: '/map'
-      fullPath: '/map'
-      preLoaderRoute: typeof MapRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manager': {
@@ -201,7 +181,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AuthRoute: AuthRoute,
   ManagerRoute: ManagerRoute,
-  MapRoute: MapRoute,
   ServicesRoute: ServicesRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
 }

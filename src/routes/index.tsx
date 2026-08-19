@@ -13,7 +13,7 @@ import { loadSubs, fireNotification } from "@/lib/subscriptions";
 import { SiteHeader } from "@/components/site-header";
 import { WhatsAppShare } from "@/components/WhatsAppShare";
 import { CrowdStatus } from "@/components/CrowdStatus";
-import { StationsMap } from "@/components/StationsMap";
+
 
 function waNumber(phone: string): string {
   let d = phone.replace(/\D/g, "");
@@ -40,7 +40,7 @@ function formatDistance(km: number): string {
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-لا اريد ان يكون له رئي المستخدم العادي نعم متوفر او لا غير متوفر اريد هذه الامور فقط لمدير المحطة و المدير الاعلى لا اريد اي شيء سوا انه يمكنة رؤية وتفعيل النوتفاكشن فقط
+الغي فكرة التصفح عبر الخريطة لانها دمرت الموقع
 */
 
 import { NewsTicker } from "@/components/news-ticker";
@@ -284,27 +284,6 @@ function HomePage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 mt-8">
-        <Link 
-          to="/map" 
-          className="group relative flex w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-primary/20 bg-secondary p-6 text-center transition-all hover:border-primary/40 hover:shadow-md sm:p-8"
-        >
-          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent group-hover:opacity-10 transition-opacity" />
-          <div className="relative flex flex-col items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm group-hover:scale-105 transition-transform sm:h-14 sm:w-14">
-              <MapPin className="h-6 w-6 sm:h-7 sm:h-7" />
-            </div>
-            <div>
-              <h3 className="text-lg font-black text-secondary-foreground sm:text-xl">تصفح عبر الخريطة التفاعلية</h3>
-              <p className="mt-1 text-[11px] text-muted-foreground sm:text-sm">تتبع حالة الوقود في جميع محطاتنا بصرياً وبشكل لحظي</p>
-            </div>
-            <Button size="sm" className="mt-1 h-9 rounded-full px-6 text-xs font-black gap-2 sm:h-10 sm:text-sm">
-              فتح الخريطة
-              <ArrowRight className="h-4 w-4 rotate-180" />
-            </Button>
-          </div>
-        </Link>
-      </div>
       <main className="mx-auto max-w-6xl px-4 py-6">
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
