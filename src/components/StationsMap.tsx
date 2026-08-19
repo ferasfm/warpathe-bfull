@@ -24,9 +24,10 @@ interface Props {
   stations: Station[];
   fuels: FuelRow[];
   apiKey: string;
+  fullHeight?: boolean;
 }
 
-export function StationsMap({ stations, fuels, apiKey }: Props) {
+export function StationsMap({ stations, fuels, apiKey, fullHeight = false }: Props) {
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
 
   const stationsWithCoords = useMemo(() => 
@@ -57,7 +58,7 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
   };
 
   return (
-    <div className="w-full h-[400px] rounded-2xl overflow-hidden border-2 border-primary/20 shadow-inner bg-muted relative mb-8">
+    <div className={`w-full ${fullHeight ? 'h-full' : 'h-[400px] mb-8'} rounded-none sm:rounded-2xl overflow-hidden border-0 sm:border-2 border-primary/20 shadow-none sm:shadow-inner bg-muted relative`}>
       <APIProvider apiKey={apiKey}>
         <Map
           defaultCenter={defaultCenter}
@@ -66,6 +67,7 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
           className="w-full h-full"
           disableDefaultUI={false}
           clickableIcons={false}
+          gestureHandling={fullHeight ? 'greedy' : 'auto'}
         >
           {stationsWithCoords.map((station) => {
             const { available, total, anyAvailable } = getStationStatus(station.id);
@@ -82,11 +84,11 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
               >
                 <div className="group relative cursor-pointer transform hover:scale-110 transition-transform">
                   <div 
-                    className={`w-4 h-4 rounded-full border-2 border-white shadow-md ${
-                      anyAvailable ? "bg-green-500" : "bg-red-500"
+                    className={`w-6 h-6 sm:w-5 sm:h-5 rounded-full border-2 border-white shadow-lg ${
+                      anyAvailable ? "bg-green-500 shadow-green-500/40" : "bg-red-500 shadow-red-500/40"
                     }`}
                   />
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-white" />
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[7px] border-t-white" />
                 </div>
               </AdvancedMarker>
             );
@@ -121,14 +123,14 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
 
                 <Button 
                   size="sm" 
-                  className="w-full h-7 text-[10px] gap-1"
+                  className="w-full h-8 text-[11px] gap-2 font-black"
                   onClick={() => {
                     const url = `https://www.google.com/maps/dir/?api=1&destination=${selectedStation.latitude},${selectedStation.longitude}`;
                     window.open(url, "_blank");
                   }}
                 >
-                  <Navigation2 className="h-3 w-3" />
-                  الاتجاهات
+                  <Navigation2 className="h-3.5 w-3.5" />
+                  الحصول على الاتجاهات
                 </Button>
               </div>
             </InfoWindow>
