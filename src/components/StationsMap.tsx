@@ -60,7 +60,7 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
       <APIProvider apiKey={apiKey}>
         <Map
           defaultCenter={defaultCenter}
-          defaultZoom={9}
+          defaultZoom={defaultZoom}
           mapId="ALHUDA_MAP_ID"
           className="w-full h-full"
           disableDefaultUI={false}
