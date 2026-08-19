@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { APIProvider, Map, AdvancedMarker, Pin, InfoWindow, useMap } from "@vis.gl/react-google-maps";
 import { FUEL_LABELS, FUEL_ORDER } from "@/lib/fuel-types";
 import { Badge } from "@/components/ui/badge";
