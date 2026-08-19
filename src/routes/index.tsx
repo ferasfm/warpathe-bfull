@@ -505,6 +505,13 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
             📍 فتح في خرائط جوجل
           </a>
         )}
+
+        <WhatsAppShare 
+          stationName={station.name} 
+          city={station.city} 
+          availableFuels={availableFuels.map(f => f.fuel_type)} 
+          mapUrl={station.google_maps_url} 
+        />
       </div>
     </Card>
   );
