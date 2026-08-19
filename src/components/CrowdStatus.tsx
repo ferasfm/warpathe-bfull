@@ -14,11 +14,11 @@ export function CrowdStatus({ stationId, fuelType }: { stationId: string; fuelTy
   const [myVote, setMyVote] = useState<boolean | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // If user is admin or manager, they shouldn't see/interact with crowd status
-  // as they have the official status control in their dashboard.
-  if (isSuperAdmin || isManager) return null;
-
   useEffect(() => {
+    // If user is admin or manager, they shouldn't see/interact with crowd status
+    // as they have the official status control in their dashboard.
+    if (isSuperAdmin || isManager) return;
+
     async function load() {
       const { data, error } = await supabase
         .from("user_confirmations")
@@ -35,7 +35,7 @@ export function CrowdStatus({ stationId, fuelType }: { stationId: string; fuelTy
       setLoading(false);
     }
     load();
-  }, [stationId, fuelType]);
+  }, [stationId, fuelType, isSuperAdmin, isManager]);
 
   async function vote(isAvailable: boolean) {
     if (myVote !== null) return;
@@ -58,6 +58,8 @@ export function CrowdStatus({ stationId, fuelType }: { stationId: string; fuelTy
     }));
     toast.success("شكراً لمساهمتك في مساعدة الآخرين");
   }
+
+  if (isSuperAdmin || isManager) return null;
 
   const total = stats.available + stats.unavailable;
   const confidence = total > 0 ? Math.round((stats.available / total) * 100) : null;
