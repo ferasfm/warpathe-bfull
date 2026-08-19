@@ -377,9 +377,10 @@ function FilterChip({
 }
 
 function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: FuelRow[]; distanceKm?: number | null }) {
-  const available = fuels.filter((f) => f.is_available).length;
+  const availableFuels = fuels.filter((f) => f.is_available);
+  const availableCount = availableFuels.length;
   const total = FUEL_ORDER.length;
-  const anyAvailable = available > 0;
+  const anyAvailable = availableCount > 0;
 
   return (
     <Card className="group overflow-hidden border-2 p-0 transition hover:border-primary/50 hover:shadow-lg">
