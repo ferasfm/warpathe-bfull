@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { SubscribeButton } from "@/components/subscribe-button";
 import { loadSubs, fireNotification } from "@/lib/subscriptions";
 import { SiteHeader } from "@/components/site-header";
+import { WhatsAppShare } from "@/components/WhatsAppShare";
+import { CrowdStatus } from "@/components/CrowdStatus";
 
 function waNumber(phone: string): string {
   let d = phone.replace(/\D/g, "");
@@ -37,7 +39,7 @@ function formatDistance(km: number): string {
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-مذا تنصح
+نعم قم بذلك
 */
 
 import { NewsTicker } from "@/components/news-ticker";
@@ -375,9 +377,10 @@ function FilterChip({
 }
 
 function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: FuelRow[]; distanceKm?: number | null }) {
-  const available = fuels.filter((f) => f.is_available).length;
+  const availableFuels = fuels.filter((f) => f.is_available);
+  const availableCount = availableFuels.length;
   const total = FUEL_ORDER.length;
-  const anyAvailable = available > 0;
+  const anyAvailable = availableCount > 0;
 
   return (
     <Card className="group overflow-hidden border-2 p-0 transition hover:border-primary/50 hover:shadow-lg">
@@ -393,7 +396,7 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
           </div>
           <div className="flex flex-col items-end gap-1">
             <Badge className={`rounded-full px-2 py-0 text-[10px] font-black sm:text-xs ${anyAvailable ? "bg-success text-success-foreground hover:bg-success/90" : "bg-destructive text-destructive-foreground"}`}>
-              {anyAvailable ? `متوفر ${available}/${total}` : "غير متوفر"}
+              {anyAvailable ? `متوفر ${availableCount}/${total}` : "غير متوفر"}
             </Badge>
             {distanceKm != null && (
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
@@ -428,6 +431,15 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
                 )}
               </div>
             );
+          })}
+        </div>
+
+        {/* Crowd Confirmations */}
+        <div className="space-y-2">
+          {FUEL_ORDER.map(ft => {
+            const item = fuels.find(f => f.fuel_type === ft);
+            if (!item) return null;
+            return <CrowdStatus key={ft} stationId={station.id} fuelType={ft} />;
           })}
         </div>
 
@@ -493,6 +505,13 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
             📍 فتح في خرائط جوجل
           </a>
         )}
+
+        <WhatsAppShare 
+          stationName={station.name} 
+          city={station.city} 
+          availableFuels={availableFuels.map(f => f.fuel_type)} 
+          mapUrl={station.google_maps_url} 
+        />
       </div>
     </Card>
   );

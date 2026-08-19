@@ -329,6 +329,41 @@ export type Database = {
         }
         Relationships: []
       }
+      user_confirmations: {
+        Row: {
+          created_at: string
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          id: string
+          ip_address: unknown
+          is_available: boolean
+          station_id: string
+        }
+        Insert: {
+          created_at?: string
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          id?: string
+          ip_address?: unknown
+          is_available: boolean
+          station_id: string
+        }
+        Update: {
+          created_at?: string
+          fuel_type?: Database["public"]["Enums"]["fuel_type"]
+          id?: string
+          ip_address?: unknown
+          is_available?: boolean
+          station_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_confirmations_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "stations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
