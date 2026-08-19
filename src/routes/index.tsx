@@ -513,23 +513,24 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
 
         </div>
 
-        {station.google_maps_url && (
-          <a
-            href={station.google_maps_url}
-            target="_blank"
-            rel="noreferrer"
-            className="block rounded-lg bg-secondary py-2 text-center text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/90"
-          >
-            📍 فتح في خرائط جوجل
-          </a>
-        )}
-
-        <WhatsAppShare 
-          stationName={station.name} 
-          city={station.city} 
-          availableFuels={availableFuels.map(f => f.fuel_type)} 
-          mapUrl={station.google_maps_url} 
-        />
+        <div className="flex gap-2">
+          {station.google_maps_url && (
+            <a
+              href={station.google_maps_url}
+              target="_blank"
+              rel="noreferrer"
+              className="flex-1 rounded-lg bg-secondary py-2 text-center text-xs font-semibold text-secondary-foreground transition hover:bg-secondary/90"
+            >
+              📍 فتح في خرائط جوجل
+            </a>
+          )}
+          <WhatsAppShare 
+            stationName={station.name} 
+            city={station.city} 
+            availableFuels={availableFuels.map(f => f.fuel_type)} 
+            mapUrl={station.google_maps_url} 
+          />
+        </div>
       </div>
     </Card>
   );
