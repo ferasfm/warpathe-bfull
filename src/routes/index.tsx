@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Phone, Clock, Fuel, Search, Radio, MessageCircle, Navigation2 } from "lucide-react";
+import { MapPin, Phone, Clock, Fuel, Search, Radio, MessageCircle, Navigation2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import { SubscribeButton } from "@/components/subscribe-button";
 import { loadSubs, fireNotification } from "@/lib/subscriptions";
@@ -284,15 +284,27 @@ function HomePage() {
         </div>
       </div>
 
-      {filtered.length > 0 && (
-        <div className="mx-auto max-w-6xl px-4 mt-6">
-          <StationsMap 
-            stations={filtered.map(f => f.station)} 
-            fuels={fuels} 
-            apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""} 
-          />
-        </div>
-      )}
+      <div className="mx-auto max-w-6xl px-4 mt-8">
+        <Link 
+          to="/map" 
+          className="group relative flex w-full flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-primary/20 bg-secondary p-8 text-center transition-all hover:border-primary/40 hover:shadow-lg sm:p-12"
+        >
+          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent group-hover:opacity-20 transition-opacity" />
+          <div className="relative flex flex-col items-center gap-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner group-hover:scale-110 transition-transform">
+              <MapPin className="h-8 w-8" />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-secondary-foreground sm:text-2xl">استكشف المحطات عبر الخريطة</h3>
+              <p className="mt-2 text-sm text-muted-foreground sm:text-base">تتبع حالة الوقود في جميع محطاتنا بصرياً وبشكل لحظي</p>
+            </div>
+            <Button size="lg" className="mt-2 rounded-full px-8 font-black gap-2">
+              فتح الخريطة التفاعلية
+              <ArrowRight className="h-5 w-5 rotate-180" />
+            </Button>
+          </div>
+        </Link>
+      </div>
       <main className="mx-auto max-w-6xl px-4 py-6">
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

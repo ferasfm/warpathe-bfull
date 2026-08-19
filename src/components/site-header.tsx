@@ -9,8 +9,8 @@ import { InstallPWA } from "@/components/install-pwa";
 
 const navItems = [
   { to: "/", label: "الرئيسية" },
+  { to: "/map", label: "الخريطة" },
   { to: "/about", label: "من نحن" },
-  { to: "/services", label: "خدماتنا" },
 ];
 
 export function SiteHeader() {
