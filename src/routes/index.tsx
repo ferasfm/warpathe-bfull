@@ -407,7 +407,21 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
                 <Navigation2 className="h-3 w-3" /> {formatDistance(distanceKm)}
               </span>
             )}
-            <SubscribeButton stationId={station.id} stationName={station.name} />
+            <div className="flex gap-1 items-center">
+              <SubscribeButton stationId={station.id} stationName={station.name} />
+              {station.google_maps_url && (
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7 rounded-full text-primary hover:bg-primary/10"
+                  asChild
+                >
+                  <a href={station.google_maps_url} target="_blank" rel="noopener noreferrer">
+                    <Navigation2 className="h-4 w-4" />
+                  </a>
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
