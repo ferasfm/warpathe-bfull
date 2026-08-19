@@ -29,7 +29,7 @@ export const Route = createFileRoute('/api/public/manifest')({
           "start_url": "/",
           "display": "standalone",
           "background_color": "#ffffff",
-          "theme_color": "#D3302F",
+          "theme_color": "#ef4444",
           "prefer_related_applications": false,
           "icons": [
             {
