@@ -80,11 +80,14 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
                 position={position}
                 onClick={() => setSelectedStation(station)}
               >
-                <Pin
-                  background={anyAvailable ? "#22c55e" : "#ef4444"}
-                  glyphColor={"#ffffff"}
-                  borderColor={"#ffffff"}
-                />
+                <div className="group relative cursor-pointer transform hover:scale-110 transition-transform">
+                  <div 
+                    className={`w-4 h-4 rounded-full border-2 border-white shadow-md ${
+                      anyAvailable ? "bg-green-500" : "bg-red-500"
+                    }`}
+                  />
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[4px] border-l-transparent border-r-[4px] border-r-transparent border-t-[6px] border-t-white" />
+                </div>
               </AdvancedMarker>
             );
           })}
