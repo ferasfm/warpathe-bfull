@@ -288,7 +288,7 @@ function HomePage() {
         <StationsMap 
           stations={filtered.map(f => f.station)} 
           fuels={fuels} 
-          apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY} 
+          apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""} 
         />
       </div>
       <main className="mx-auto max-w-6xl px-4 py-6">
