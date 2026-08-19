@@ -287,20 +287,20 @@ function HomePage() {
       <div className="mx-auto max-w-6xl px-4 mt-8">
         <Link 
           to="/map" 
-          className="group relative flex w-full flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-primary/20 bg-secondary p-8 text-center transition-all hover:border-primary/40 hover:shadow-lg sm:p-12"
+          className="group relative flex w-full flex-col items-center justify-center overflow-hidden rounded-xl border border-primary/20 bg-secondary p-6 text-center transition-all hover:border-primary/40 hover:shadow-md sm:p-8"
         >
-          <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent group-hover:opacity-20 transition-opacity" />
-          <div className="relative flex flex-col items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-inner group-hover:scale-110 transition-transform">
-              <MapPin className="h-8 w-8" />
+          <div className="absolute inset-0 opacity-5 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent group-hover:opacity-10 transition-opacity" />
+          <div className="relative flex flex-col items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm group-hover:scale-105 transition-transform sm:h-14 sm:w-14">
+              <MapPin className="h-6 w-6 sm:h-7 sm:h-7" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-secondary-foreground sm:text-2xl">استكشف المحطات عبر الخريطة</h3>
-              <p className="mt-2 text-sm text-muted-foreground sm:text-base">تتبع حالة الوقود في جميع محطاتنا بصرياً وبشكل لحظي</p>
+              <h3 className="text-lg font-black text-secondary-foreground sm:text-xl">تصفح عبر الخريطة التفاعلية</h3>
+              <p className="mt-1 text-[11px] text-muted-foreground sm:text-sm">تتبع حالة الوقود في جميع محطاتنا بصرياً وبشكل لحظي</p>
             </div>
-            <Button size="lg" className="mt-2 rounded-full px-8 font-black gap-2">
-              فتح الخريطة التفاعلية
-              <ArrowRight className="h-5 w-5 rotate-180" />
+            <Button size="sm" className="mt-1 h-9 rounded-full px-6 text-xs font-black gap-2 sm:h-10 sm:text-sm">
+              فتح الخريطة
+              <ArrowRight className="h-4 w-4 rotate-180" />
             </Button>
           </div>
         </Link>
