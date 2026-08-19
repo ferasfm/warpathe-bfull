@@ -40,7 +40,13 @@ function formatDistance(km: number): string {
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-الغي فكرة التصفح عبر الخريطة لانها دمرت الموقع
+For the code present, I get the error below.
+
+Please think step-by-step in order to resolve it.
+```
+Rendered fewer hooks than expected. This may be caused by an accidental early return statement.
+...
+```
 */
 
 import { NewsTicker } from "@/components/news-ticker";
