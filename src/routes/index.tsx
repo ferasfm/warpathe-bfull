@@ -396,7 +396,7 @@ function StationCard({ station, fuels, distanceKm }: { station: Station; fuels: 
           </div>
           <div className="flex flex-col items-end gap-1">
             <Badge className={`rounded-full px-2 py-0 text-[10px] font-black sm:text-xs ${anyAvailable ? "bg-success text-success-foreground hover:bg-success/90" : "bg-destructive text-destructive-foreground"}`}>
-              {anyAvailable ? `متوفر ${available}/${total}` : "غير متوفر"}
+              {anyAvailable ? `متوفر ${availableCount}/${total}` : "غير متوفر"}
             </Badge>
             {distanceKm != null && (
               <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
