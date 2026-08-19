@@ -37,7 +37,7 @@ function formatDistance(km: number): string {
 /*
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
 
-كل تحديث امني لا يتم ظهور لا توجد محطات تطابق البحث. لمذا هذا الخلل
+هل كل شيء يعمل
 */
 
 import { NewsTicker } from "@/components/news-ticker";
