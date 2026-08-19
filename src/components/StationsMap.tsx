@@ -29,11 +29,10 @@ interface Props {
 export function StationsMap({ stations, fuels, apiKey }: Props) {
   const [selectedStation, setSelectedStation] = useState<Station | null>(null);
 
-  const stationsWithCoords = stations.filter(
-    (s) => s.latitude !== null && s.longitude !== null
+  const stationsWithCoords = useMemo(() => 
+    stations.filter((s) => s.latitude !== null && s.longitude !== null),
+    [stations]
   );
-
-  if (stationsWithCoords.length === 0) return null;
 
   // Default center: West Bank area
   const defaultCenter = useMemo(() => {
@@ -47,6 +46,8 @@ export function StationsMap({ stations, fuels, apiKey }: Props) {
   }, [stationsWithCoords]);
 
   const defaultZoom = stationsWithCoords.length > 1 ? 9 : 12;
+
+  if (stationsWithCoords.length === 0) return null;
 
   const getStationStatus = (stationId: string) => {
     const stationFuels = fuels.filter((f) => f.station_id === stationId);

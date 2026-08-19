@@ -284,13 +284,15 @@ function HomePage() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 mt-6">
-        <StationsMap 
-          stations={filtered.map(f => f.station)} 
-          fuels={fuels} 
-          apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""} 
-        />
-      </div>
+      {filtered.length > 0 && (
+        <div className="mx-auto max-w-6xl px-4 mt-6">
+          <StationsMap 
+            stations={filtered.map(f => f.station)} 
+            fuels={fuels} 
+            apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ""} 
+          />
+        </div>
+      )}
       <main className="mx-auto max-w-6xl px-4 py-6">
         {loading ? (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
