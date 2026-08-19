@@ -11,6 +11,8 @@ import { toast } from "sonner";
 import { SubscribeButton } from "@/components/subscribe-button";
 import { loadSubs, fireNotification } from "@/lib/subscriptions";
 import { SiteHeader } from "@/components/site-header";
+import { WhatsAppShare } from "@/components/WhatsAppShare";
+import { CrowdStatus } from "@/components/CrowdStatus";
 
 function waNumber(phone: string): string {
   let d = phone.replace(/\D/g, "");
