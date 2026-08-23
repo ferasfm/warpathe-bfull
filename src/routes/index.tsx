@@ -5,199 +5,157 @@ import { supabase } from "@/integrations/supabase/client";
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            WARPATH — PHASE 04A
+                                            WARPATH — PHASE 04B
 
-ADMIN DASHBOARD
+ADMIN USER MANAGEMENT
 
-Phase 03 database architecture is fully completed and validated.
+Phase 04A is completed.
 
-Now implement ONLY Phase 04A.
+Implement ONLY Phase 04B.
 
-Do not implement Phase 04B or any later phase.
-
-==================================================
+Do not implement Phase 04C or any later phase.
 
 OBJECTIVE
 
-==================================================
+Build the Admin Users management page.
 
-Build the main Admin Dashboard using the existing database.
+Route:
 
-Do NOT create new database architecture unless absolutely required to fix a confirmed issue.
+/admin/users
 
-Do NOT modify existing authentication or RLS.
+Use the existing authentication, roles and RLS.
 
-==================================================
+Do not replace the existing authorization system.
 
-ADMIN DASHBOARD
+PAGE
 
-==================================================
+Create a professional users table showing:
 
-The route is:
+- User
 
-/admin
+- Email
 
-Create a professional administrative dashboard.
+- Role
 
-Show summary cards for:
+- Status
 
-- Total Users
+- Created date
 
-- Total Accounts
+- Last activity if available
 
-- Total Farms
+Add:
 
-- Total Fleets
+- Search
 
-- Total Missions
+- Role filter
 
-- Total Agents
+- Status filter
 
-- Total Devices
+ROLE MANAGEMENT
 
-- Total Emulators
+Authorized administrators may manage normal USER accounts.
 
-Show operational status cards:
+SUPER_ADMIN:
 
-- Online Agents
+- Can manage ADMIN and USER roles.
 
-- Offline Agents
+- Can assign/remove ADMIN role.
 
-- Active Missions
+- Can manage normal users.
 
-- Failed Missions
+ADMIN:
 
-Show a recent activity section using existing audit/event data where appropriate.
+- Can manage USER accounts.
 
-Show a system status section:
+- Must NOT promote themselves.
 
-Database
+- Must NOT create or assign SUPER_ADMIN.
 
-Authentication
+- Must NOT modify SUPER_ADMIN.
 
-Agents
+USER:
 
-Devices
-
-Missions
-
-Use clear status indicators.
-
-==================================================
-
-NAVIGATION
-
-==================================================
-
-The Admin sidebar should contain:
-
-Dashboard
-
-Users
-
-Accounts & Farms
-
-Resources & Fleets
-
-Missions
-
-Agents & Devices
-
-Vision
-
-Recovery
-
-Logs
-
-Settings
-
-For this phase:
-
-ONLY Dashboard is functional.
-
-The other navigation items may be placeholders.
-
-Do not implement their functionality yet.
-
-==================================================
+- Cannot access this page.
 
 SECURITY
 
-==================================================
+All permission checks must be enforced server-side.
 
-Only:
+Do NOT rely only on hidden UI elements.
 
-SUPER_ADMIN
+A user must not be able to manipulate requests to:
 
-ADMIN
+- change their own role
 
-may access /admin.
+- promote themselves
 
-USER must remain blocked.
+- create SUPER_ADMIN
 
-Do not weaken the existing RLS or authorization.
+- modify unauthorized users
 
-==================================================
+Preserve existing RLS.
 
-IMPORTANT
+USER STATUS
 
-==================================================
+Allow authorized administrators to disable/enable normal USER accounts if supported safely by the existing authentication architecture.
+
+Do not break Supabase authentication.
 
 Do NOT implement:
 
-- Windows Agent
+- Accounts
+
+- Farms
+
+- Resources
+
+- Fleets
+
+- Missions
+
+- Agents
+
+- MuMu
 
 - ADB
 
-- MuMu control
-
-- Image Recognition
+- Vision
 
 - AI
 
-- Mission Engine
-
-- Watchdog
-
-- Recovery execution
-
-- User management functionality
-
-- Farm management functionality
-
-- Resource management functionality
+- Recovery
 
 Those belong to later phases.
 
-Do not delete existing functionality.
-
-Do not redesign the entire application.
-
-Use the existing WARPATH design system.
-
-==================================================
+Do not modify unrelated functionality.
 
 ACCEPTANCE TESTS
 
-==================================================
+1. Admin can open /admin/users.
 
-1. ADMIN can open /admin.
+2. User cannot open /admin/users.
 
-2. SUPER_ADMIN can open /admin.
+3. Users are loaded from the database.
 
-3. USER cannot open /admin.
+4. Search works.
 
-4. Dashboard statistics load from the database.
+5. Role filter works.
 
-5. No fake statistics are used when real database data is available.
+6. Status filter works.
 
-6. Dashboard does not expose unauthorized information.
+7. SUPER_ADMIN can manage ADMIN and USER roles.
 
-7. Existing authentication works.
+8. ADMIN can manage USER roles only.
 
-8. Existing RLS works.
+9. ADMIN cannot promote themselves.
 
-9. Application builds successfully.
+10. ADMIN cannot create SUPER_ADMIN.
+
+11. USER cannot modify roles through API requests.
+
+12. RLS remains functional.
+
+13. Build succeeds.
 
 Update:
 
@@ -205,11 +163,11 @@ Update:
 
 Set:
 
-Phase 04A = COMPLETED
+Phase 04B = COMPLETED
 
-Next Phase = 04B
+Next Phase = 04C
 
-STOP AFTER PHASE 04A.
+STOP AFTER PHASE 04B.
 */
 
 export const Route = createFileRoute("/")({
