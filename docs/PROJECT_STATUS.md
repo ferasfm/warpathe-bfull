@@ -1,7 +1,7 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 03A: Database Core
+Phase 03B: Mission Database
 
 ## Status
 COMPLETED
@@ -13,9 +13,12 @@ COMPLETED
 - **UI & UX**: Admin User Management dashboard (`/admin/users`) and role-based Sidebar.
 - **Database Core (Phase 03A)**:
     - Created tables: `accounts`, `farms`, `farm_users`, `resources`, `resource_assets`, `fleets`, `fleet_assignments`.
-    - Implemented foreign keys, unique constraints, and indexes.
-    - Configured RLS policies ensuring isolation (users only see assigned farms/fleets).
-    - Inserted initial resource records: `WHEAT`, `IRON`, `STEEL`.
+- **Mission Database (Phase 03B)**:
+    - Created tables: `missions`, `mission_templates`, `mission_steps`, `mission_runs`.
+    - Implemented `jsonb` configuration for mission steps.
+    - Prevented duplicate `step_order` within templates using unique constraints.
+    - Configured RLS: Admins manage definitions; Users only access runs for their assigned farms.
+    - Added comprehensive indexes for mission tracking and execution history.
 
 ## Routes
 - `/auth`: Login & Signup (Public)
@@ -24,26 +27,22 @@ COMPLETED
 - `/admin/users`: User Management (Admin/Super Admin only)
 - `/settings`: User Preferences (Authenticated)
 
-## Database Changes (Phase 03A)
-- `public.accounts`: System accounts.
-- `public.farms`: Individual farm instances belonging to accounts.
-- `public.farm_users`: Linking users to specific farms (RBAC at farm level).
-- `public.resources`: Definitions for automatable resources.
-- `public.resource_assets`: Versioned assets for resources (images/metadata).
-- `public.fleets`: Fleet groups within a farm.
-- `public.fleet_assignments`: Mapping fleets to specific resources/tasks.
+## Database Changes (Phase 03B)
+- `public.missions`: High-level automation task definitions.
+- `public.mission_templates`: Versioned sequences for missions.
+- `public.mission_steps`: Individual actions (JSON-configured) within a template.
+- `public.mission_runs`: Execution history and tracking per farm.
 
 ## Tests
-- [x] USER isolation: User cannot see farms they are not assigned to via RLS.
-- [x] ADMIN access: Admin/Super Admin can see all system records.
-- [x] Unique constraints: Verified for resource codes and fleet numbers within farms.
-- [x] Initial Data: `WHEAT`, `IRON`, `STEEL` exist in `resources`.
-- [x] Build succeeds without errors.
+- [x] RLS: Normal users can only see runs for farms they belong to.
+- [x] Unique Constraint: Verified `(mission_template_id, step_order)` uniqueness.
+- [x] Admin Access: Verified Admins can manage all mission definitions.
+- [x] JSONB: Verified configuration field supports structured JSON.
 
 ## Known Issues
 - None.
 
 ## Next Phase
-Phase 03B: User Dashboard UI for Farms & Fleets
+Phase 04: Mission Engine Core (Foundation)
 
-STOP AFTER PHASE 03A.
+STOP AFTER PHASE 03B.
