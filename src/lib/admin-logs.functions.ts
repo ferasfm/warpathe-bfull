@@ -3,15 +3,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 
 export const getAuditLogs = createServerFn({ method: "GET" })
-  .validator(z.object({
+  .validator((data: {
+    page?: number;
+    limit?: number;
+    action?: string;
+    entityType?: string;
+  }) => z.object({
     page: z.number().default(1),
     limit: z.number().default(20),
     action: z.string().optional(),
     entityType: z.string().optional(),
-    userEmail: z.string().optional(),
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
-    let query = supabase.from("audit_logs").select("*", { count: "exact" });
+    let query = supabase.from("audit_logs" as any).select("*", { count: "exact" });
     
     if (data.action) query = query.eq("action", data.action);
     if (data.entityType) query = query.eq("entity_type", data.entityType);
@@ -24,14 +28,17 @@ export const getAuditLogs = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return { logs, count };
+    return { logs: logs || [], count: count || 0 };
   });
 
 export const getAgentEvents = createServerFn({ method: "GET" })
-  .validator(z.object({
+  .validator((data: {
+    page?: number;
+    limit?: number;
+  }) => z.object({
     page: z.number().default(1),
     limit: z.number().default(20),
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     const from = (data.page - 1) * data.limit;
     const to = from + data.limit - 1;
@@ -43,32 +50,37 @@ export const getAgentEvents = createServerFn({ method: "GET" })
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return { events, count };
+    return { events: events || [], count: count || 0 };
   });
 
 export const getSystemSettings = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabase
-    .from("system_settings")
+    .from("system_settings" as any)
     .select("*")
     .order("key");
   if (error) throw error;
-  return data;
+  return (data || []) as any[];
 });
 
 export const updateSystemSetting = createServerFn({ method: "POST" })
-  .validator(z.object({
+  .validator((data: {
+    id?: string;
+    key: string;
+    value: any;
+    description?: string;
+  }) => z.object({
     id: z.string().optional(),
     key: z.string(),
     value: z.any(),
     description: z.string().optional(),
-  }))
+  }).parse(data))
   .handler(async ({ data }) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error("Unauthorized");
 
     if (data.id) {
       const { error } = await supabase
-        .from("system_settings")
+        .from("system_settings" as any)
         .update({ 
           value: data.value, 
           description: data.description, 
@@ -79,7 +91,7 @@ export const updateSystemSetting = createServerFn({ method: "POST" })
       if (error) throw error;
     } else {
       const { error } = await supabase
-        .from("system_settings")
+        .from("system_settings" as any)
         .insert({ 
           key: data.key, 
           value: data.value, 
