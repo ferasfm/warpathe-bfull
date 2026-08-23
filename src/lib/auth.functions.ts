@@ -21,8 +21,10 @@ export const getAllUsers = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Check if admin/super_admin
-    const { data: roleData } = await supabase
+    // Check if admin/super_admin using the internal supabaseAdmin to ensure bypass of any RLS/cache issues for this check
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { data: roleData } = await supabaseAdmin
       .from("user_roles")
       .select("role")
       .eq("user_id", userId);
@@ -32,19 +34,33 @@ export const getAllUsers = createServerFn({ method: "GET" })
       throw new Error("Forbidden");
     }
 
-    const { data, error } = await supabase
+    // Fetch profiles and roles separately to avoid relationship schema cache issues
+    const { data: profiles, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select(`
         id,
         full_name,
         email,
-        created_at,
-        updated_at,
-        user_roles (role)
+        created_at
       `);
 
-    if (error) throw error;
-    return data;
+    if (profileError) throw profileError;
+    if (!profiles) return [];
+
+    const { data: allRoles, error: roleError } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id, role");
+
+    if (roleError) throw roleError;
+    const rolesList = allRoles || [];
+
+    // Map roles to profiles
+    const usersWithRoles = profiles.map(profile => ({
+      ...profile,
+      user_roles: rolesList.filter(r => r.user_id === profile.id)
+    }));
+
+    return usersWithRoles;
   });
 
 export const updateUserRole = createServerFn({ method: "POST" })
