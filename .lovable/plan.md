@@ -1,62 +1,51 @@
-# Project Status: WARPATH AUTOMATION PLATFORM
+# Plan: Phase 12 - AI Vision Fallback
 
-## Current Phase
-Phase 12: Mission Monitoring & Analytics
+Implement a secure, structured AI Vision fallback layer for the WARPATH platform. This adds an optional observation layer when deterministic matching fails, using an abstraction for AI providers while maintaining strict security boundaries.
 
-## Status
-COMPLETED (Phase 11)
+## Proposed Changes
 
-## Completed
-- **Phase 01 & 02**: RBAC, Auth, User Management, and Layout Foundation.
-- **Phase 03**: Database Architecture (Finalized & Validated).
-- **Phase 04**: Admin Platform (Dashboard, Infrastructure, Missions).
-- **Phase 05**: User Dashboard and Farm Management.
-- **Phase 06**: Windows Agent Architecture (Backend Communication).
-- **Phase 07**: Windows Agent (Executable).
-    - Developed a dedicated Node.js-based Windows Agent project.
-    - Successfully compiled into a standalone Windows executable (`warpath-agent.exe`).
-    - Implemented secure Registration, Heartbeat, and Event submission.
-    - Built a Command Dispatcher with polling and retry/backoff logic.
-    - Integrated structured logging with file rotation via `winston`.
-    - Verified graceful shutdown and backend failure handling.
-    - Verified registration and telemetry against the live API.
+### Database & Security
+- Create `ai_vision_logs` table for auditing AI requests and results.
+- Add AI configuration fields to `system_settings` (e.g., `AI_VISION_ENABLED`, `AI_VISION_PROVIDER`, `AI_MIN_CONFIDENCE`).
+- Define `app_role` permissions for managing AI settings.
 
-## Next Phase
-Phase 09: physical drivers and image recognition infrastructure.
+### Platform (Backend)
+- Implement `AiVisionProvider` abstraction in `src/lib/vision/`.
+- Create a dedicated server function `processAiVisionFallback` that:
+    - Validates AI provider secrets (server-side only).
+    - Sends screenshots and context to the configured provider (e.g., OpenAI/Anthropic via Lovable AI Gateway).
+    - Enforces strict JSON output schema validation using Zod.
+    - Implements rate limiting and mission-level call budgets.
 
-- **Phase 08**: MuMu Player and ADB Integration.
-    - Implemented `AdbService` and `MuMuService` in the Windows Agent.
-    - Extended Agent with background discovery of devices and emulators.
-    - Added secure ADB command dispatcher (allowlisted).
-    - Integrated discovery telemetry with the backend via events.
-    - Verified Admin UI displays real-time device/emulator data.
-    - Hardened command execution with security allowlists.
+### Windows Agent
+- Modify `agent/vision-service.js` to include `AiVisionFallback` logic.
+- Update `agent/mission-engine.js` (`handleFindImage`):
+    - Try deterministic `findTemplate` first.
+    - If confidence is below threshold AND AI is enabled, request AI fallback from the platform.
+    - Validate and consume AI structured observations.
+- Implement short-lived caching for vision results in the agent.
 
-- **Phase 09**: Screenshot and Vision Foundation.
-    - Implemented `ScreenshotService` with ADB `screencap` integration.
-    - Built deterministic template matching `VisionService` using Jimp.
-    - Enforced 1012x800 resolution and 200 DPI configuration.
-    - Added structured `vision_results` telemetry and database migration.
-    - Developed Admin Diagnostic Tool at `/admin/vision-test` for real-time testing.
-    - Verified multiple matches, confidence scoring, and coordinate mapping.
-    - Hardened security for remote diagnostic screenshot requests.
+### Admin UI
+- Add "AI Vision" tab to the Admin Dashboard for global settings.
+- Update Vision Diagnostic tool to show AI fallback results and confidence scores.
 
-## Next Phase
-Phase 12: Infrastructure Scaling & MuMu Multi-Instance
+## Technical Details
 
-- **Phase 10**: Mission Execution Foundation.
-    - Implemented `MissionEngine` in the Windows Agent for sequential logic.
-    - Supported actions: `WAIT`, `SCREENSHOT`, `FIND_IMAGE`, `TAP`, `CONDITION`, `END`.
-    - Integrated with `AdbService`, `VisionService`, and `ScreenshotService`.
-    - Implemented `triggerMissionExecution` server function for mission orchestration.
+- **Vision Result Schema**:
+```json
+{
+  "detected": boolean,
+  "confidence": number,
+  "objects": [{ "label": "button", "center_x": 160, "center_y": 225, ... }]
+}
+```
+- **Security**: AI never touches ADB. It only "sees" and "reports". The Agent decides what to do based on those reports.
+- **Limits**: Configurable `MAX_AI_CALLS_PER_MISSION` (default: 10) and `AI_RATE_LIMIT_MS` (default: 5000ms).
 
-- **Phase 11**: Watchdog and Recovery Engine.
-    - Created `WatchdogService` for real-time mission health monitoring.
-    - Integrated Watchdog into the `MissionEngine` loop.
-    - Implemented ADB connectivity monitoring and recovery triggers.
-    - Added hierarchical `recovery_rules` evaluation with priority.
-    - Supported recovery actions: `WAIT`, `TAP`, `FIND_IMAGE`, `SCREENSHOT`.
-    - Implemented mission resumption strategies: `RETRY_CURRENT_STEP`, `RETURN_TO_STEP`.
-    - Added safety mechanisms: max attempts, mission pausing, and infinite loop prevention.
-    - Verified telemetry for `RECOVERY_STARTED` events.
-    - Hardened platform orchestration for recovery rule distribution.
+## Acceptance Criteria
+- [ ] Deterministic Vision remains the primary layer.
+- [ ] AI fallback is only triggered when enabled and deterministic matching fails.
+- [ ] AI results are schema-validated and rejected if malformed.
+- [ ] Mission Engine continues mission based on AI observations.
+- [ ] AI usage is fully audited with cost/performance tracking.
+- [ ] Windows Agent re-builds successfully.
