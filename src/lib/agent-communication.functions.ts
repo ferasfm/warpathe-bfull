@@ -177,6 +177,49 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
+    // Special handling for discovery events to upsert records
+    if (data.eventType === 'EMULATOR_DISCOVERED') {
+      const { adbSerial, instanceName, status, resolution, dpi } = data.payload;
+      
+      // 1. Ensure a device record exists for this serial
+      const { data: device } = await supabaseAdmin
+        .from("devices")
+        .upsert({
+          agent_id: data.agentId,
+          device_id: adbSerial,
+          name: instanceName || `MuMu-${adbSerial}`,
+          status: status,
+        }, { onConflict: 'agent_id, device_id' })
+        .select("id")
+        .single();
+
+      if (device) {
+        // 2. Upsert the emulator record
+        await supabaseAdmin
+          .from("emulators")
+          .upsert({
+            agent_id: data.agentId,
+            device_id: device.id,
+            adb_serial: adbSerial,
+            instance_name: instanceName,
+            name: instanceName || `MuMu-${adbSerial}`,
+            status: status,
+            resolution: resolution,
+            dpi: dpi,
+          }, { onConflict: 'agent_id, adb_serial' });
+      }
+    } else if (data.eventType === 'DEVICE_DISCOVERED') {
+      const { serial, model, status } = data.payload;
+      await supabaseAdmin
+        .from("devices")
+        .upsert({
+          agent_id: data.agentId,
+          device_id: serial,
+          name: model || `Device-${serial}`,
+          status: status,
+        }, { onConflict: 'agent_id, device_id' });
+    }
+
     await supabaseAdmin
       .from("agent_events")
       .insert({
