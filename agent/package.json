@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "bin": "index.js",
   "scripts": {
+    "start": "node index.js",
+    "build": "pkg . --targets node18-win-x64 --output dist/warpath-agent.exe",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
