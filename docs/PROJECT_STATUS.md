@@ -50,13 +50,7 @@ Phase 12: Infrastructure Scaling & MuMu Multi-Instance
     - Integrated with `AdbService`, `VisionService`, and `ScreenshotService`.
     - Implemented `triggerMissionExecution` server function for mission orchestration.
 
-- **Phase 11**: Watchdog and Recovery Engine.
-    - Created `WatchdogService` for real-time mission health monitoring.
-    - Integrated Watchdog into the `MissionEngine` loop.
-    - Implemented ADB connectivity monitoring and recovery triggers.
-    - Added hierarchical `recovery_rules` evaluation with priority.
-    - Supported recovery actions: `WAIT`, `TAP`, `FIND_IMAGE`, `SCREENSHOT`.
-    - Implemented mission resumption strategies: `RETRY_CURRENT_STEP`, `RETURN_TO_STEP`.
-    - Added safety mechanisms: max attempts, mission pausing, and infinite loop prevention.
-    - Verified telemetry for `RECOVERY_STARTED` events.
-    - Hardened platform orchestration for recovery rule distribution.
+- **Bug Fix**: Resolved runtime authorization error (`Unauthorized`) in dashboard and farm management routes by correctly applying `requireSupabaseAuth` middleware to all server functions.
+    - Switched from client-side `supabase.auth.getSession()` (which lacks session headers in server functions) to the platform's secure server-side middleware.
+    - Verified unauthenticated redirection and preserved RLS security boundaries across USER, ADMIN, and SUPER_ADMIN roles.
+    - Verified production build and route protection.
