@@ -22,11 +22,7 @@ export const Route = createFileRoute("/_authenticated")({
         .eq('user_id', session.user.id);
       
       const roleList = roles?.map(r => r.role) || [];
-      const isAdmin = roleList.includes('admin') || roleList.includes('super_admin');
-      
-      if (!isAdmin) {
-        // Fallback check: if the standard select fails due to RLS/cache, we might still be admin
-        // But for now, let's keep it simple and just redirect if not in list.
+      if (!roleList.includes('admin') && !roleList.includes('super_admin')) {
         throw redirect({ to: '/dashboard' });
       }
     }
