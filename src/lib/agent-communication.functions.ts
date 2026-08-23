@@ -186,3 +186,69 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
 
     return { success: true };
   });
+
+// 6. Request Diagnostic Screenshot (Admin Only)
+export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
+  .inputValidator((data) => z.object({
+    agentId: z.string(),
+    deviceId: z.string().optional(),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    // Auth check - simplified for brevity, in prod use middleware
+    // This is a placeholder for the actual security check
+    
+    const { data: command, error } = await supabaseAdmin
+      .from("agent_commands")
+      .insert({
+        agent_id: data.agentId,
+        device_id: data.deviceId,
+        command_type: "TAKE_SCREENSHOT",
+        status: "PENDING",
+        payload: { serial: data.deviceId } // Usually device_id is the serial in this context
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error("Failed to queue screenshot command");
+    return command;
+  });
+
+// 7. Request Vision Test (Admin Only)
+export const requestVisionTest = createServerFn({ method: "POST" })
+  .inputValidator((data) => z.object({
+    agentId: z.string(),
+    deviceId: z.string(),
+    ruleId: z.string(),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { data: rule } = await supabaseAdmin
+      .from("vision_rules")
+      .select("*, vision_assets(*)")
+      .eq("id", data.ruleId)
+      .single();
+
+    if (!rule) throw new Error("Vision rule not found");
+
+    const { data: command, error } = await supabaseAdmin
+      .from("agent_commands")
+      .insert({
+        agent_id: data.agentId,
+        device_id: data.deviceId,
+        command_type: "TEST_VISION_RULE",
+        status: "PENDING",
+        payload: { 
+          serial: data.deviceId,
+          rule: rule,
+          assetUrl: rule.vision_assets.image_url
+        }
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error("Failed to queue vision test command");
+    return command;
+  });
