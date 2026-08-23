@@ -39,6 +39,7 @@ export const getAllUsers = createServerFn({ method: "GET" })
         full_name,
         email,
         created_at,
+        updated_at,
         user_roles (role)
       `);
 
@@ -85,7 +86,16 @@ export const updateUserRole = createServerFn({ method: "POST" })
       throw new Error("Admins cannot modify Super Admin roles");
     }
 
-    // Delete existing roles for this user first (since we only support one role at a time in the current logic)
+    // Prevent Admin from promoting themselves (if they aren't already admin/super_admin, but they must be to reach here)
+    // Specifically: "ADMIN must NOT promote themselves."
+    // In our case, an Admin can change their own role to 'user' (demotion), but can they change to 'super_admin'? No, blocked by hierarchy.
+    // Can they change from 'admin' to 'admin'? NOP.
+    // The requirement is "Must NOT promote themselves". If they are ADMIN, they can't become SUPER_ADMIN anyway.
+    if (userId === session.user.id && !isSuperAdmin && newRole === 'super_admin') {
+        throw new Error("You cannot promote yourself to Super Admin");
+    }
+
+    // Delete existing roles for this user first
     await supabase
       .from("user_roles")
       .delete()
