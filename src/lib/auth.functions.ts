@@ -27,7 +27,7 @@ export const getAllUsers = createServerFn({ method: "GET" })
       .select("role")
       .eq("user_id", session.user.id);
     
-    const roles = roleData?.map(r => r.role) || [];
+    const roles = (roleData?.map(r => r.role) || []) as string[];
     if (!roles.includes('admin') && !roles.includes('super_admin')) {
       throw new Error("Forbidden");
     }
@@ -47,10 +47,12 @@ export const getAllUsers = createServerFn({ method: "GET" })
   });
 
 export const updateUserRole = createServerFn({ method: "POST" })
-  .input(z.object({
-    userId: z.string(),
-    newRole: z.enum(['super_admin', 'admin', 'user'])
-  }))
+  .validator((data: { userId: string, newRole: 'super_admin' | 'admin' | 'user' }) => 
+    z.object({
+      userId: z.string(),
+      newRole: z.enum(['super_admin', 'admin', 'user'])
+    }).parse(data)
+  )
   .handler(async ({ data: { userId, newRole } }) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error("Unauthorized");
@@ -61,7 +63,7 @@ export const updateUserRole = createServerFn({ method: "POST" })
       .select("role")
       .eq("user_id", session.user.id);
     
-    const requesterRoles = requesterRoleData?.map(r => r.role) || [];
+    const requesterRoles = (requesterRoleData?.map(r => r.role) || []) as string[];
     const isSuperAdmin = requesterRoles.includes('super_admin');
     const isAdmin = requesterRoles.includes('admin');
 
@@ -78,15 +80,21 @@ export const updateUserRole = createServerFn({ method: "POST" })
       .select("role")
       .eq("user_id", userId);
     
-    const targetRoles = targetRoleData?.map(r => r.role) || [];
+    const targetRoles = (targetRoleData?.map(r => r.role) || []) as string[];
     if (targetRoles.includes('super_admin') && !isSuperAdmin) {
       throw new Error("Admins cannot modify Super Admin roles");
     }
 
-    // Update (or Insert)
+    // Delete existing roles for this user first (since we only support one role at a time in the current logic)
+    await supabase
+      .from("user_roles")
+      .delete()
+      .eq("user_id", userId);
+
+    // Update
     const { error } = await supabase
       .from("user_roles")
-      .upsert({ user_id: userId, role: newRole }, { onConflict: 'user_id, role' });
+      .insert({ user_id: userId, role: newRole });
 
     if (error) throw error;
     return { success: true };

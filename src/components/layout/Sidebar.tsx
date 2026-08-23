@@ -1,11 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Settings, ShieldCheck, LogOut, Menu } from "lucide-react";
+import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
+import { useRoles } from "@/hooks/use-roles";
 
 export function Sidebar() {
   const navigate = useNavigate();
+  const { isAdmin } = useRoles();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -21,7 +23,14 @@ export function Sidebar() {
       
       <nav className="flex-1 p-4 space-y-2">
         <NavItem to="/dashboard" icon={<LayoutDashboard className="w-4 h-4" />} label="لوحة التحكم" />
-        <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4" />} label="الإدارة" />
+        
+        {isAdmin && (
+          <>
+            <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4" />} label="الإدارة" />
+            <NavItem to="/admin/users" icon={<Users className="w-4 h-4" />} label="المستخدمين" />
+          </>
+        )}
+        
         <NavItem to="/settings" icon={<Settings className="w-4 h-4" />} label="الإعدادات" />
       </nav>
 
