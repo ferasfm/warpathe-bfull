@@ -16,13 +16,16 @@ export const Route = createFileRoute("/_authenticated")({
 
     // Server-side check for /admin route
     if (location.pathname.startsWith('/admin')) {
-      const { data: roles } = await supabase
+      const { data: roles, error } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id);
       
       const roleList = roles?.map(r => r.role) || [];
-      if (!roleList.includes('admin') && !roleList.includes('super_admin')) {
+      const isAdmin = roleList.includes('admin') || roleList.includes('super_admin');
+      
+      if (!isAdmin) {
+        console.warn("Access denied to admin route for user:", session.user.id, "Roles:", roleList);
         throw redirect({ to: '/dashboard' });
       }
     }
