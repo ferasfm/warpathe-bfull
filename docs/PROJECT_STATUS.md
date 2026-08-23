@@ -1,7 +1,7 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 05C: User Farm Configuration
+Phase 05D: User Task Monitoring
 
 ## Status
 ONGOING
@@ -12,14 +12,16 @@ ONGOING
 - **Phase 04**: Admin Platform (Dashboard, Users, Accounts, Farms, Missions, Infrastructure, Logs, Settings).
 - **Phase 05A**: User Dashboard.
 - **Phase 05B**: User Farm Management.
-    - Implemented `/farms` for viewing assigned farms.
-    - Created `/farms/:id` for detailed read-only farm views.
-    - Enforced server-side validation ensuring users only access farms assigned via `farm_users`.
-    - Added a quick farm selector for seamless navigation.
-    - Integrated real-time data for fleet counts and account associations.
-    - Maintained hierarchical security, denying unauthorized ID access.
+- **Phase 05C**: User Fleet and Resource Configuration.
+    - Implemented interactive resource assignment UI on `/farms/:id`.
+    - Created `saveFarmConfiguration` server function with strict multi-layer validation (Ownership, Farm-Fleet link, Resource existence).
+    - Enabled real-time fleet-to-resource mapping using `fleet_assignments` table with `upsert` logic.
+    - Integrated `sonner` for transactional feedback (Success/Error toasts).
+    - Verified configuration persistence across sessions and reloads.
+    - Enforced read-only resource lists to prevent unauthorized injection.
 
 ## Next Phase
-Phase 05C
+Phase 05D
+
 
 
