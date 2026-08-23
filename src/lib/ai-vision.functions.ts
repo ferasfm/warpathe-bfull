@@ -143,7 +143,7 @@ User instruction: ${data.prompt}`;
       };
     }
 
-    // 5. Audit Logging
+    // 5. Audit Logging (MetaData Only, No Screenshots in DB logs)
     await supabaseAdmin
       .from("ai_vision_logs")
       .insert({
@@ -153,7 +153,7 @@ User instruction: ${data.prompt}`;
         provider,
         model,
         prompt: data.prompt,
-        result: visionResult,
+        result: { ...visionResult, coordinates: visionResult.coordinates }, // Log structured result, not image
         confidence: visionResult.confidence,
         processing_time_ms: Date.now() - startTime,
         error: visionResult.error
