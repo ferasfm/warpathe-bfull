@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
 
 export const getAuditLogs = createServerFn({ method: "GET" })
   .validator((data: {
@@ -53,7 +55,31 @@ export const getAgentEvents = createServerFn({ method: "GET" })
     return { events: events || [], count: count || 0 };
   });
 
+export const getAiVisionLogs = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: {
+    page?: number;
+    limit?: number;
+  }) => z.object({
+    page: z.number().default(1),
+    limit: z.number().default(20),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const from = (data.page - 1) * data.limit;
+    const to = from + data.limit - 1;
+    
+    const { data: logs, count, error } = await supabase
+      .from("ai_vision_logs")
+      .select("*", { count: "exact" })
+      .range(from, to)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+    return { logs: logs || [], count: count || 0 };
+  });
+
 export const getSystemSettings = createServerFn({ method: "GET" }).handler(async () => {
+
   const { data, error } = await supabase
     .from("system_settings" as any)
     .select("*")

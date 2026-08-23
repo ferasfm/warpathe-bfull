@@ -176,6 +176,66 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_vision_logs: {
+        Row: {
+          agent_id: string | null
+          confidence: number | null
+          created_at: string | null
+          device_id: string | null
+          error: string | null
+          id: string
+          mission_run_id: string | null
+          model: string
+          processing_time_ms: number | null
+          prompt: string | null
+          provider: string
+          result: Json | null
+        }
+        Insert: {
+          agent_id?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          device_id?: string | null
+          error?: string | null
+          id?: string
+          mission_run_id?: string | null
+          model: string
+          processing_time_ms?: number | null
+          prompt?: string | null
+          provider: string
+          result?: Json | null
+        }
+        Update: {
+          agent_id?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          device_id?: string | null
+          error?: string | null
+          id?: string
+          mission_run_id?: string | null
+          model?: string
+          processing_time_ms?: number | null
+          prompt?: string | null
+          provider?: string
+          result?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_vision_logs_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_vision_logs_mission_run_id_fkey"
+            columns: ["mission_run_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string

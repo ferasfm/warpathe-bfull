@@ -49,9 +49,21 @@ class WarpathAgent {
         this.adb = new AdbService(logger, { adbPath: process.env.ADB_PATH });
         this.mumu = new MuMuService(logger, { mumuPath: process.env.MUMU_PATH });
         this.screenshot = new ScreenshotService(logger, this.adb);
-        this.vision = new VisionService(logger);
+        this.vision = new VisionService(logger, this);
         this.missionEngine = new MissionEngine(logger, this);
     }
+
+    /**
+     * Helper to call a server function via the API proxy
+     */
+    async callServerFunction(name, data) {
+        const response = await axios.post(`${this.baseUrl}/rpc`, {
+            functionName: name,
+            payload: data
+        });
+        return response.data;
+    }
+
 
     async init() {
         logger.info('Starting WARPATH Agent...');

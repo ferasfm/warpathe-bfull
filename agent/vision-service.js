@@ -1,9 +1,35 @@
 const Jimp = require('jimp-compact');
 
 class VisionService {
-    constructor(logger) {
+    constructor(logger, agent) {
         this.logger = logger;
+        this.agent = agent;
     }
+
+    async analyzeWithAi(screenshotBase64, prompt, missionRunId, deviceId) {
+        this.logger.info('Requesting AI Vision fallback', { prompt });
+        try {
+            const response = await this.agent.callServerFunction('processAiVision', {
+                agentId: this.agent.agentId,
+                token: this.agent.token,
+                deviceId: deviceId,
+                missionRunId: missionRunId,
+                screenshot: screenshotBase64,
+                prompt: prompt
+            });
+
+            if (response.error) {
+                this.logger.error('AI Vision returned error', { error: response.error });
+                return { detected: false, confidence: 0, error: response.error };
+            }
+
+            return response;
+        } catch (error) {
+            this.logger.error('AI Vision request failed', { error: error.message });
+            return { detected: false, confidence: 0, error: error.message };
+        }
+    }
+
 
     /**
      * Deterministic template matching
