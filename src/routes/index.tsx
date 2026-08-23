@@ -5,17 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            WARPATH — PHASE 03B
+                                            WARPATH — PHASE 03C
 
-MISSION DATABASE
+AGENTS, DEVICES AND EMULATORS DATABASE
 
-Phase 03A is completed.
+Phase 03A and Phase 03B are completed.
 
-Implement ONLY the Mission database structure.
+Implement ONLY the database structure for Windows Agents, devices, and MuMu emulator instances.
 
 Create these tables:
 
-1. missions
+1. agents
 
 Fields:
 
@@ -23,153 +23,183 @@ Fields:
 
 - name
 
-- description
-
 - status
 
 - version
+
+- hostname
+
+- last_heartbeat
 
 - created_at
 
 - updated_at
 
-2. mission_templates
+2. devices
 
 Fields:
 
 - id
 
-- mission_id
+- agent_id
 
-- version
-
-- description
-
-- status
-
-- created_at
-
-- updated_at
-
-3. mission_steps
-
-Fields:
-
-- id
-
-- mission_template_id
-
-- step_order
+- device_id
 
 - name
 
-- step_type
-
-- configuration
-
-- timeout_ms
-
-- retry_count
+- status
 
 - created_at
 
 - updated_at
 
-The configuration field must support structured JSON.
-
-4. mission_runs
+3. emulators
 
 Fields:
 
 - id
 
-- mission_id
+- agent_id
 
-- farm_id
+- device_id
+
+- name
 
 - status
 
-- started_at
+- resolution
 
-- completed_at
+- dpi
 
-- error_message
+- assigned_farm_id
 
 - created_at
+
+- updated_at
 
 Relationships:
 
-Mission
+Agent
 
 ↓
 
-Mission Template
+Devices
+
+Agent
 
 ↓
 
-Mission Steps
-
-Mission
-
-↓
-
-Mission Runs
-
-↓
+Emulators
 
 Farm
 
+↓
+
+Emulator
+
 Requirements:
+
+- Every device belongs to an Agent.
+
+- Every emulator belongs to an Agent.
+
+- An emulator may optionally be assigned to a Farm.
+
+- device_id must identify the device correctly.
+
+- Prevent invalid duplicate device relationships.
 
 - Add foreign keys.
 
 - Add useful indexes.
 
-- Prevent duplicate step_order inside the same mission template.
+- Add appropriate unique constraints.
 
-- Preserve existing Phase 02 security.
+- Add created_at and updated_at.
 
-- Apply appropriate RLS.
+Default MuMu configuration:
 
-- Normal users must only access mission data they are authorized to use.
+Resolution:
 
-- Admins can manage mission definitions.
+1012x800
+
+DPI:
+
+200
+
+Store these values in the emulator records.
+
+SECURITY:
+
+Preserve the existing Phase 02 authorization.
+
+SUPER_ADMIN:
+
+Full access.
+
+ADMIN:
+
+Administrative access.
+
+USER:
+
+Must not access Agent, Device, or Emulator management data unless explicitly authorized later.
+
+Apply appropriate RLS.
+
+IMPORTANT:
+
+This phase creates DATABASE STRUCTURE ONLY.
 
 Do NOT implement:
 
-- Mission Engine
+- Windows Agent
 
 - ADB
 
-- MuMu
+- MuMu integration
 
-- Windows Agent
+- ADB commands
+
+- Device discovery
+
+- Screenshot
 
 - Image Recognition
 
-- AI
+- Mission Engine
 
 - Watchdog
 
 - Recovery
 
-- Mission execution
+- AI
 
-Do NOT build UI in this phase.
+Do NOT create UI.
 
 Do NOT modify existing working functionality.
 
-Test the database migration and constraints.
+Test:
+
+1. Migration succeeds.
+
+2. Foreign keys work.
+
+3. Unique constraints work.
+
+4. RLS works.
+
+5. Existing Phase 01 and Phase 02 functionality still works.
+
+6. Application builds successfully.
 
 Update:
 
 /docs/PROJECT_STATUS.md
 
-Set the current progress to:
+Mark Phase 03C as completed.
 
-Phase 03B completed.
-
-STOP after Phase 03B.
+STOP after Phase 03C.
 */
 
 export const Route = createFileRoute("/")({
