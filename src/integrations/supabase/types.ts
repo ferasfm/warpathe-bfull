@@ -14,6 +14,190 @@ export type Database = {
   }
   public: {
     Tables: {
+      accounts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      farm_users: {
+        Row: {
+          created_at: string
+          farm_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          farm_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          farm_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "farm_users_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      farms: {
+        Row: {
+          account_id: string
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          account_id: string
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "farms_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_assignments: {
+        Row: {
+          created_at: string
+          enabled: boolean | null
+          farm_id: string
+          fleet_id: string
+          id: string
+          resource_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean | null
+          farm_id: string
+          fleet_id: string
+          id?: string
+          resource_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean | null
+          farm_id?: string
+          fleet_id?: string
+          id?: string
+          resource_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_assignments_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_assignments_fleet_id_fkey"
+            columns: ["fleet_id"]
+            isOneToOne: false
+            referencedRelation: "fleets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fleet_assignments_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleets: {
+        Row: {
+          created_at: string
+          farm_id: string
+          fleet_number: number
+          id: string
+          name: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          farm_id: string
+          fleet_number: number
+          id?: string
+          name?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          farm_id?: string
+          fleet_number?: number
+          id?: string
+          name?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleets_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       login_attempts: {
         Row: {
           attempt_time: string | null
@@ -53,6 +237,74 @@ export type Database = {
           email?: string | null
           full_name?: string | null
           id?: string
+        }
+        Relationships: []
+      }
+      resource_assets: {
+        Row: {
+          active: boolean | null
+          created_at: string
+          id: string
+          name: string
+          resource_id: string
+          storage_path: string
+          updated_at: string
+          version: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          name: string
+          resource_id: string
+          storage_path: string
+          updated_at?: string
+          version?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string
+          id?: string
+          name?: string
+          resource_id?: string
+          storage_path?: string
+          updated_at?: string
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_assets_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "resources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      resources: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          status?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
