@@ -244,8 +244,14 @@ export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Auth check - simplified for brevity, in prod use middleware
-    // This is a placeholder for the actual security check
     
+    // Fetch emulator to get ADB serial
+    const { data: emulator } = await supabaseAdmin
+      .from("emulators")
+      .select("adb_serial")
+      .eq("id", data.deviceId || "")
+      .single();
+
     const { data: command, error } = await supabaseAdmin
       .from("agent_commands")
       .insert({
@@ -253,7 +259,7 @@ export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
         device_id: data.deviceId,
         command_type: "TAKE_SCREENSHOT",
         status: "PENDING",
-        payload: { serial: data.deviceId } // Usually device_id is the serial in this context
+        payload: { serial: (emulator as any)?.adb_serial || data.deviceId } 
       })
       .select()
       .single();
@@ -287,6 +293,13 @@ export const requestVisionTest = createServerFn({ method: "POST" })
       .from("vision-assets")
       .getPublicUrl(rule.vision_assets.storage_path || "");
 
+    // Fetch emulator to get ADB serial
+    const { data: emulator } = await supabaseAdmin
+      .from("emulators")
+      .select("adb_serial")
+      .eq("id", data.deviceId)
+      .single();
+
     const { data: command, error } = await supabaseAdmin
       .from("agent_commands")
       .insert({
@@ -295,7 +308,7 @@ export const requestVisionTest = createServerFn({ method: "POST" })
         command_type: "TEST_VISION_RULE",
         status: "PENDING",
         payload: { 
-          serial: data.deviceId,
+          serial: (emulator as any)?.adb_serial || data.deviceId,
           rule: rule,
           assetUrl: publicUrl
         }
