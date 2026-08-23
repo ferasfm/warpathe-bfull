@@ -5,6 +5,8 @@ const winston = require('winston');
 const { z } = require('zod');
 const { randomBytes } = require('crypto');
 const os = require('os');
+const AdbService = require('./adb-service');
+const MuMuService = require('./mumu-service');
 require('dotenv').config();
 
 // CONFIGURATION & LOGGING
@@ -39,6 +41,10 @@ class WarpathAgent {
         this.isShuttingDown = false;
         this.heartbeatInterval = null;
         this.commandInterval = null;
+        this.discoveryInterval = null;
+        
+        this.adb = new AdbService(logger, { adbPath: process.env.ADB_PATH });
+        this.mumu = new MuMuService(logger, { mumuPath: process.env.MUMU_PATH });
     }
 
     async init() {
@@ -52,8 +58,12 @@ class WarpathAgent {
         this.setupProcessHandlers();
         this.startHeartbeat();
         this.startCommandPolling();
+        this.startDiscovery();
         
-        await this.sendEvent('AGENT_STARTED', { hostname: os.hostname() });
+        await this.sendEvent('AGENT_STARTED', { 
+            hostname: os.hostname(),
+            adbAvailable: await this.adb.isAvailable()
+        });
     }
 
     async loadConfig() {
@@ -139,13 +149,83 @@ class WarpathAgent {
         this.commandInterval = setInterval(pollCommands, 5000); // 5s
     }
 
+    async startDiscovery() {
+        const discover = async () => {
+            if (this.isShuttingDown) return;
+            try {
+                const adbDevices = await this.adb.getDevices();
+                const mappedDevices = this.mumu.mapAdbToMuMu(adbDevices);
+
+                for (const device of mappedDevices) {
+                    if (device.type === 'MUMU') {
+                        const info = await this.adb.getDeviceInfo(device.serial);
+                        await this.sendEvent('EMULATOR_DISCOVERED', {
+                            adbSerial: device.serial,
+                            instanceName: device.instanceName,
+                            status: device.state === 'device' ? 'ONLINE' : 'OFFLINE',
+                            resolution: info.resolution,
+                            dpi: info.dpi
+                        });
+                    } else {
+                        const info = await this.adb.getDeviceInfo(device.serial);
+                        await this.sendEvent('DEVICE_DISCOVERED', {
+                            serial: device.serial,
+                            model: info.model,
+                            androidVersion: info.androidVersion,
+                            status: device.state === 'device' ? 'ONLINE' : 'OFFLINE'
+                        });
+                    }
+                }
+            } catch (error) {
+                logger.error('Discovery cycle failed', { error: error.message });
+            }
+        };
+
+        discover();
+        this.discoveryInterval = setInterval(discover, 60000); // Every 1m
+    }
+
     async dispatchCommand(command) {
         logger.info('Executing command', { id: command.id, type: command.command_type });
         
-        // REPORT AS NOT IMPLEMENTED IN PHASE 07
-        await this.reportCommandResult(command.id, 'NOT_IMPLEMENTED', {
-            message: 'Physical automation drivers not installed in this version'
-        });
+        try {
+            switch (command.command_type) {
+                case 'ADB_DEVICES': {
+                    const devices = await this.adb.getDevices();
+                    await this.reportCommandResult(command.id, 'SUCCESS', { devices });
+                    break;
+                }
+                case 'ADB_GET_STATE': {
+                    const { serial } = command.payload || {};
+                    const result = await this.adb.execute('get-state', serial);
+                    await this.reportCommandResult(command.id, result.success ? 'SUCCESS' : 'FAILED', { state: result.stdout });
+                    break;
+                }
+                case 'ADB_GET_SCREEN_SIZE': {
+                    const { serial } = command.payload || {};
+                    const result = await this.adb.execute('shell wm size', serial);
+                    await this.reportCommandResult(command.id, result.success ? 'SUCCESS' : 'FAILED', { 
+                        resolution: result.stdout ? result.stdout.replace('Physical size: ', '') : 'Unknown'
+                    });
+                    break;
+                }
+                case 'ADB_GET_DENSITY': {
+                    const { serial } = command.payload || {};
+                    const result = await this.adb.execute('shell wm density', serial);
+                    await this.reportCommandResult(command.id, result.success ? 'SUCCESS' : 'FAILED', { 
+                        dpi: result.stdout ? parseInt(result.stdout.replace('Physical density: ', '')) : null
+                    });
+                    break;
+                }
+                default:
+                    await this.reportCommandResult(command.id, 'NOT_IMPLEMENTED', {
+                        message: `Command type ${command.command_type} not implemented`
+                    });
+            }
+        } catch (error) {
+            logger.error('Command dispatcher error', { id: command.id, error: error.message });
+            await this.reportCommandResult(command.id, 'FAILED', { error: error.message });
+        }
     }
 
     async reportCommandResult(commandId, status, payload = {}) {
@@ -183,6 +263,7 @@ class WarpathAgent {
             
             clearInterval(this.heartbeatInterval);
             clearInterval(this.commandInterval);
+            clearInterval(this.discoveryInterval);
             
             await this.sendEvent('AGENT_STOPPED', { reason: 'Graceful shutdown' });
             process.exit(0);
