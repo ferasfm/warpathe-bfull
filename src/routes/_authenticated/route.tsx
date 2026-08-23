@@ -13,6 +13,20 @@ export const Route = createFileRoute("/_authenticated")({
         },
       });
     }
+
+    // Server-side check for /admin route
+    if (location.pathname.startsWith('/admin')) {
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', session.user.id);
+      
+      const roleList = roles?.map(r => r.role) || [];
+      if (!roleList.includes('admin') && !roleList.includes('super_admin')) {
+        throw redirect({ to: '/dashboard' });
+      }
+    }
+
     return { session };
   },
   component: AuthenticatedLayout,
