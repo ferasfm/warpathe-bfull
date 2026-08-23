@@ -1,7 +1,7 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 04D: Resources and Fleets Management
+Phase 04E: Mission Management
 
 ## Status
 COMPLETED
@@ -22,7 +22,13 @@ COMPLETED
     - Implemented Fleet Resource Assignment.
     - Secured all operations with server-side admin checks and RLS.
 
-## Next Phase
-Phase 04E: Mission Engine Integration
+- **Phase 04E**: Mission Management.
+    - Built Admin Mission list and search interface.
+    - Implemented Mission Builder with ordered steps and configuration.
+    - Support for initial step types: DETECT_IMAGE, TAP_TARGET, etc.
+    - Implemented basic template versioning and publishing flow.
 
-STOP AFTER PHASE 04D.
+## Next Phase
+Phase 04F: Agent Orchestration Core
+
+STOP AFTER PHASE 04E.
