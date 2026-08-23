@@ -219,6 +219,169 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          farm_id: string
+          id: string
+          mission_id: string
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          farm_id: string
+          id?: string
+          mission_id: string
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          farm_id?: string
+          id?: string
+          mission_id?: string
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_runs_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mission_runs_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_steps: {
+        Row: {
+          configuration: Json | null
+          created_at: string | null
+          id: string
+          mission_template_id: string
+          name: string
+          retry_count: number | null
+          step_order: number
+          step_type: string
+          timeout_ms: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          mission_template_id: string
+          name: string
+          retry_count?: number | null
+          step_order: number
+          step_type: string
+          timeout_ms?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          mission_template_id?: string
+          name?: string
+          retry_count?: number | null
+          step_order?: number
+          step_type?: string
+          timeout_ms?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_steps_mission_template_id_fkey"
+            columns: ["mission_template_id"]
+            isOneToOne: false
+            referencedRelation: "mission_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mission_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          mission_id: string
+          status: string | null
+          updated_at: string | null
+          version: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          mission_id: string
+          status?: string | null
+          updated_at?: string | null
+          version: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          mission_id?: string
+          status?: string | null
+          updated_at?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_templates_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missions: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          status: string | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          status?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
