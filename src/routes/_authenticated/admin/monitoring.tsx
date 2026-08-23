@@ -31,7 +31,7 @@ function MonitoringDashboard() {
 
   const logsQuery = useSuspenseQuery({
     queryKey: ['monitoring-logs', page],
-    queryFn: () => getPaginatedLogs({ page, pageSize: 15 }),
+    queryFn: () => getPaginatedLogs({ data: { page, pageSize: 15 } }),
     refetchInterval: 5000,
   });
 
