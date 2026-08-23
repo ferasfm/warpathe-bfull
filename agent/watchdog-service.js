@@ -6,7 +6,7 @@ class WatchdogService {
         this.logger = logger;
         this.agent = agent;
         this.recoveryAttempts = new Map(); // mission_run_id -> count
-        this.maxRecoveryAttempts = 3;
+        this.maxRecoveryAttempts = 3; // PRODUCTION_HARDENED: Strict limit
         this.recoveryTimeout = 60000; // 1 minute
         this.isRecovering = new Set(); // mission_run_id
     }
