@@ -40,6 +40,7 @@ import { Route as ApiPublicAgentHeartbeatRouteImport } from './routes/api/public
 import { Route as ApiPublicAgentEventsRouteImport } from './routes/api/public/agent/events'
 import { Route as ApiPublicAgentCommandsRouteImport } from './routes/api/public/agent/commands'
 import { Route as AuthenticatedAdminMissionsIdRouteImport } from './routes/_authenticated/admin/missions/$id'
+import { Route as AuthenticatedAdminMissionsRunsRunIdRouteImport } from './routes/_authenticated/admin/missions/runs/$runId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -210,6 +211,12 @@ const AuthenticatedAdminMissionsIdRoute =
     path: '/admin/missions/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminMissionsRunsRunIdRoute =
+  AuthenticatedAdminMissionsRunsRunIdRouteImport.update({
+    id: '/admin/missions/runs/$runId',
+    path: '/admin/missions/runs/$runId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -242,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
   '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
+  '/admin/missions/runs/$runId': typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -274,6 +282,7 @@ export interface FileRoutesByTo {
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
   '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/admin/missions': typeof AuthenticatedAdminMissionsIndexRoute
+  '/admin/missions/runs/$runId': typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -308,6 +317,7 @@ export interface FileRoutesById {
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
   '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/_authenticated/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
+  '/_authenticated/admin/missions/runs/$runId': typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -342,6 +352,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/register'
     | '/api/public/agent/rpc'
     | '/admin/missions/'
+    | '/admin/missions/runs/$runId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -374,6 +385,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/register'
     | '/api/public/agent/rpc'
     | '/admin/missions'
+    | '/admin/missions/runs/$runId'
   id:
     | '__root__'
     | '/'
@@ -407,6 +419,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/register'
     | '/api/public/agent/rpc'
     | '/_authenticated/admin/missions/'
+    | '/_authenticated/admin/missions/runs/$runId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -640,6 +653,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMissionsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/missions/runs/$runId': {
+      id: '/_authenticated/admin/missions/runs/$runId'
+      path: '/admin/missions/runs/$runId'
+      fullPath: '/admin/missions/runs/$runId'
+      preLoaderRoute: typeof AuthenticatedAdminMissionsRunsRunIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -666,6 +686,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedAdminMissionsIdRoute: typeof AuthenticatedAdminMissionsIdRoute
   AuthenticatedAdminMissionsIndexRoute: typeof AuthenticatedAdminMissionsIndexRoute
+  AuthenticatedAdminMissionsRunsRunIdRoute: typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -691,6 +712,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedAdminMissionsIdRoute: AuthenticatedAdminMissionsIdRoute,
   AuthenticatedAdminMissionsIndexRoute: AuthenticatedAdminMissionsIndexRoute,
+  AuthenticatedAdminMissionsRunsRunIdRoute:
+    AuthenticatedAdminMissionsRunsRunIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
