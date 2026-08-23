@@ -41,6 +41,131 @@ export type Database = {
         }
         Relationships: []
       }
+      agents: {
+        Row: {
+          created_at: string | null
+          hostname: string | null
+          id: string
+          last_heartbeat: string | null
+          name: string
+          status: string | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          hostname?: string | null
+          id?: string
+          last_heartbeat?: string | null
+          name: string
+          status?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          hostname?: string | null
+          id?: string
+          last_heartbeat?: string | null
+          name?: string
+          status?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: []
+      }
+      devices: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          device_id: string
+          id: string
+          name: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          device_id: string
+          id?: string
+          name?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          device_id?: string
+          id?: string
+          name?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "devices_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      emulators: {
+        Row: {
+          agent_id: string
+          assigned_farm_id: string | null
+          created_at: string | null
+          device_id: string
+          dpi: number | null
+          id: string
+          name: string | null
+          resolution: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          assigned_farm_id?: string | null
+          created_at?: string | null
+          device_id: string
+          dpi?: number | null
+          id?: string
+          name?: string | null
+          resolution?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          assigned_farm_id?: string | null
+          created_at?: string | null
+          device_id?: string
+          dpi?: number | null
+          id?: string
+          name?: string | null
+          resolution?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "emulators_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "emulators_assigned_farm_id_fkey"
+            columns: ["assigned_farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       farm_users: {
         Row: {
           created_at: string
