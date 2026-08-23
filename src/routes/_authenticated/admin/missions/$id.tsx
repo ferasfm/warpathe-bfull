@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { AiMissionBuilder } from '@/components/admin/AiMissionBuilder';
 
 export const Route = createFileRoute('/_authenticated/admin/missions/$id')({
   component: MissionBuilderPage,
@@ -134,8 +135,16 @@ function MissionBuilderPage() {
       <Tabs defaultValue="builder">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="builder">بناء المهمة</TabsTrigger>
+          <TabsTrigger value="ai-builder" className="gap-2">
+            <Sparkles className="w-4 h-4" />
+            AI Builder
+          </TabsTrigger>
           <TabsTrigger value="history">سجل التنفيذ</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="ai-builder" className="pt-4">
+          <AiMissionBuilder missionId={mission.id} templateId={activeTemplate?.id || ''} />
+        </TabsContent>
 
         <TabsContent value="builder" className="space-y-4 pt-4">
           <Card>

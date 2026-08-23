@@ -1,79 +1,59 @@
-# Project Status: WARPATH AUTOMATION PLATFORM
+# WARPATH - Project Status
 
-## Current Phase
-Phase 13: Multi-Emulator Scaling & Parallelism
+## Project Overview
+WARPATH is a professional automation platform designed for MuMu Player and ADB-based game automation.
 
-## Status
-COMPLETED (Phase 12)
+## Roadmap & Progress
 
+### Phase 01: Initial Infrastructure (COMPLETED)
+- Basic TanStack Start project structure.
+- Supabase integration.
+- Authentication (Admin & User).
 
-## Completed
-- **Phase 01 & 02**: RBAC, Auth, User Management, and Layout Foundation.
-- **Phase 03**: Database Architecture (Finalized & Validated).
-- **Phase 04**: Admin Platform (Dashboard, Infrastructure, Missions).
-- **Phase 05**: User Dashboard and Farm Management.
-- **Phase 06**: Windows Agent Architecture (Backend Communication).
-- **Phase 07**: Windows Agent (Executable).
-    - Developed a dedicated Node.js-based Windows Agent project.
-    - Successfully compiled into a standalone Windows executable (`warpath-agent.exe`).
-    - Implemented secure Registration, Heartbeat, and Event submission.
-    - Built a Command Dispatcher with polling and retry/backoff logic.
-    - Integrated structured logging with file rotation via `winston`.
-    - Verified graceful shutdown and backend failure handling.
-    - Verified registration and telemetry against the live API.
+### Phase 02: Core Security & Roles (COMPLETED)
+- Hierarchical RBAC (Super Admin, Admin, User).
+- Server-side auth verification.
+
+### Phase 03: Database Schema (COMPLETED)
+- Accounts, Farms, Resources, Fleets, Missions, Agents, Devices.
+
+### Phase 04: Admin Platform (COMPLETED)
+- CRUD for all entities.
+- Mission Builder UI.
+
+### Phase 05: User Dashboard (COMPLETED)
+- Farm management and resource configuration.
+- Task monitoring.
+
+### Phase 06: Agent Communication Core (COMPLETED)
+- Secure API contracts for registration and heartbeats.
+- Token-based agent authentication.
+
+### Phase 07: Windows Agent (COMPLETED)
+- C#/.NET agent implementation.
+- Command polling and status reporting.
+
+### Phase 08: Emulator Discovery (COMPLETED)
+- MuMu Player and ADB integration.
+- Device telemetry reporting.
+
+### Phase 09: Vision Foundation (COMPLETED)
+- Screenshot service and deterministic template matching.
+- Diagnostic vision tools.
+
+### Phase 10: Mission Execution Engine (COMPLETED)
+- Sequential step logic and ADB interaction.
+
+### Phase 11: Watchdog & Recovery (COMPLETED)
+- Health monitoring and mission recovery rules.
+
+### Phase 12: AI Vision Fallback (COMPLETED)
+- Optional AI analysis for unknown screens.
+- Auditing and rate limiting.
+
+### Phase 13: AI Mission Builder (COMPLETED)
+- Natural language to structured mission definition.
+- Admin productivity tools and schema validation.
 
 ## Next Phase
-Phase 09: physical drivers and image recognition infrastructure.
-
-- **Phase 08**: MuMu Player and ADB Integration.
-    - Implemented `AdbService` and `MuMuService` in the Windows Agent.
-    - Extended Agent with background discovery of devices and emulators.
-    - Added secure ADB command dispatcher (allowlisted).
-    - Integrated discovery telemetry with the backend via events.
-    - Verified Admin UI displays real-time device/emulator data.
-    - Hardened command execution with security allowlists.
-
-- **Phase 09**: Screenshot and Vision Foundation.
-    - Implemented `ScreenshotService` with ADB `screencap` integration.
-    - Built deterministic template matching `VisionService` using Jimp.
-    - Enforced 1012x800 resolution and 200 DPI configuration.
-    - Added structured `vision_results` telemetry and database migration.
-    - Developed Admin Diagnostic Tool at `/admin/vision-test` for real-time testing.
-    - Verified multiple matches, confidence scoring, and coordinate mapping.
-    - Hardened security for remote diagnostic screenshot requests.
-
-## Next Phase
-Phase 12: Infrastructure Scaling & MuMu Multi-Instance
-
-- **Phase 10**: Mission Execution Foundation.
-    - Implemented `MissionEngine` in the Windows Agent for sequential logic.
-    - Supported actions: `WAIT`, `SCREENSHOT`, `FIND_IMAGE`, `TAP`, `CONDITION`, `END`.
-    - Integrated with `AdbService`, `VisionService`, and `ScreenshotService`.
-    - Implemented `triggerMissionExecution` server function for mission orchestration.
-
-- **Phase 11**: Watchdog and Recovery Engine.
-    - Created `WatchdogService` for real-time mission health monitoring.
-    - Integrated Watchdog into the `MissionEngine` loop.
-    - Implemented ADB connectivity monitoring and recovery triggers.
-    - Added hierarchical `recovery_rules` evaluation with priority.
-    - Supported recovery actions: `WAIT`, `TAP`, `FIND_IMAGE`, `SCREENSHOT`.
-    - Implemented mission resumption strategies: `RETRY_CURRENT_STEP`, `RETURN_TO_STEP`.
-    - Added safety mechanisms: max attempts, mission pausing, and infinite loop prevention.
-    - Verified telemetry for `RECOVERY_STARTED` events.
-    - Hardened platform orchestration for recovery rule distribution.
-
-- **Bug Fix**: Resolved runtime authorization error (`Unauthorized`) in dashboard and farm management routes by correctly applying `requireSupabaseAuth` middleware to all server functions.
-    - Switched from client-side `supabase.auth.getSession()` (which lacks session headers in server functions) to the platform's secure server-side middleware.
-    - Verified unauthenticated redirection and preserved RLS security boundaries across USER, ADMIN, and SUPER_ADMIN roles.
-    - Verified production build and route protection.
-
-- **Phase 12**: AI Vision Fallback.
-    - Implemented `AiVisionProvider` abstraction via `ai-gateway.server.ts`.
-    - Created `processAiVision` server function with Zod validation and rate limiting.
-    - Added `ai_vision_logs` for detailed auditing (provider, model, confidence, processing time).
-    - Integrated AI fallback into Windows Agent `VisionService` and `MissionEngine`.
-    - Supported deterministic-first logic: AI only triggers if enabled and template matching fails.
-    - Enforced safety limits: per-mission call caps and per-device rate limiting.
-    - Secured API keys by keeping all AI processing on the server side.
-    - Verified strict JSON output validation for coordinates and detected objects.
-
+- Phase 14: Advanced Analytics & Optimization.
