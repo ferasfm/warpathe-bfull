@@ -20,6 +20,9 @@ import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
 import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
 import { Route as AuthenticatedAdminFarmsRouteImport } from './routes/_authenticated/admin/farms'
+import { Route as AuthenticatedAdminEmulatorsRouteImport } from './routes/_authenticated/admin/emulators'
+import { Route as AuthenticatedAdminDevicesRouteImport } from './routes/_authenticated/admin/devices'
+import { Route as AuthenticatedAdminAgentsRouteImport } from './routes/_authenticated/admin/agents'
 import { Route as AuthenticatedAdminAccountsRouteImport } from './routes/_authenticated/admin/accounts'
 import { Route as AuthenticatedAdminMissionsIndexRouteImport } from './routes/_authenticated/admin/missions/index'
 import { Route as AuthenticatedAdminMissionsIdRouteImport } from './routes/_authenticated/admin/missions/$id'
@@ -82,6 +85,24 @@ const AuthenticatedAdminFarmsRoute = AuthenticatedAdminFarmsRouteImport.update({
   path: '/admin/farms',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminEmulatorsRoute =
+  AuthenticatedAdminEmulatorsRouteImport.update({
+    id: '/admin/emulators',
+    path: '/admin/emulators',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminDevicesRoute =
+  AuthenticatedAdminDevicesRouteImport.update({
+    id: '/admin/devices',
+    path: '/admin/devices',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminAgentsRoute =
+  AuthenticatedAdminAgentsRouteImport.update({
+    id: '/admin/agents',
+    path: '/admin/agents',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminAccountsRoute =
   AuthenticatedAdminAccountsRouteImport.update({
     id: '/admin/accounts',
@@ -105,6 +126,9 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin/accounts': typeof AuthenticatedAdminAccountsRoute
+  '/admin/agents': typeof AuthenticatedAdminAgentsRoute
+  '/admin/devices': typeof AuthenticatedAdminDevicesRoute
+  '/admin/emulators': typeof AuthenticatedAdminEmulatorsRoute
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
@@ -120,6 +144,9 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin/accounts': typeof AuthenticatedAdminAccountsRoute
+  '/admin/agents': typeof AuthenticatedAdminAgentsRoute
+  '/admin/devices': typeof AuthenticatedAdminDevicesRoute
+  '/admin/emulators': typeof AuthenticatedAdminEmulatorsRoute
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
@@ -137,6 +164,9 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/admin/accounts': typeof AuthenticatedAdminAccountsRoute
+  '/_authenticated/admin/agents': typeof AuthenticatedAdminAgentsRoute
+  '/_authenticated/admin/devices': typeof AuthenticatedAdminDevicesRoute
+  '/_authenticated/admin/emulators': typeof AuthenticatedAdminEmulatorsRoute
   '/_authenticated/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/_authenticated/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/_authenticated/admin/resources': typeof AuthenticatedAdminResourcesRoute
@@ -154,6 +184,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/admin/accounts'
+    | '/admin/agents'
+    | '/admin/devices'
+    | '/admin/emulators'
     | '/admin/farms'
     | '/admin/fleets'
     | '/admin/resources'
@@ -169,6 +202,9 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/admin/accounts'
+    | '/admin/agents'
+    | '/admin/devices'
+    | '/admin/emulators'
     | '/admin/farms'
     | '/admin/fleets'
     | '/admin/resources'
@@ -185,6 +221,9 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/admin/accounts'
+    | '/_authenticated/admin/agents'
+    | '/_authenticated/admin/devices'
+    | '/_authenticated/admin/emulators'
     | '/_authenticated/admin/farms'
     | '/_authenticated/admin/fleets'
     | '/_authenticated/admin/resources'
@@ -283,6 +322,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminFarmsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/emulators': {
+      id: '/_authenticated/admin/emulators'
+      path: '/admin/emulators'
+      fullPath: '/admin/emulators'
+      preLoaderRoute: typeof AuthenticatedAdminEmulatorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/devices': {
+      id: '/_authenticated/admin/devices'
+      path: '/admin/devices'
+      fullPath: '/admin/devices'
+      preLoaderRoute: typeof AuthenticatedAdminDevicesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/agents': {
+      id: '/_authenticated/admin/agents'
+      path: '/admin/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AuthenticatedAdminAgentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/accounts': {
       id: '/_authenticated/admin/accounts'
       path: '/admin/accounts'
@@ -309,6 +369,9 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminAccountsRoute: typeof AuthenticatedAdminAccountsRoute
+  AuthenticatedAdminAgentsRoute: typeof AuthenticatedAdminAgentsRoute
+  AuthenticatedAdminDevicesRoute: typeof AuthenticatedAdminDevicesRoute
+  AuthenticatedAdminEmulatorsRoute: typeof AuthenticatedAdminEmulatorsRoute
   AuthenticatedAdminFarmsRoute: typeof AuthenticatedAdminFarmsRoute
   AuthenticatedAdminFleetsRoute: typeof AuthenticatedAdminFleetsRoute
   AuthenticatedAdminResourcesRoute: typeof AuthenticatedAdminResourcesRoute
@@ -322,6 +385,9 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminAccountsRoute: AuthenticatedAdminAccountsRoute,
+  AuthenticatedAdminAgentsRoute: AuthenticatedAdminAgentsRoute,
+  AuthenticatedAdminDevicesRoute: AuthenticatedAdminDevicesRoute,
+  AuthenticatedAdminEmulatorsRoute: AuthenticatedAdminEmulatorsRoute,
   AuthenticatedAdminFarmsRoute: AuthenticatedAdminFarmsRoute,
   AuthenticatedAdminFleetsRoute: AuthenticatedAdminFleetsRoute,
   AuthenticatedAdminResourcesRoute: AuthenticatedAdminResourcesRoute,

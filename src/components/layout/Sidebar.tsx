@@ -33,7 +33,10 @@ export function Sidebar() {
             <NavItem to="/admin/resources" icon={<ShieldCheck className="w-4 h-4" />} label="Resources" />
             <NavItem to="/admin/fleets" icon={<ShieldCheck className="w-4 h-4" />} label="Fleets" />
             <NavItem to="/admin/missions" icon={<ShieldCheck className="w-4 h-4" />} label="Missions" />
-            <NavItem to="/admin/agents" icon={<ShieldCheck className="w-4 h-4" />} label="Agents & Devices" />
+            <NavItem to="/admin/agents" icon={<ShieldCheck className="w-4 h-4" />} label="Agents" />
+            <NavItem to="/admin/devices" icon={<ShieldCheck className="w-4 h-4" />} label="Devices" />
+            <NavItem to="/admin/emulators" icon={<ShieldCheck className="w-4 h-4" />} label="Emulators" />
+
             <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4" />} label="Vision" />
             <NavItem to="/admin/recovery" icon={<ShieldCheck className="w-4 h-4" />} label="Recovery" />
             <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4" />} label="Logs" />
