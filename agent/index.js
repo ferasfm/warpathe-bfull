@@ -37,7 +37,7 @@ const AgentStatus = z.enum(["ONLINE", "OFFLINE", "UNKNOWN"]);
 
 class WarpathAgent {
     constructor() {
-        this.baseUrl = process.env.WARPATH_API_URL || 'http://localhost:8080/api/public/agent';
+        this.baseUrl = process.env.WARPATH_API_URL || 'https://warpathe-bfull.lovable.app/api/public/agent';
         this.registrationKey = process.env.AGENT_REGISTRATION_KEY || 'warpath-secret-key-change-me';
         this.agentId = null;
         this.token = null;
