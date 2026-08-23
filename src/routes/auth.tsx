@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Fuel, ArrowRight, ShieldAlert } from "lucide-react";
+import { ShieldAlert, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { trackLoginAttempt, checkIpStatus } from "@/lib/auth-security.functions";
@@ -13,8 +13,8 @@ import { trackLoginAttempt, checkIpStatus } from "@/lib/auth-security.functions"
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "دخول الإدارة — شركة الهدى للمحروقات" },
-      { name: "description", content: "صفحة دخول مديري المحطات والإدارة الرئيسية لشركة الهدى." },
+      { title: "تسجيل الدخول — WARPATH" },
+      { name: "description", content: "تسجيل الدخول لمنصة الأتمتة WARPATH" },
       { name: "robots", content: "noindex" },
     ],
   }),
@@ -39,10 +39,7 @@ function AuthPage() {
   useEffect(() => {
     supabase.auth.getSession().then(async ({ data }) => {
       if (data.session) {
-        const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.session.user.id);
-        const r = (roles ?? []).map((x) => x.role);
-        if (r.includes("super_admin")) nav({ to: "/admin" });
-        else nav({ to: "/manager" });
+        nav({ to: "/" });
       }
     });
   }, [nav]);
@@ -64,7 +61,6 @@ function AuthPage() {
       
       if (error) {
         await trackAttempt({ data: { is_successful: false } });
-        // Re-check status after a failed attempt
         const newStatus = await checkIp();
         if (newStatus.isBlocked) setIsBlocked(true);
         
@@ -75,11 +71,7 @@ function AuthPage() {
 
       await trackAttempt({ data: { is_successful: true } });
       toast.success("مرحباً بك!");
-      
-      const { data: roles } = await supabase.from("user_roles").select("role").eq("user_id", data.user.id);
-      const r = (roles ?? []).map((x) => x.role);
-      if (r.includes("super_admin")) nav({ to: "/admin" });
-      else nav({ to: "/manager" });
+      nav({ to: "/" });
     } catch (err) {
       toast.error("حدث خطأ أثناء محاولة تسجيل الدخول");
       console.error(err);
@@ -89,20 +81,15 @@ function AuthPage() {
   }
 
   return (
-    <div className="grid min-h-screen place-items-center bg-secondary px-4" dir="rtl">
+    <div className="grid min-h-screen place-items-center bg-background px-4" dir="rtl">
       <div className="w-full max-w-md">
-        <Link to="/" className="mb-6 flex items-center justify-center gap-2 text-secondary-foreground hover:text-primary">
-          <ArrowRight className="h-4 w-4" />
-          <span className="text-sm">العودة للرئيسية</span>
-        </Link>
-
-        <Card className="border-2">
+        <Card className="border-2 shadow-2xl">
           <CardHeader className="text-center">
             <div className="mx-auto mb-3 grid h-14 w-14 place-items-center rounded-2xl bg-primary shadow-lg">
-              <Fuel className="h-7 w-7 text-primary-foreground" />
+              <Terminal className="h-7 w-7 text-primary-foreground" />
             </div>
-            <CardTitle className="text-2xl">دخول الإدارة</CardTitle>
-            <CardDescription>مديري المحطات والإدارة الرئيسية فقط</CardDescription>
+            <CardTitle className="text-3xl font-black tracking-tighter uppercase">WARPATH</CardTitle>
+            <CardDescription className="font-medium">AUTOMATION PLATFORM</CardDescription>
           </CardHeader>
           <CardContent>
             {isBlocked ? (
@@ -111,34 +98,48 @@ function AuthPage() {
                   <ShieldAlert className="h-10 w-10" />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="font-bold text-destructive">تم حظر الوصول مؤقتاً</h3>
+                  <h3 className="font-bold text-destructive text-lg">تم حظر الوصول مؤقتاً</h3>
                   <p className="text-sm text-muted-foreground px-4">
-                    لقد تجاوزت الحد المسموح لمحاولات الدخول الخاطئة (3 محاولات).
-                    تم حظر هذا الجهاز لمدة 24 ساعة لضمان أمن النظام.
+                    لقد تجاوزت الحد المسموح لمحاولات الدخول الخاطئة.
+                    تم حظر هذا الجهاز لمدة 24 ساعة لضمان أمن المنصة.
                   </p>
                 </div>
-                <Button variant="outline" onClick={() => window.location.reload()}>تحديث الصفحة</Button>
+                <Button variant="outline" onClick={() => window.location.reload()} className="w-full">تحديث الصفحة</Button>
               </div>
             ) : (
               <form onSubmit={onSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="email">البريد الإلكتروني</Label>
-                  <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
+                  <Input id="email" type="email" placeholder="name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">كلمة المرور</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="password">كلمة المرور</Label>
+                  </div>
                   <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "جاري الدخول..." : "تسجيل الدخول"}
+                <Button type="submit" className="w-full h-11 text-base font-bold" disabled={loading}>
+                  {loading ? "جاري الدخول..." : "دخول المنصة"}
                 </Button>
-                <p className="pt-2 text-center text-xs text-muted-foreground">
-                  لا يوجد تسجيل ذاتي. يقوم الأدمن الرئيسي بإنشاء الحسابات.
-                </p>
+                <div className="relative py-2">
+                  <div className="absolute inset-0 flex items-center"><span className="w-full border-t" /></div>
+                  <div className="relative flex justify-center text-xs uppercase"><span className="bg-background px-2 text-muted-foreground">أو</span></div>
+                </div>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  type="button"
+                  onClick={() => supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: `${window.location.origin}/auth/callback` } })}
+                >
+                  الدخول بواسطة Google
+                </Button>
               </form>
             )}
           </CardContent>
         </Card>
+        <p className="mt-8 text-center text-xs text-muted-foreground uppercase tracking-widest font-black opacity-50">
+          WARPATH FOUNDATION PHASE 01
+        </p>
       </div>
     </div>
   );
