@@ -133,7 +133,57 @@ function AdminLogsPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        <TabsContent value="ai-vision" className="mt-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>AI Vision Fallback Auditing</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {isLoadingVision ? (
+                <div className="py-10 text-center">Loading AI vision logs...</div>
+              ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date/Time</TableHead>
+                      <TableHead>Mission</TableHead>
+                      <TableHead>Provider/Model</TableHead>
+                      <TableHead>Result</TableHead>
+                      <TableHead>Conf</TableHead>
+                      <TableHead>Time</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {visionData?.logs.map((log: any) => (
+                      <TableRow key={log.id}>
+                        <TableCell>{new Date(log.created_at).toLocaleString()}</TableCell>
+                        <TableCell className="font-mono text-xs">{log.mission_run_id || 'Manual'}</TableCell>
+                        <TableCell>{log.provider} / {log.model}</TableCell>
+                        <TableCell className="max-w-[200px] truncate font-mono text-xs text-blue-600">
+                          {JSON.stringify(log.result)}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {log.confidence ? `${(log.confidence * 100).toFixed(1)}%` : '0%'}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">{log.processing_time_ms}ms</TableCell>
+                      </TableRow>
+                    ))}
+                    {visionData?.logs.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                          No AI vision logs found.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
+
     </div>
   );
 }
