@@ -160,7 +160,7 @@ function AdminAccountsPage() {
       <AccountDialog 
         open={isCreateOpen} 
         onOpenChange={setIsCreateOpen}
-        onSubmit={(data) => createMutation.mutate(data)}
+        onSubmit={(data: any) => createMutation.mutate(data)}
         title="Create New Account"
       />
 
@@ -169,7 +169,7 @@ function AdminAccountsPage() {
         <AccountDialog 
           open={!!editingAccount} 
           onOpenChange={() => setEditingAccount(null)}
-          onSubmit={(data) => updateMutation.mutate({ id: editingAccount.id, ...data })}
+          onSubmit={(data: any) => updateMutation.mutate({ id: editingAccount.id, ...data })}
           initialData={editingAccount}
           title="Edit Account"
         />
