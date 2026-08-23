@@ -5,17 +5,17 @@ import { supabase } from "@/integrations/supabase/client";
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            WARPATH — PHASE 03C
+                                            WARPATH — PHASE 03D
 
-AGENTS, DEVICES AND EMULATORS DATABASE
+VISION, RECOVERY, COMMANDS AND LOGS DATABASE
 
-Phase 03A and Phase 03B are completed.
+Phase 03A, 03B and 03C are completed.
 
-Implement ONLY the database structure for Windows Agents, devices, and MuMu emulator instances.
+Implement ONLY the remaining database structures required for Vision, Recovery, Agent Commands, Agent Events and Audit Logs.
 
-Create these tables:
+CREATE THESE TABLES:
 
-1. agents
+1. vision_assets
 
 Fields:
 
@@ -23,19 +23,59 @@ Fields:
 
 - name
 
-- status
+- asset_type
+
+- storage_path
 
 - version
 
-- hostname
-
-- last_heartbeat
+- active
 
 - created_at
 
 - updated_at
 
-2. devices
+2. vision_rules
+
+Fields:
+
+- id
+
+- name
+
+- asset_id
+
+- configuration
+
+- confidence_threshold
+
+- active
+
+- created_at
+
+- updated_at
+
+3. recovery_rules
+
+Fields:
+
+- id
+
+- name
+
+- trigger_type
+
+- configuration
+
+- priority
+
+- active
+
+- created_at
+
+- updated_at
+
+4. agent_commands
 
 Fields:
 
@@ -45,15 +85,21 @@ Fields:
 
 - device_id
 
-- name
+- command_type
+
+- payload
 
 - status
 
 - created_at
 
-- updated_at
+- started_at
 
-3. emulators
+- completed_at
+
+- error_message
+
+5. agent_events
 
 Fields:
 
@@ -63,75 +109,83 @@ Fields:
 
 - device_id
 
-- name
+- event_type
 
-- status
-
-- resolution
-
-- dpi
-
-- assigned_farm_id
+- payload
 
 - created_at
 
-- updated_at
+6. audit_logs
 
-Relationships:
+Fields:
 
-Agent
+- id
+
+- user_id
+
+- action
+
+- entity_type
+
+- entity_id
+
+- metadata
+
+- created_at
+
+RELATIONSHIPS:
+
+vision_assets
 
 ↓
 
-Devices
+vision_rules
 
-Agent
-
-↓
-
-Emulators
-
-Farm
+agents
 
 ↓
 
-Emulator
+agent_commands
 
-Requirements:
+↓
 
-- Every device belongs to an Agent.
+devices
 
-- Every emulator belongs to an Agent.
+agents
 
-- An emulator may optionally be assigned to a Farm.
+↓
 
-- device_id must identify the device correctly.
+agent_events
 
-- Prevent invalid duplicate device relationships.
+↓
 
-- Add foreign keys.
+devices
+
+users
+
+↓
+
+audit_logs
+
+REQUIREMENTS:
+
+- Add proper foreign keys.
 
 - Add useful indexes.
 
 - Add appropriate unique constraints.
 
-- Add created_at and updated_at.
+- Use JSON/JSONB for configuration and payload fields where appropriate.
 
-Default MuMu configuration:
+- Add timestamps.
 
-Resolution:
+- Preserve existing database structure.
 
-1012x800
-
-DPI:
-
-200
-
-Store these values in the emulator records.
+- Do not modify working Phase 01, Phase 02, 03A, 03B or 03C functionality.
 
 SECURITY:
 
-Preserve the existing Phase 02 authorization.
+Preserve the existing authorization model.
 
 SUPER_ADMIN:
 
@@ -143,13 +197,13 @@ Administrative access.
 
 USER:
 
-Must not access Agent, Device, or Emulator management data unless explicitly authorized later.
+No access to Agent management, Vision configuration, Recovery configuration or Audit Logs unless explicitly authorized by existing security rules.
 
 Apply appropriate RLS.
 
 IMPORTANT:
 
-This phase creates DATABASE STRUCTURE ONLY.
+This is DATABASE ONLY.
 
 Do NOT implement:
 
@@ -157,49 +211,51 @@ Do NOT implement:
 
 - ADB
 
-- MuMu integration
-
-- ADB commands
-
-- Device discovery
-
-- Screenshot
+- MuMu
 
 - Image Recognition
+
+- AI
 
 - Mission Engine
 
 - Watchdog
 
-- Recovery
+- Recovery execution
 
-- AI
+- Command execution
 
-Do NOT create UI.
+- Screenshot
 
-Do NOT modify existing working functionality.
+- UI
 
-Test:
+Do not create fake data except what is necessary for database validation.
 
-1. Migration succeeds.
+TEST:
+
+1. Migrations succeed.
 
 2. Foreign keys work.
 
-3. Unique constraints work.
+3. RLS works.
 
-4. RLS works.
+4. JSON fields work.
 
-5. Existing Phase 01 and Phase 02 functionality still works.
+5. Existing database functionality remains intact.
 
-6. Application builds successfully.
+6. Existing authentication and authorization remain intact.
+
+7. Application builds successfully.
 
 Update:
 
 /docs/PROJECT_STATUS.md
 
-Mark Phase 03C as completed.
+Mark:
 
-STOP after Phase 03C.
+Phase 03D = COMPLETED
+
+STOP after Phase 03D.
 */
 
 export const Route = createFileRoute("/")({
