@@ -257,3 +257,75 @@ export const requestVisionTest = createServerFn({ method: "POST" })
     if (error) throw new Error("Failed to queue vision test command");
     return command;
   });
+
+// 8. Trigger Mission Execution (Admin/System)
+export const triggerMissionExecution = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({
+    agentId: z.string(),
+    emulatorId: z.string(),
+    missionId: z.string(),
+    version: z.number().optional(),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // 1. Get Mission Version
+    let query = supabaseAdmin
+      .from("mission_versions")
+      .select("id, version_number")
+      .eq("mission_id", data.missionId);
+    
+    if (data.version) {
+      query = query.eq("version_number", data.version);
+    } else {
+      query = query.order("version_number", { ascending: false }).limit(1);
+    }
+
+    const { data: version } = await query.single();
+    if (!version) throw new Error("Mission version not found");
+
+    // 2. Get Ordered Steps
+    const { data: steps } = await supabaseAdmin
+      .from("mission_steps")
+      .select("*")
+      .eq("mission_version_id", version.id)
+      .order("step_order", { ascending: true });
+
+    if (!steps || steps.length === 0) throw new Error("Mission has no steps");
+
+    // 3. Create Mission Run
+    const { data: run, error: runError } = await supabaseAdmin
+      .from("mission_runs")
+      .insert({
+        mission_id: data.missionId,
+        mission_version_id: version.id,
+        emulator_id: data.emulatorId,
+        status: "PENDING",
+        started_at: new Date().toISOString(),
+      })
+      .select()
+      .single();
+
+    if (runError) throw new Error(`Failed to create mission run: ${runError.message}`);
+
+    // 4. Queue Command for Agent
+    const { data: command, error: cmdError } = await supabaseAdmin
+      .from("agent_commands")
+      .insert({
+        agent_id: data.agentId,
+        device_id: data.emulatorId,
+        command_type: "EXECUTE_MISSION",
+        status: "PENDING",
+        payload: {
+          emulatorId: data.emulatorId,
+          missionRunId: run.id,
+          steps: steps
+        }
+      })
+      .select()
+      .single();
+
+    if (cmdError) throw new Error(`Failed to queue mission command: ${cmdError.message}`);
+
+    return { missionRunId: run.id, commandId: command.id };
+  });
