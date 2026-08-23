@@ -5,99 +5,45 @@ import { supabase } from "@/integrations/supabase/client";
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            WARPATH — PHASE 03A
+                                            WARPATH — PHASE 03B
 
-DATABASE CORE
+MISSION DATABASE
 
-Phase 01 and Phase 02 are completed.
+Phase 03A is completed.
 
-Implement ONLY the database core for Phase 03.
-
-Do not modify existing authentication or authorization.
+Implement ONLY the Mission database structure.
 
 Create these tables:
 
-1. accounts
+1. missions
+
+Fields:
 
 - id
 
 - name
+
+- description
 
 - status
-
-- notes
-
-- created_at
-
-- updated_at
-
-2. farms
-
-- id
-
-- account_id
-
-- name
-
-- status
-
-- notes
-
-- created_at
-
-- updated_at
-
-3. farm_users
-
-- id
-
-- farm_id
-
-- user_id
-
-- created_at
-
-4. resources
-
-- id
-
-- name
-
-- code
-
-- status
-
-- created_at
-
-- updated_at
-
-5. resource_assets
-
-- id
-
-- resource_id
-
-- name
-
-- storage_path
 
 - version
 
-- active
-
 - created_at
 
 - updated_at
 
-6. fleets
+2. mission_templates
+
+Fields:
 
 - id
 
-- farm_id
+- mission_id
 
-- fleet_number
+- version
 
-- name
+- description
 
 - status
 
@@ -105,79 +51,125 @@ Create these tables:
 
 - updated_at
 
-7. fleet_assignments
+3. mission_steps
+
+Fields:
 
 - id
 
-- farm_id
+- mission_template_id
 
-- fleet_id
+- step_order
 
-- resource_id
+- name
 
-- enabled
+- step_type
+
+- configuration
+
+- timeout_ms
+
+- retry_count
 
 - created_at
 
 - updated_at
 
-Create proper foreign keys and useful indexes.
+The configuration field must support structured JSON.
 
-Rules:
+4. mission_runs
 
-- A user can have multiple farms.
+Fields:
 
-- A farm belongs to an account.
+- id
 
-- A farm can have multiple fleets.
+- mission_id
 
-- A fleet can be assigned to a resource.
+- farm_id
 
-- Resource code must be unique.
+- status
 
-- Fleet number must be unique within its farm.
+- started_at
 
-- Duplicate farm-user assignments must be prevented.
+- completed_at
 
-Create initial resource records:
+- error_message
 
-WHEAT
+- created_at
 
-IRON
+Relationships:
 
-STEEL
+Mission
 
-Apply appropriate RLS without weakening the existing Phase 02 security.
+↓
 
-Normal users may only access farms assigned to them.
+Mission Template
 
-Do NOT create UI for these tables yet.
+↓
+
+Mission Steps
+
+Mission
+
+↓
+
+Mission Runs
+
+↓
+
+Farm
+
+Requirements:
+
+- Add foreign keys.
+
+- Add useful indexes.
+
+- Prevent duplicate step_order inside the same mission template.
+
+- Preserve existing Phase 02 security.
+
+- Apply appropriate RLS.
+
+- Normal users must only access mission data they are authorized to use.
+
+- Admins can manage mission definitions.
 
 Do NOT implement:
 
-- Windows Agent
+- Mission Engine
 
 - ADB
 
 - MuMu
 
-- Vision
+- Windows Agent
+
+- Image Recognition
 
 - AI
-
-- Missions
 
 - Watchdog
 
 - Recovery
 
-Do not delete existing functionality.
+- Mission execution
 
-Test the migration and database constraints.
+Do NOT build UI in this phase.
 
-Update /docs/PROJECT_STATUS.md with the current progress.
+Do NOT modify existing working functionality.
 
-STOP after Phase 03A.
+Test the database migration and constraints.
+
+Update:
+
+/docs/PROJECT_STATUS.md
+
+Set the current progress to:
+
+Phase 03B completed.
+
+STOP after Phase 03B.
 */
 
 export const Route = createFileRoute("/")({
