@@ -584,36 +584,86 @@ export type Database = {
         }
         Relationships: []
       }
+      mission_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          id: string
+          message: string | null
+          mission_run_id: string | null
+          payload: Json | null
+          severity: string
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          id?: string
+          message?: string | null
+          mission_run_id?: string | null
+          payload?: Json | null
+          severity?: string
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          id?: string
+          message?: string | null
+          mission_run_id?: string | null
+          payload?: Json | null
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mission_events_mission_run_id_fkey"
+            columns: ["mission_run_id"]
+            isOneToOne: false
+            referencedRelation: "mission_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mission_runs: {
         Row: {
           completed_at: string | null
           created_at: string | null
+          current_step_index: number | null
           error_message: string | null
           farm_id: string
           id: string
+          last_event_type: string | null
           mission_id: string
+          recovery_count: number | null
           started_at: string | null
           status: string
+          total_steps: number | null
         }
         Insert: {
           completed_at?: string | null
           created_at?: string | null
+          current_step_index?: number | null
           error_message?: string | null
           farm_id: string
           id?: string
+          last_event_type?: string | null
           mission_id: string
+          recovery_count?: number | null
           started_at?: string | null
           status?: string
+          total_steps?: number | null
         }
         Update: {
           completed_at?: string | null
           created_at?: string | null
+          current_step_index?: number | null
           error_message?: string | null
           farm_id?: string
           id?: string
+          last_event_type?: string | null
           mission_id?: string
+          recovery_count?: number | null
           started_at?: string | null
           status?: string
+          total_steps?: number | null
         }
         Relationships: [
           {
