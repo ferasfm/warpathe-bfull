@@ -1,26 +1,29 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const checkAdmin = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
-
+/**
+ * RBAC Helper
+ */
+const checkRole = async (supabase: any, userId: string, allowedRoles: string[]) => {
   const { data: roleData } = await supabase
     .from("user_roles")
     .select("role")
-    .eq("user_id", session.user.id);
+    .eq("user_id", userId);
   
-  const roles = (roleData?.map(r => r.role) || []) as string[];
-  if (!roles.includes('admin') && !roles.includes('super_admin')) {
-    throw new Error("Forbidden");
+  const roles = (roleData?.map((r: any) => r.role) || []) as string[];
+  const isAllowed = allowedRoles.some(role => roles.includes(role));
+  
+  if (!isAllowed) {
+    throw new Error("Forbidden: Insufficient permissions");
   }
-  return session;
 };
 
 export const getAgents = createServerFn({ method: "GET" })
-  .handler(async () => {
-    await checkAdmin();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from('agents')
       .select('*')
@@ -30,8 +33,10 @@ export const getAgents = createServerFn({ method: "GET" })
   });
 
 export const getDevices = createServerFn({ method: "GET" })
-  .handler(async () => {
-    await checkAdmin();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from('devices')
       .select('*, agents(name)')
@@ -41,8 +46,10 @@ export const getDevices = createServerFn({ method: "GET" })
   });
 
 export const getEmulators = createServerFn({ method: "GET" })
-  .handler(async () => {
-    await checkAdmin();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from('emulators')
       .select('*, agents(name), devices(name, device_id), farms(name), current_run:mission_runs(status, mission:missions(name))')
@@ -52,6 +59,7 @@ export const getEmulators = createServerFn({ method: "GET" })
   });
 
 export const createEmulator = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     name: string,
     agent_id: string,
@@ -69,8 +77,9 @@ export const createEmulator = createServerFn({ method: "POST" })
     dpi: z.number().default(200),
     status: z.string().default("OFFLINE")
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data: result, error } = await supabase
       .from('emulators')
       .insert(data)
@@ -81,6 +90,7 @@ export const createEmulator = createServerFn({ method: "POST" })
   });
 
 export const updateEmulator = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     id: string,
     name?: string,
@@ -96,8 +106,9 @@ export const updateEmulator = createServerFn({ method: "POST" })
     resolution: z.string().optional(),
     dpi: z.number().optional(),
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { id, ...updates } = data;
     const { data: result, error } = await supabase
       .from('emulators')
@@ -110,9 +121,11 @@ export const updateEmulator = createServerFn({ method: "POST" })
   });
 
 export const deleteEmulator = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { error } = await supabase
       .from('emulators')
       .delete()

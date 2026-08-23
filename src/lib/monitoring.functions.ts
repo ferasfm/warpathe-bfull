@@ -2,29 +2,31 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
+/**
+ * RBAC Helper
+ */
+const checkRole = async (supabase: any, userId: string, allowedRoles: string[]) => {
+  const { data: roleData } = await supabase
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userId);
+  
+  const roles = (roleData?.map((r: any) => r.role) || []) as string[];
+  const isAllowed = allowedRoles.some(role => roles.includes(role));
+  
+  if (!isAllowed) {
+    throw new Error("Forbidden: Insufficient permissions");
+  }
+};
+
 // 1. Get Monitoring Metrics (Admin Only)
 export const getMonitoringMetrics = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    const { supabase, userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // Check if user is admin
-    const { data: { user } } = await context.supabase.auth.getUser();
-    const { data: roles } = await supabaseAdmin
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user?.id || "")
-      .eq("role", "admin");
-      
-    if (!roles || roles.length === 0) {
-      // Check for super_admin too
-      const { data: superRoles } = await supabaseAdmin
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user?.id || "")
-        .eq("role", "super_admin");
-      if (!superRoles || superRoles.length === 0) throw new Error("Unauthorized");
-    }
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
 
     const now = new Date();
     const heartbeatLimit = new Date(now.getTime() - 90000).toISOString(); // 90s threshold
@@ -66,9 +68,10 @@ export const getPaginatedLogs = createServerFn({ method: "GET" })
     eventType: z.string().optional(),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
-    // Auth check (repeat for each admin fn or use a shared helper)
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     
     let query = supabaseAdmin
       .from("agent_events")
@@ -110,7 +113,11 @@ export const getMissionRunsForMission = createServerFn({ method: "GET" })
     missionId: z.string(),
   }).parse(data))
   .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
+
     const { data: runs, error } = await supabaseAdmin
       .from("mission_runs")
       .select(`
