@@ -117,6 +117,7 @@ export const getPendingCommands = createServerFn({ method: "GET" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
+    // We also handle recovery rule requests via command polling for simplicity in Phase 11
     const { data: commands } = await supabaseAdmin
       .from("agent_commands")
       .select("*")
