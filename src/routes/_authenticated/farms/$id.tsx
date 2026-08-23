@@ -25,7 +25,7 @@ function FarmDetailsPage() {
 
   const { data: farm, isLoading, error } = useQuery({
     queryKey: ["farm-details", id],
-    queryFn: () => getFarmDetails(id),
+    queryFn: () => getFarmDetails({ data: id }),
     retry: false,
   });
 
