@@ -189,7 +189,7 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
           device_id: adbSerial,
           name: instanceName || `MuMu-${adbSerial}`,
           status: status,
-        }, { onConflict: 'agent_id, device_id' })
+        } as any, { onConflict: 'agent_id, device_id' })
         .select("id")
         .single();
 
@@ -206,7 +206,7 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
             status: status,
             resolution: resolution,
             dpi: dpi,
-          }, { onConflict: 'agent_id, adb_serial' });
+          } as any, { onConflict: 'agent_id, adb_serial' });
       }
     } else if (data.eventType === 'DEVICE_DISCOVERED') {
       const { serial, model, status } = data.payload;
