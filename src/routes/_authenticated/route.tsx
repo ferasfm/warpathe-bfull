@@ -14,9 +14,8 @@ export const Route = createFileRoute("/_authenticated")({
       });
     }
 
-    // Temporary bypass for verification
+    // Server-side check for /admin route
     if (location.pathname.startsWith('/admin')) {
-      /*
       const { data: roles } = await supabase
         .from('user_roles')
         .select('role')
@@ -26,7 +25,6 @@ export const Route = createFileRoute("/_authenticated")({
       if (!roleList.includes('admin') && !roleList.includes('super_admin')) {
         throw redirect({ to: '/dashboard' });
       }
-      */
     }
 
     return { session };
