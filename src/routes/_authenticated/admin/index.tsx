@@ -1,23 +1,10 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Users, Shield, Key, AlertTriangle } from "lucide-react";
+import { Users, Shield, Key, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/admin/")({
-  beforeLoad: async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw redirect({ to: "/auth" });
-
-    // Use the generic 'admin' role for WARPATH
-    const { data: hasAdmin } = await supabase.rpc('has_role', {
-      _user_id: user.id,
-      _role: 'admin' as any // Casting as any because generated types might still be stale
-    });
-
-    if (!hasAdmin) {
-      throw redirect({ to: "/dashboard" });
-    }
-  },
   component: AdminDashboard,
 });
 
@@ -30,7 +17,7 @@ function AdminDashboard() {
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
+        <Card className="hover:border-primary/50 transition-colors">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-primary" />
@@ -42,10 +29,15 @@ function AdminDashboard() {
             <div className="space-y-4">
               <div className="p-4 border rounded-lg bg-muted/50 flex items-center justify-between">
                 <div>
-                  <div className="font-bold">قائمة المستخدمين</div>
-                  <div className="text-xs text-muted-foreground italic">سيتم تفعيلها في Phase 02</div>
+                  <div className="font-bold">إدارة الأدوار</div>
+                  <div className="text-xs text-muted-foreground">تغيير صلاحيات SUPER_ADMIN و ADMIN و USER</div>
                 </div>
-                <Shield className="w-4 h-4 text-muted-foreground" />
+                <Link to="/admin/users">
+                  <Button size="sm" variant="outline">
+                    فتح الإدارة
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </CardContent>
@@ -60,9 +52,9 @@ function AdminDashboard() {
             <CardDescription>إدارة الاتصال مع Windows Agents</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-2 p-4 text-sm bg-warning/10 text-warning-foreground border border-warning/20 rounded-lg">
+            <div className="flex items-center gap-2 p-4 text-sm bg-muted/50 text-muted-foreground border border-dashed rounded-lg">
               <AlertTriangle className="w-4 h-4" />
-              <span>لا توجد مفاتيح نشطة حالياً.</span>
+              <span>متاح في المرحلة القادمة (Phase 03).</span>
             </div>
           </CardContent>
         </Card>
