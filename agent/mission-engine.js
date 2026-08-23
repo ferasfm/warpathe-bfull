@@ -10,13 +10,13 @@ class MissionEngine {
         this.watchdog = new WatchdogService(logger, agent);
     }
 
-    async executeMission(emulatorId, missionRunId, steps) {
+    async executeMission(emulatorId, adbSerial, missionRunId, steps) {
         if (this.runningMissions.has(emulatorId)) {
             throw new Error(`DEVICE_BUSY: Mission already running on emulator ${emulatorId}`);
         }
 
         this.runningMissions.set(emulatorId, missionRunId);
-        this.logger.info('Starting mission execution', { emulatorId, missionRunId, stepCount: steps.length });
+        this.logger.info('Starting mission execution', { emulatorId, adbSerial, missionRunId, stepCount: steps.length });
 
         try {
             let currentStepIndex = 0;
@@ -24,7 +24,7 @@ class MissionEngine {
                 const step = steps[currentStepIndex];
                 
                 // Watchdog Monitor before step
-                const health = await this.watchdog.monitor(emulatorId, missionRunId, step, steps);
+                const health = await this.watchdog.monitor(adbSerial, missionRunId, step, steps);
                 if (health.status === 'RECOVERED') {
                     if (health.resumeAction === 'RESTART_MISSION') {
                         currentStepIndex = 0;
@@ -46,7 +46,7 @@ class MissionEngine {
                 await this.reportStepProgress(missionRunId, step.id, 'RUNNING');
 
                 try {
-                    const result = await this.executeStep(emulatorId, step);
+                    const result = await this.executeStep(adbSerial, step);
                     
                     if (result.status === 'SUCCESS') {
                         await this.reportStepProgress(missionRunId, step.id, 'COMPLETED', result.payload);
@@ -69,7 +69,7 @@ class MissionEngine {
                     this.logger.error(`Step execution failed`, { stepId: step.id, error: stepError.message });
                     
                     // Attempt recovery on step failure
-                    const recovery = await this.watchdog.handleRecovery(emulatorId, missionRunId, 'STEP_FAILURE', step, steps);
+                    const recovery = await this.watchdog.handleRecovery(adbSerial, missionRunId, 'STEP_FAILURE', step, steps);
                     if (recovery.status === 'RECOVERED') {
                         if (recovery.resumeAction === 'RETRY_CURRENT_STEP') {
                             continue; // Retry same index
@@ -97,7 +97,7 @@ class MissionEngine {
         }
     }
 
-    async executeStep(emulatorId, step) {
+    async executeStep(adbSerial, step) {
         const { step_type, params } = step;
 
         switch (step_type) {
@@ -107,20 +107,20 @@ class MissionEngine {
                 return { status: 'SUCCESS' };
 
             case 'SCREENSHOT':
-                const buffer = await this.agent.screenshot.capture(emulatorId);
+                const buffer = await this.agent.screenshot.capture(adbSerial);
                 const validation = await this.agent.screenshot.validate(buffer);
                 if (!validation.valid) throw new Error(validation.error);
                 return { status: 'SUCCESS', payload: { screenshot: buffer.toString('base64') } };
 
             case 'FIND_IMAGE':
-                return await this.handleFindImage(emulatorId, params, step.missionRunId);
+                return await this.handleFindImage(adbSerial, params, step.missionRunId);
 
 
             case 'TAP':
-                return await this.handleTap(emulatorId, params);
+                return await this.handleTap(adbSerial, params);
 
             case 'CONDITION':
-                return await this.handleCondition(emulatorId, params);
+                return await this.handleCondition(adbSerial, params);
 
             case 'END':
                 return { status: 'SUCCESS' };
@@ -130,7 +130,7 @@ class MissionEngine {
         }
     }
 
-    async handleFindImage(emulatorId, params, missionRunId) {
+    async handleFindImage(adbSerial, params, missionRunId) {
         const { 
             assetUrl, 
             threshold = 0.8, 
@@ -147,7 +147,7 @@ class MissionEngine {
 
         while (attempt <= retries) {
             try {
-                const buffer = await this.agent.screenshot.capture(emulatorId);
+                const buffer = await this.agent.screenshot.capture(adbSerial);
                 const validation = await this.agent.screenshot.validate(buffer);
                 if (!validation.valid) throw new Error(validation.error);
 
@@ -169,7 +169,7 @@ class MissionEngine {
                         screenshotBase64, 
                         aiPrompt, 
                         missionRunId, 
-                        emulatorId
+                        adbSerial
                     );
 
                     if (aiResult.detected && aiResult.confidence >= (params.aiThreshold || 0.7)) {
@@ -196,7 +196,7 @@ class MissionEngine {
     }
 
 
-    async handleTap(emulatorId, params) {
+    async handleTap(adbSerial, params) {
         const { x, y, useVisionResult } = params;
         let tapX = x;
         let tapY = y;

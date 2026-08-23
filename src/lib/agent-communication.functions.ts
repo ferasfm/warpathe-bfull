@@ -364,11 +364,12 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
       .from("agent_commands")
       .insert({
         agent_id: data.agentId,
-        device_id: data.emulatorId,
+        device_id: data.emulatorId, // This is used to look up the correct queue, but we need the serial in the payload
         command_type: "EXECUTE_MISSION",
         status: "PENDING",
         payload: {
           emulatorId: data.emulatorId,
+          adbSerial: template.adb_serial, // We need to get this from the emulator table
           missionRunId: run.id,
           steps: steps
         }
