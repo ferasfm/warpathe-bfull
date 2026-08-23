@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Settings2, Bell, Shield, User } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/settings/index")({
+export const Route = createFileRoute("/_authenticated/settings/")({
   component: SettingsPage,
 });
 
