@@ -18,8 +18,10 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as AuthenticatedAdminVisionRouteImport } from './routes/_authenticated/admin/vision'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
 import { Route as AuthenticatedAdminRecoveryRouteImport } from './routes/_authenticated/admin/recovery'
+import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin/logs'
 import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
 import { Route as AuthenticatedAdminFarmsRouteImport } from './routes/_authenticated/admin/farms'
 import { Route as AuthenticatedAdminEmulatorsRouteImport } from './routes/_authenticated/admin/emulators'
@@ -76,6 +78,12 @@ const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   path: '/admin/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminResourcesRoute =
   AuthenticatedAdminResourcesRouteImport.update({
     id: '/admin/resources',
@@ -88,6 +96,11 @@ const AuthenticatedAdminRecoveryRoute =
     path: '/admin/recovery',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
+  id: '/admin/logs',
+  path: '/admin/logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAdminFleetsRoute =
   AuthenticatedAdminFleetsRouteImport.update({
     id: '/admin/fleets',
@@ -145,8 +158,10 @@ export interface FileRoutesByFullPath {
   '/admin/emulators': typeof AuthenticatedAdminEmulatorsRoute
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
+  '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/recovery': typeof AuthenticatedAdminRecoveryRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vision': typeof AuthenticatedAdminVisionRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -165,8 +180,10 @@ export interface FileRoutesByTo {
   '/admin/emulators': typeof AuthenticatedAdminEmulatorsRoute
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
+  '/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/admin/recovery': typeof AuthenticatedAdminRecoveryRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vision': typeof AuthenticatedAdminVisionRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -187,8 +204,10 @@ export interface FileRoutesById {
   '/_authenticated/admin/emulators': typeof AuthenticatedAdminEmulatorsRoute
   '/_authenticated/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/_authenticated/admin/fleets': typeof AuthenticatedAdminFleetsRoute
+  '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
   '/_authenticated/admin/recovery': typeof AuthenticatedAdminRecoveryRoute
   '/_authenticated/admin/resources': typeof AuthenticatedAdminResourcesRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/vision': typeof AuthenticatedAdminVisionRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -209,8 +228,10 @@ export interface FileRouteTypes {
     | '/admin/emulators'
     | '/admin/farms'
     | '/admin/fleets'
+    | '/admin/logs'
     | '/admin/recovery'
     | '/admin/resources'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin/vision'
     | '/api/public/manifest'
@@ -229,8 +250,10 @@ export interface FileRouteTypes {
     | '/admin/emulators'
     | '/admin/farms'
     | '/admin/fleets'
+    | '/admin/logs'
     | '/admin/recovery'
     | '/admin/resources'
+    | '/admin/settings'
     | '/admin/users'
     | '/admin/vision'
     | '/api/public/manifest'
@@ -250,8 +273,10 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/emulators'
     | '/_authenticated/admin/farms'
     | '/_authenticated/admin/fleets'
+    | '/_authenticated/admin/logs'
     | '/_authenticated/admin/recovery'
     | '/_authenticated/admin/resources'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/vision'
     | '/api/public/manifest'
@@ -334,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/resources': {
       id: '/_authenticated/admin/resources'
       path: '/admin/resources'
@@ -346,6 +378,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/recovery'
       fullPath: '/admin/recovery'
       preLoaderRoute: typeof AuthenticatedAdminRecoveryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/logs': {
+      id: '/_authenticated/admin/logs'
+      path: '/admin/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AuthenticatedAdminLogsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/fleets': {
@@ -414,8 +453,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminEmulatorsRoute: typeof AuthenticatedAdminEmulatorsRoute
   AuthenticatedAdminFarmsRoute: typeof AuthenticatedAdminFarmsRoute
   AuthenticatedAdminFleetsRoute: typeof AuthenticatedAdminFleetsRoute
+  AuthenticatedAdminLogsRoute: typeof AuthenticatedAdminLogsRoute
   AuthenticatedAdminRecoveryRoute: typeof AuthenticatedAdminRecoveryRoute
   AuthenticatedAdminResourcesRoute: typeof AuthenticatedAdminResourcesRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminVisionRoute: typeof AuthenticatedAdminVisionRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -432,8 +473,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminEmulatorsRoute: AuthenticatedAdminEmulatorsRoute,
   AuthenticatedAdminFarmsRoute: AuthenticatedAdminFarmsRoute,
   AuthenticatedAdminFleetsRoute: AuthenticatedAdminFleetsRoute,
+  AuthenticatedAdminLogsRoute: AuthenticatedAdminLogsRoute,
   AuthenticatedAdminRecoveryRoute: AuthenticatedAdminRecoveryRoute,
   AuthenticatedAdminResourcesRoute: AuthenticatedAdminResourcesRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminVisionRoute: AuthenticatedAdminVisionRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
