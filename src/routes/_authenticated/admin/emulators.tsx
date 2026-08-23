@@ -86,10 +86,11 @@ function AdminEmulatorsPage() {
     };
 
     if (editingEmulator) {
-      updateMutation.mutate({ id: editingEmulator.id, ...data });
+      updateMutation.mutate({ data: { id: editingEmulator.id, ...data } });
     } else {
-      createMutation.mutate(data);
+      createMutation.mutate({ data });
     }
+
   };
 
   return (
@@ -175,8 +176,9 @@ function AdminEmulatorsPage() {
                         className="text-destructive"
                         onClick={() => {
                           if (confirm('Are you sure you want to delete this emulator record?')) {
-                            deleteMutation.mutate({ id: emu.id });
+                            deleteMutation.mutate({ data: { id: emu.id } });
                           }
+
                         }}
                       >
                         <Trash2 className="w-4 h-4" />
