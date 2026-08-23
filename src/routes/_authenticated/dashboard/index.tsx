@@ -1,50 +1,163 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Server, Cpu, Globe } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { getUserDashboardData } from "@/lib/dashboard.functions";
+import { 
+  LayoutDashboard, 
+  Sprout, 
+  Activity, 
+  Settings, 
+  Box,
+  AlertCircle
+} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_authenticated/dashboard/")({
-  component: DashboardPage,
+  component: UserDashboard,
 });
 
-function DashboardPage() {
+function UserDashboard() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["user-dashboard"],
+    queryFn: () => getUserDashboardData(),
+  });
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-48" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+          <Skeleton className="h-32" />
+        </div>
+        <Skeleton className="h-64" />
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] text-center">
+        <AlertCircle className="w-12 h-12 text-destructive mb-4" />
+        <h2 className="text-2xl font-bold">Error loading dashboard</h2>
+        <p className="text-muted-foreground">Please try again later.</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-6" dir="rtl">
+    <div className="space-y-8 animate-in fade-in duration-500">
       <div>
-        <h1 className="text-3xl font-black tracking-tight">لوحة التحكم</h1>
-        <p className="text-muted-foreground mt-1">نظرة عامة على حالة منصة WARPATH</p>
+        <h1 className="text-3xl font-black tracking-tighter">Welcome, {data.user.fullName}</h1>
+        <p className="text-muted-foreground">Manage your farms and automation status.</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="الحالات النشطة" value="0" icon={<Activity className="w-4 h-4" />} />
-        <StatCard title="الوكلاء المتصلون" value="0" icon={<Server className="w-4 h-4" />} />
-        <StatCard title="إجمالي العمليات" value="0" icon={<Cpu className="w-4 h-4" />} />
-        <StatCard title="وقت التشغيل" value="100%" icon={<Globe className="w-4 h-4" />} />
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Assigned Farms</CardTitle>
+            <Sprout className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data.stats.totalFarms}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Active Farms</CardTitle>
+            <Activity className="h-4 w-4 text-primary" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{data.stats.activeFarms}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium">Global Status</CardTitle>
+            <Badge variant="secondary">{data.automationStatus}</Badge>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">IDLE</div>
+          </CardContent>
+        </Card>
       </div>
 
-      <Card className="col-span-4">
-        <CardHeader>
-          <CardTitle>حالة النظام المباشرة</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[200px] flex items-center justify-center border-2 border-dashed rounded-lg text-muted-foreground">
-            بانتظار اتصال الوكيل (Phase 02)
+      {/* Farms List */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Sprout className="w-5 h-5" />
+          My Farms
+        </h2>
+        
+        {data.farms.length === 0 ? (
+          <Card className="bg-muted/50 border-dashed">
+            <CardContent className="py-12 flex flex-col items-center justify-center text-center">
+              <Box className="w-12 h-12 text-muted-foreground mb-4 opacity-20" />
+              <p className="text-muted-foreground">No farms assigned yet.</p>
+              <p className="text-xs text-muted-foreground/60">Contact an administrator to get access.</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {data.farms.map((farm) => (
+              <Card key={farm.id} className="hover:shadow-md transition-shadow">
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <CardTitle className="text-lg">{farm.name}</CardTitle>
+                      <CardDescription>{farm.accountName}</CardDescription>
+                    </div>
+                    <Badge variant={farm.status === 'ACTIVE' ? 'default' : 'secondary'}>
+                      {farm.status || 'INACTIVE'}
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex justify-between items-center text-sm">
+                  <div className="flex gap-4 text-muted-foreground">
+                    <span className="flex items-center gap-1">
+                      <Box className="w-4 h-4" />
+                      {farm.fleetCount} Fleets
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xs block text-muted-foreground uppercase mb-1">Automation</span>
+                    <Badge variant="outline" className="text-[10px] font-bold">
+                      {farm.automationStatus}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+        )}
+      </div>
 
-function StatCard({ title, value, icon }: { title: string; value: string; icon: React.ReactNode }) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        {icon}
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-      </CardContent>
-    </Card>
+      {/* Mission Config Placeholder */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold flex items-center gap-2">
+          <Settings className="w-5 h-5" />
+          Available Missions
+        </h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {data.missions.length > 0 ? (
+            data.missions.map(mission => (
+              <Card key={mission.id} className="bg-accent/50">
+                <CardHeader className="p-4">
+                  <CardTitle className="text-sm">{mission.name}</CardTitle>
+                  {mission.description && (
+                    <CardDescription className="text-xs line-clamp-1">{mission.description}</CardDescription>
+                  )}
+                </CardHeader>
+              </Card>
+            ))
+          ) : (
+            <p className="text-muted-foreground text-sm italic">No active missions available.</p>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
