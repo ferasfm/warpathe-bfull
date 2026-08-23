@@ -26,8 +26,16 @@ export function Sidebar() {
         
         {isAdmin && (
           <>
-            <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4" />} label="الإدارة" />
-            <NavItem to="/admin/users" icon={<Users className="w-4 h-4" />} label="المستخدمين" />
+            <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4" />} label="Dashboard" />
+            <NavItem to="/admin/users" icon={<Users className="w-4 h-4" />} label="Users" />
+            <NavItem to="/admin/accounts" icon={<ShieldCheck className="w-4 h-4" />} label="Accounts & Farms" />
+            <NavItem to="/admin/resources" icon={<ShieldCheck className="w-4 h-4" />} label="Resources & Fleets" />
+            <NavItem to="/admin/missions" icon={<ShieldCheck className="w-4 h-4" />} label="Missions" />
+            <NavItem to="/admin/agents" icon={<ShieldCheck className="w-4 h-4" />} label="Agents & Devices" />
+            <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4" />} label="Vision" />
+            <NavItem to="/admin/recovery" icon={<ShieldCheck className="w-4 h-4" />} label="Recovery" />
+            <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4" />} label="Logs" />
+            <NavItem to="/admin/settings" icon={<Settings className="w-4 h-4" />} label="Settings" />
           </>
         )}
         

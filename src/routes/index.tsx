@@ -5,111 +5,143 @@ import { supabase } from "@/integrations/supabase/client";
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            WARPATH — PHASE 03E
+                                            WARPATH — PHASE 04A
 
-DATABASE FINAL VALIDATION
+ADMIN DASHBOARD
 
-Phases 03A, 03B, 03C and 03D are completed.
+Phase 03 database architecture is fully completed and validated.
 
-Do NOT create new features.
+Now implement ONLY Phase 04A.
 
-Do NOT redesign the database.
+Do not implement Phase 04B or any later phase.
 
-This phase is ONLY for validation and fixing confirmed database problems.
+==================================================
 
-CHECK THE COMPLETE DATABASE:
+OBJECTIVE
 
-1. Authentication and user roles
+==================================================
 
-2. Accounts
+Build the main Admin Dashboard using the existing database.
 
-3. Farms
+Do NOT create new database architecture unless absolutely required to fix a confirmed issue.
 
-4. Farm users
+Do NOT modify existing authentication or RLS.
 
-5. Resources
+==================================================
 
-6. Resource assets
+ADMIN DASHBOARD
 
-7. Fleets
+==================================================
 
-8. Fleet assignments
+The route is:
 
-9. Missions
+/admin
 
-10. Mission templates
+Create a professional administrative dashboard.
 
-11. Mission steps
+Show summary cards for:
 
-12. Mission runs
+- Total Users
 
-13. Agents
+- Total Accounts
 
-14. Devices
+- Total Farms
 
-15. Emulators
+- Total Fleets
 
-16. Vision assets
+- Total Missions
 
-17. Vision rules
+- Total Agents
 
-18. Recovery rules
+- Total Devices
 
-19. Agent commands
+- Total Emulators
 
-20. Agent events
+Show operational status cards:
 
-21. Audit logs
+- Online Agents
 
-CHECK:
+- Offline Agents
 
-- Foreign keys
+- Active Missions
 
-- Primary keys
+- Failed Missions
 
-- Unique constraints
+Show a recent activity section using existing audit/event data where appropriate.
 
-- NOT NULL constraints
+Show a system status section:
 
-- Indexes
+Database
 
-- Relationships
+Authentication
 
-- RLS policies
+Agents
 
-- Role permissions
+Devices
 
-- Data isolation
+Missions
 
-- Cascade behavior
+Use clear status indicators.
 
-- Migration consistency
+==================================================
 
-SECURITY TESTS:
+NAVIGATION
 
-USER must not be able to:
+==================================================
 
-- access another user's farms
+The Admin sidebar should contain:
 
-- modify another user's farms
+Dashboard
 
-- modify roles
+Users
 
-- access Agent administration
+Accounts & Farms
 
-- access Vision administration
+Resources & Fleets
 
-- access Recovery administration
+Missions
 
-- modify Audit Logs
+Agents & Devices
 
-- modify System configuration
+Vision
 
-ADMIN must have the intended administrative access.
+Recovery
 
-SUPER_ADMIN must have full administrative access.
+Logs
 
-IMPORTANT:
+Settings
+
+For this phase:
+
+ONLY Dashboard is functional.
+
+The other navigation items may be placeholders.
+
+Do not implement their functionality yet.
+
+==================================================
+
+SECURITY
+
+==================================================
+
+Only:
+
+SUPER_ADMIN
+
+ADMIN
+
+may access /admin.
+
+USER must remain blocked.
+
+Do not weaken the existing RLS or authorization.
+
+==================================================
+
+IMPORTANT
+
+==================================================
 
 Do NOT implement:
 
@@ -117,7 +149,7 @@ Do NOT implement:
 
 - ADB
 
-- MuMu
+- MuMu control
 
 - Image Recognition
 
@@ -129,45 +161,43 @@ Do NOT implement:
 
 - Recovery execution
 
-- UI features
+- User management functionality
 
-Only fix confirmed database/security problems.
+- Farm management functionality
 
-Do not change working functionality unnecessarily.
+- Resource management functionality
 
-After validation report:
+Those belong to later phases.
 
-DATABASE STATUS:
+Do not delete existing functionality.
 
-PASS / FAIL
+Do not redesign the entire application.
 
-SECURITY STATUS:
+Use the existing WARPATH design system.
 
-PASS / FAIL
+==================================================
 
-RLS STATUS:
+ACCEPTANCE TESTS
 
-PASS / FAIL
+==================================================
 
-RELATIONSHIPS:
+1. ADMIN can open /admin.
 
-PASS / FAIL
+2. SUPER_ADMIN can open /admin.
 
-MIGRATIONS:
+3. USER cannot open /admin.
 
-PASS / FAIL
+4. Dashboard statistics load from the database.
 
-BUILD:
+5. No fake statistics are used when real database data is available.
 
-PASS / FAIL
+6. Dashboard does not expose unauthorized information.
 
-FIXES MADE:
+7. Existing authentication works.
 
-...
+8. Existing RLS works.
 
-REMAINING ISSUES:
-
-...
+9. Application builds successfully.
 
 Update:
 
@@ -175,11 +205,11 @@ Update:
 
 Set:
 
-Phase 03 = COMPLETED
+Phase 04A = COMPLETED
 
-Next Phase = 04
+Next Phase = 04B
 
-STOP AFTER PHASE 03E.
+STOP AFTER PHASE 04A.
 */
 
 export const Route = createFileRoute("/")({
