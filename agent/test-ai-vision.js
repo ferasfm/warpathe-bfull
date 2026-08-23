@@ -40,8 +40,9 @@ const logger = {
 async function runTest() {
     console.log('--- Starting Phase 12 AI Vision Fallback Test ---');
     
-    const VisionService = require('./agent/vision-service');
-    const MissionEngine = require('./agent/mission-engine');
+    const VisionService = require('./vision-service');
+    const MissionEngine = require('./mission-engine');
+
     
     const agent = new MockAgent();
     const vision = new VisionService(logger, agent);
