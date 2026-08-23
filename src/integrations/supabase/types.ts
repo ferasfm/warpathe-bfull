@@ -14,30 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      announcements: {
-        Row: {
-          created_at: string
-          id: string
-          is_active: boolean
-          message: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          is_active?: boolean
-          message: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          is_active?: boolean
-          message?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       login_attempts: {
         Row: {
           attempt_time: string | null
@@ -56,104 +32,6 @@ export type Database = {
           id?: string
           ip_address?: string
           is_successful?: boolean | null
-        }
-        Relationships: []
-      }
-      manager_group_members: {
-        Row: {
-          created_at: string
-          group_id: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          group_id: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          group_id?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "manager_group_members_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "manager_groups"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      manager_group_stations: {
-        Row: {
-          created_at: string
-          group_id: string
-          id: string
-          station_id: string
-        }
-        Insert: {
-          created_at?: string
-          group_id: string
-          id?: string
-          station_id: string
-        }
-        Update: {
-          created_at?: string
-          group_id?: string
-          id?: string
-          station_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "manager_group_stations_group_id_fkey"
-            columns: ["group_id"]
-            isOneToOne: false
-            referencedRelation: "manager_groups"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "manager_group_stations_station_id_fkey"
-            columns: ["station_id"]
-            isOneToOne: false
-            referencedRelation: "stations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      manager_groups: {
-        Row: {
-          can_edit_arrival: boolean
-          can_edit_fuels: boolean
-          can_edit_station_info: boolean
-          created_at: string
-          description: string | null
-          id: string
-          name: string
-          updated_at: string
-        }
-        Insert: {
-          can_edit_arrival?: boolean
-          can_edit_fuels?: boolean
-          can_edit_station_info?: boolean
-          created_at?: string
-          description?: string | null
-          id?: string
-          name: string
-          updated_at?: string
-        }
-        Update: {
-          can_edit_arrival?: boolean
-          can_edit_fuels?: boolean
-          can_edit_station_info?: boolean
-          created_at?: string
-          description?: string | null
-          id?: string
-          name?: string
-          updated_at?: string
         }
         Relationships: []
       }
@@ -178,192 +56,6 @@ export type Database = {
         }
         Relationships: []
       }
-      site_settings: {
-        Row: {
-          key: string
-          updated_at: string | null
-          value: Json
-        }
-        Insert: {
-          key: string
-          updated_at?: string | null
-          value: Json
-        }
-        Update: {
-          key?: string
-          updated_at?: string | null
-          value?: Json
-        }
-        Relationships: []
-      }
-      station_audit_log: {
-        Row: {
-          action: string
-          actor_email: string | null
-          changes: Json | null
-          created_at: string
-          entity: string
-          fuel_type: Database["public"]["Enums"]["fuel_type"] | null
-          id: string
-          station_id: string | null
-          summary: string
-          user_id: string | null
-        }
-        Insert: {
-          action: string
-          actor_email?: string | null
-          changes?: Json | null
-          created_at?: string
-          entity: string
-          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
-          id?: string
-          station_id?: string | null
-          summary: string
-          user_id?: string | null
-        }
-        Update: {
-          action?: string
-          actor_email?: string | null
-          changes?: Json | null
-          created_at?: string
-          entity?: string
-          fuel_type?: Database["public"]["Enums"]["fuel_type"] | null
-          id?: string
-          station_id?: string | null
-          summary?: string
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "station_audit_log_station_id_fkey"
-            columns: ["station_id"]
-            isOneToOne: false
-            referencedRelation: "stations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      station_fuels: {
-        Row: {
-          expected_arrival: string | null
-          fuel_type: Database["public"]["Enums"]["fuel_type"]
-          id: string
-          is_available: boolean
-          note: string | null
-          station_id: string
-          updated_at: string
-        }
-        Insert: {
-          expected_arrival?: string | null
-          fuel_type: Database["public"]["Enums"]["fuel_type"]
-          id?: string
-          is_available?: boolean
-          note?: string | null
-          station_id: string
-          updated_at?: string
-        }
-        Update: {
-          expected_arrival?: string | null
-          fuel_type?: Database["public"]["Enums"]["fuel_type"]
-          id?: string
-          is_available?: boolean
-          note?: string | null
-          station_id?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "station_fuels_station_id_fkey"
-            columns: ["station_id"]
-            isOneToOne: false
-            referencedRelation: "stations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      stations: {
-        Row: {
-          address: string | null
-          city: string
-          created_at: string
-          google_maps_url: string | null
-          id: string
-          is_active: boolean
-          latitude: number | null
-          longitude: number | null
-          name: string
-          phone: string | null
-          region: string | null
-          updated_at: string
-          working_hours: string | null
-        }
-        Insert: {
-          address?: string | null
-          city: string
-          created_at?: string
-          google_maps_url?: string | null
-          id?: string
-          is_active?: boolean
-          latitude?: number | null
-          longitude?: number | null
-          name: string
-          phone?: string | null
-          region?: string | null
-          updated_at?: string
-          working_hours?: string | null
-        }
-        Update: {
-          address?: string | null
-          city?: string
-          created_at?: string
-          google_maps_url?: string | null
-          id?: string
-          is_active?: boolean
-          latitude?: number | null
-          longitude?: number | null
-          name?: string
-          phone?: string | null
-          region?: string | null
-          updated_at?: string
-          working_hours?: string | null
-        }
-        Relationships: []
-      }
-      user_confirmations: {
-        Row: {
-          created_at: string
-          fuel_type: Database["public"]["Enums"]["fuel_type"]
-          id: string
-          ip_address: unknown
-          is_available: boolean
-          station_id: string
-        }
-        Insert: {
-          created_at?: string
-          fuel_type: Database["public"]["Enums"]["fuel_type"]
-          id?: string
-          ip_address?: unknown
-          is_available: boolean
-          station_id: string
-        }
-        Update: {
-          created_at?: string
-          fuel_type?: Database["public"]["Enums"]["fuel_type"]
-          id?: string
-          ip_address?: unknown
-          is_available?: boolean
-          station_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_confirmations_station_id_fkey"
-            columns: ["station_id"]
-            isOneToOne: false
-            referencedRelation: "stations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_roles: {
         Row: {
           id: string
@@ -387,15 +79,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      can_manage_station: {
-        Args: { _station_id: string; _user_id: string }
-        Returns: boolean
-      }
       check_ip_blocked: { Args: { _ip: string }; Returns: boolean }
-      get_manager_permission: {
-        Args: { _perm: string; _station_id: string; _user_id: string }
-        Returns: boolean
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -405,7 +89,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "super_admin" | "station_manager"
+      app_role: "super_admin" | "station_manager" | "admin" | "user"
       fuel_type: "gasoline_95" | "gasoline_98" | "diesel" | "kerosene" | "gas"
     }
     CompositeTypes: {
@@ -534,7 +218,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["super_admin", "station_manager"],
+      app_role: ["super_admin", "station_manager", "admin", "user"],
       fuel_type: ["gasoline_95", "gasoline_98", "diesel", "kerosene", "gas"],
     },
   },
