@@ -3,15 +3,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Users, Shield, Key, AlertTriangle } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/admin/")({
-  beforeLoad: async ({ context }) => {
-    // Basic check for admin role using the has_role function
+export const Route = createFileRoute("/_authenticated/admin")({
+  beforeLoad: async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw redirect({ to: "/auth" });
 
+    // Use the generic 'admin' role for WARPATH
     const { data: hasAdmin } = await supabase.rpc('has_role', {
       _user_id: user.id,
-      _role: 'admin'
+      _role: 'admin' as any // Casting as any because generated types might still be stale
     });
 
     if (!hasAdmin) {
