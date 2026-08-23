@@ -55,7 +55,7 @@ export const getFarmDetails = createServerFn({ method: "GET" })
           *,
           fleet_assignments (
             *,
-            resources (name, code)
+            resources (id, name, code)
           )
         )
       `)
@@ -71,3 +71,109 @@ export const getFarmDetails = createServerFn({ method: "GET" })
       automationStatus: "IDLE"
     };
   });
+
+export const getActiveResources = createServerFn({ method: "GET" }).handler(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  const { data, error } = await supabase
+    .from("resources")
+    .select("*")
+    .eq("status", "ACTIVE")
+    .order("name");
+  
+  if (error) throw error;
+  return data;
+});
+
+export const saveFarmConfiguration = createServerFn({ method: "POST" })
+  .validator((data: { 
+    farmId: string, 
+    assignments: { fleetId: string, resourceId: string }[] 
+  }) => z.object({
+    farmId: z.string().uuid(),
+    assignments: z.array(z.object({
+      fleetId: z.string().uuid(),
+      resourceId: z.string().uuid()
+    }))
+  }).parse(data))
+  .handler(async ({ data: { farmId, assignments } }) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error("Unauthorized");
+
+    // 1. Verify farm ownership
+    const { data: farmUser } = await supabase
+      .from("farm_users")
+      .select("id")
+      .eq("farm_id", farmId)
+      .eq("user_id", session.user.id)
+      .single();
+
+    if (!farmUser) throw new Error("Unauthorized: Farm access denied");
+
+    // 2. Validate all fleets belong to the farm and resources exist
+    const fleetIds = assignments.map(a => a.fleetId);
+    const { data: validFleets } = await supabase
+      .from("fleets")
+      .select("id")
+      .eq("farm_id", farmId)
+      .in("id", fleetIds);
+
+    if (!validFleets || validFleets.length !== fleetIds.length) {
+      throw new Error("Invalid configuration: Some fleets do not belong to this farm");
+    }
+
+    // 3. Process assignments
+    for (const assignment of assignments) {
+      // Upsert fleet assignment
+      const { error: upsertError } = await supabase
+        .from("fleet_assignments")
+        .upsert({
+          farm_id: farmId,
+          fleet_id: assignment.fleetId,
+          resource_id: assignment.resourceId,
+          enabled: true,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'farm_id,fleet_id'
+        });
+
+      if (upsertError) throw upsertError;
+    }
+
+    return { success: true };
+  });
+
+export const getUserTasks = createServerFn({ method: "GET" }).handler(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  // Get missions (runs) for farms assigned to the user
+  const { data: farmUsers } = await supabase
+    .from("farm_users")
+    .select("farm_id")
+    .eq("user_id", session.user.id);
+
+  const farmIds = farmUsers?.map(fu => fu.farm_id) || [];
+
+  if (farmIds.length === 0) return [];
+
+  const { data: runs, error } = await supabase
+    .from("mission_runs")
+    .select(`
+      *,
+      farms (name),
+      missions (name)
+    `)
+    .in("farm_id", farmIds)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+
+  return runs?.map((run: any) => ({
+    ...run,
+    farmName: run.farms?.name || "Unknown",
+    missionName: run.missions?.name || "Unknown Task"
+  })) || [];
+});

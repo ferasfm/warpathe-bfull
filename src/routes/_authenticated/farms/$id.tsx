@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { getFarmDetails } from "@/lib/user-farms.functions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { getFarmDetails, getActiveResources, saveFarmConfiguration } from "@/lib/user-farms.functions";
 import { 
   Sprout, 
   Box, 
@@ -8,13 +8,24 @@ import {
   ArrowLeft,
   LayoutGrid,
   Info,
-  Layers
+  Layers,
+  Save,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/farms/$id")({
   component: FarmDetailsPage,
@@ -22,14 +33,71 @@ export const Route = createFileRoute("/_authenticated/farms/$id")({
 
 function FarmDetailsPage() {
   const { id } = Route.useParams();
+  const queryClient = useQueryClient();
+  const [config, setConfig] = useState<Record<string, string>>({});
 
-  const { data: farm, isLoading, error } = useQuery({
+  const { data: farm, isLoading: isLoadingFarm, error: farmError } = useQuery({
     queryKey: ["farm-details", id],
     queryFn: () => getFarmDetails({ data: id }),
     retry: false,
   });
 
-  if (isLoading) {
+  const { data: resources, isLoading: isLoadingResources } = useQuery({
+    queryKey: ["active-resources"],
+    queryFn: () => getActiveResources(),
+  });
+
+  const mutation = useMutation({
+    mutationFn: (data: { farmId: string, assignments: { fleetId: string, resourceId: string }[] }) => 
+      saveFarmConfiguration({ data }),
+    onSuccess: () => {
+      toast.success("Configuration saved successfully");
+      queryClient.invalidateQueries({ queryKey: ["farm-details", id] });
+    },
+    onError: (error: any) => {
+      toast.error(error.message || "Failed to save configuration");
+    }
+  });
+
+  useEffect(() => {
+    if (farm?.fleets) {
+      const initialConfig: Record<string, string> = {};
+      farm.fleets.forEach((fleet: any) => {
+        if (fleet.fleet_assignments && fleet.fleet_assignments.length > 0) {
+          initialConfig[fleet.id] = fleet.fleet_assignments[0].resource_id;
+        }
+      });
+      setConfig(initialConfig);
+    }
+  }, [farm]);
+
+  const handleSave = () => {
+    const assignments = Object.entries(config)
+      .filter(([_, resourceId]) => resourceId && resourceId !== "none")
+      .map(([fleetId, resourceId]) => ({
+        fleetId,
+        resourceId
+      }));
+
+    if (assignments.length === 0) {
+      toast.warning("Please configure at least one fleet");
+      return;
+    }
+
+    mutation.mutate({
+      farmId: id,
+      assignments
+    });
+  };
+
+  const handleResourceChange = (fleetId: string, resourceId: string) => {
+    setConfig(prev => ({
+      ...prev,
+      [fleetId]: resourceId
+    }));
+  };
+
+  if (isLoadingFarm) {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-32" />
@@ -44,7 +112,7 @@ function FarmDetailsPage() {
     );
   }
 
-  if (error || !farm) {
+  if (farmError || !farm) {
     return (
       <div className="max-w-md mx-auto py-12 space-y-4 text-center">
         <Alert variant="destructive">
@@ -63,9 +131,21 @@ function FarmDetailsPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
-      <div className="flex items-center gap-4">
+      <div className="flex items-center justify-between">
         <Button asChild variant="ghost" size="sm" className="-ml-2">
           <Link to="/farms"><ArrowLeft className="w-4 h-4 mr-2" /> Back</Link>
+        </Button>
+        <Button 
+          onClick={handleSave} 
+          disabled={mutation.isPending}
+          className="font-bold px-8"
+        >
+          {mutation.isPending ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4 mr-2" />
+          )}
+          Save Configuration
         </Button>
       </div>
 
@@ -105,11 +185,12 @@ function FarmDetailsPage() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Last Update</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground">Status</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xl font-semibold">
-              {new Date(farm.updated_at).toLocaleDateString()}
+            <div className="text-xl font-semibold flex items-center gap-2">
+              <div className={`w-2 h-2 rounded-full ${farm.status === 'ACTIVE' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+              {farm.status || 'INACTIVE'}
             </div>
           </CardContent>
         </Card>
@@ -120,7 +201,7 @@ function FarmDetailsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-lg font-bold text-muted-foreground italic">
-              DISCONNECTED
+              IDLE
             </div>
           </CardContent>
         </Card>
@@ -130,48 +211,53 @@ function FarmDetailsPage() {
         <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold flex items-center gap-2">
             <Layers className="w-6 h-6" />
-            Fleet Configurations
+            Fleet Configuration
             </h2>
-            <Badge variant="secondary" className="text-[10px]">READ-ONLY</Badge>
+            <Badge variant="secondary" className="text-[10px]">EDITABLE</Badge>
         </div>
 
         {farm.fleets.length === 0 ? (
           <Card className="bg-muted/50 border-dashed">
             <CardContent className="py-12 text-center text-muted-foreground">
-              No fleets configured for this farm.
+              No fleets configured for this farm by administrators.
             </CardContent>
           </Card>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {farm.fleets.map((fleet: any) => (
-              <Card key={fleet.id}>
-                <CardHeader className="pb-2 border-b mb-4">
+              <Card key={fleet.id} className="border-l-4 border-l-primary/40">
+                <CardHeader className="pb-2">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-base font-bold">Fleet #{fleet.fleet_number}</CardTitle>
-                    <Badge variant="outline">{fleet.status}</Badge>
+                    <CardTitle className="text-sm font-black tracking-tight">FLEET #{fleet.fleet_number}</CardTitle>
+                    <Badge variant="outline" className="text-[9px] uppercase">{fleet.status}</Badge>
                   </div>
-                  {fleet.name && <CardDescription>{fleet.name}</CardDescription>}
+                  {fleet.name && <CardDescription className="text-xs truncate">{fleet.name}</CardDescription>}
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest block mb-2">Assigned Resources</span>
-                      {fleet.fleet_assignments && fleet.fleet_assignments.length > 0 ? (
-                        <div className="space-y-2">
-                          {fleet.fleet_assignments.map((assignment: any) => (
-                            <div key={assignment.id} className="flex items-center justify-between p-2 rounded bg-accent/30 border border-accent">
-                              <span className="text-sm font-medium">{assignment.resources.name}</span>
-                              <code className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary">
-                                {assignment.resources.code}
-                              </code>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <span className="text-sm text-muted-foreground italic">No resource assigned</span>
-                      )}
-                    </div>
+                <CardContent className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Target Resource</label>
+                    <Select 
+                      value={config[fleet.id] || "none"} 
+                      onValueChange={(val) => handleResourceChange(fleet.id, val)}
+                    >
+                      <SelectTrigger className="h-9">
+                        <SelectValue placeholder="Select resource" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">Not Assigned</SelectItem>
+                        {resources?.map(res => (
+                          <SelectItem key={res.id} value={res.id}>{res.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
+                  
+                  {config[fleet.id] && config[fleet.id] !== "none" && (
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-primary animate-in fade-in zoom-in-95 duration-200">
+                      <Activity className="w-3 h-3" />
+                      READY TO DEPLOY
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -180,14 +266,14 @@ function FarmDetailsPage() {
       </div>
 
       {farm.notes && (
-        <Card className="bg-primary/5 border-primary/10">
-          <CardHeader>
-            <CardTitle className="text-sm font-bold flex items-center gap-2 italic">
-                <Info className="w-4 h-4" />
-                Farm Notes
+        <Card className="bg-muted/30 border-dashed">
+          <CardHeader className="py-3">
+            <CardTitle className="text-xs font-bold flex items-center gap-2 uppercase tracking-widest text-muted-foreground">
+                <Info className="w-3.5 h-3.5" />
+                Special Instructions
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm text-muted-foreground">
+          <CardContent className="text-sm">
             {farm.notes}
           </CardContent>
         </Card>
