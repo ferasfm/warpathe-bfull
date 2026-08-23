@@ -13,9 +13,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedFarmsIndexRouteImport } from './routes/_authenticated/farms/index'
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as AuthenticatedFarmsIdRouteImport } from './routes/_authenticated/farms/$id'
 import { Route as AuthenticatedAdminVisionRouteImport } from './routes/_authenticated/admin/vision'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
@@ -51,6 +53,11 @@ const AuthenticatedSettingsIndexRoute =
     path: '/settings/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFarmsIndexRoute = AuthenticatedFarmsIndexRouteImport.update({
+  id: '/farms/',
+  path: '/farms/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedDashboardIndexRoute =
   AuthenticatedDashboardIndexRouteImport.update({
     id: '/dashboard/',
@@ -66,6 +73,11 @@ const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   id: '/api/public/manifest',
   path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedFarmsIdRoute = AuthenticatedFarmsIdRouteImport.update({
+  id: '/farms/$id',
+  path: '/farms/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAdminVisionRoute =
   AuthenticatedAdminVisionRouteImport.update({
@@ -164,9 +176,11 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vision': typeof AuthenticatedAdminVisionRoute
+  '/farms/$id': typeof AuthenticatedFarmsIdRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/farms/': typeof AuthenticatedFarmsIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/admin/missions/$id': typeof AuthenticatedAdminMissionsIdRoute
   '/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
@@ -186,9 +200,11 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vision': typeof AuthenticatedAdminVisionRoute
+  '/farms/$id': typeof AuthenticatedFarmsIdRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/farms': typeof AuthenticatedFarmsIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/admin/missions/$id': typeof AuthenticatedAdminMissionsIdRoute
   '/admin/missions': typeof AuthenticatedAdminMissionsIndexRoute
@@ -210,9 +226,11 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/vision': typeof AuthenticatedAdminVisionRoute
+  '/_authenticated/farms/$id': typeof AuthenticatedFarmsIdRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/farms/': typeof AuthenticatedFarmsIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/admin/missions/$id': typeof AuthenticatedAdminMissionsIdRoute
   '/_authenticated/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
@@ -234,9 +252,11 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/admin/vision'
+    | '/farms/$id'
     | '/api/public/manifest'
     | '/admin/'
     | '/dashboard/'
+    | '/farms/'
     | '/settings/'
     | '/admin/missions/$id'
     | '/admin/missions/'
@@ -256,9 +276,11 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/users'
     | '/admin/vision'
+    | '/farms/$id'
     | '/api/public/manifest'
     | '/admin'
     | '/dashboard'
+    | '/farms'
     | '/settings'
     | '/admin/missions/$id'
     | '/admin/missions'
@@ -279,9 +301,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/vision'
+    | '/_authenticated/farms/$id'
     | '/api/public/manifest'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/farms/'
     | '/_authenticated/settings/'
     | '/_authenticated/admin/missions/$id'
     | '/_authenticated/admin/missions/'
@@ -324,6 +348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/farms/': {
+      id: '/_authenticated/farms/'
+      path: '/farms'
+      fullPath: '/farms/'
+      preLoaderRoute: typeof AuthenticatedFarmsIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/dashboard/': {
       id: '/_authenticated/dashboard/'
       path: '/dashboard'
@@ -344,6 +375,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/manifest'
       preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/farms/$id': {
+      id: '/_authenticated/farms/$id'
+      path: '/farms/$id'
+      fullPath: '/farms/$id'
+      preLoaderRoute: typeof AuthenticatedFarmsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/vision': {
       id: '/_authenticated/admin/vision'
@@ -459,8 +497,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminVisionRoute: typeof AuthenticatedAdminVisionRoute
+  AuthenticatedFarmsIdRoute: typeof AuthenticatedFarmsIdRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedFarmsIndexRoute: typeof AuthenticatedFarmsIndexRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedAdminMissionsIdRoute: typeof AuthenticatedAdminMissionsIdRoute
   AuthenticatedAdminMissionsIndexRoute: typeof AuthenticatedAdminMissionsIndexRoute
@@ -479,8 +519,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminVisionRoute: AuthenticatedAdminVisionRoute,
+  AuthenticatedFarmsIdRoute: AuthenticatedFarmsIdRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedFarmsIndexRoute: AuthenticatedFarmsIndexRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedAdminMissionsIdRoute: AuthenticatedAdminMissionsIdRoute,
   AuthenticatedAdminMissionsIndexRoute: AuthenticatedAdminMissionsIndexRoute,
