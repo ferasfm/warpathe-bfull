@@ -32,19 +32,32 @@ export const getAllUsers = createServerFn({ method: "GET" })
       throw new Error("Forbidden");
     }
 
-    const { data, error } = await supabase
+    // Fetch profiles and roles separately to avoid relationship schema cache issues
+    const { data: profiles, error: profileError } = await supabase
       .from("profiles")
       .select(`
         id,
         full_name,
         email,
         created_at,
-        updated_at,
-        user_roles (role)
+        updated_at
       `);
 
-    if (error) throw error;
-    return data;
+    if (profileError) throw profileError;
+
+    const { data: allRoles, error: roleError } = await supabase
+      .from("user_roles")
+      .select("user_id, role");
+
+    if (roleError) throw roleError;
+
+    // Map roles to profiles
+    const usersWithRoles = profiles.map(profile => ({
+      ...profile,
+      user_roles: allRoles.filter(r => r.user_id === profile.id)
+    }));
+
+    return usersWithRoles;
   });
 
 export const updateUserRole = createServerFn({ method: "POST" })
