@@ -1,10 +1,10 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 11: Real-time Mission Monitoring & Analytics
+Phase 12: Recovery & Watchdog System
 
 ## Status
-COMPLETED (Phase 10)
+PLANNING (Phase 12)
 
 ## Completed
 - **Phase 01 & 02**: RBAC, Auth, User Management, and Layout Foundation.
@@ -42,7 +42,7 @@ Phase 09: physical drivers and image recognition infrastructure.
     - Hardened security for remote diagnostic screenshot requests.
 
 ## Next Phase
-Phase 11: Real-time Mission Monitoring & Analytics
+Phase 12: Recovery & Watchdog System
 
 - **Phase 10**: Mission Execution Foundation.
     - Implemented `MissionEngine` in the Windows Agent for sequential logic.
@@ -53,3 +53,24 @@ Phase 11: Real-time Mission Monitoring & Analytics
     - Verified step progress reporting and mission completion/failure telemetry.
     - Hardened ADB layer with `tap` and `swipe` allowlisting.
     - Verified retry, timeout, and coordinate-based interaction.
+
+- **Phase 11**: Real-time Mission Monitoring & Analytics (Pending).
+
+- **Phase 12**: Recovery & Watchdog System (Proposed Flow).
+    ```text
+    Mission
+       ↓
+    تعمل بشكل طبيعي
+       ↓
+    ظهرت نافذة غير متوقعة
+       ↓
+    Watchdog يكتشفها
+       ↓
+    Recovery Rule
+       ↓
+    معالجة الحالة
+       ↓
+    إعادة المهمة إلى نقطة آمنة
+       ↓
+    Mission continues
+    ```
