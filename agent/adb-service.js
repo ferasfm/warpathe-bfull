@@ -31,18 +31,18 @@ class AdbService {
     }
 
     async execute(command, serial = null) {
-        // Simple allowlist check
-        const isAllowed = this.allowedCommands.some(allowed => command.startsWith(allowed));
-        if (!isAllowed) {
-            throw new Error(`Command not allowed: ${command}`);
-        }
-
-        // For mission execution/interactive commands, we MUST have a serial
+        // Strict target serial check for interactive commands
         const interactiveCommands = ['shell input', 'exec-out', 'shell wm'];
         const isInteractive = interactiveCommands.some(c => command.startsWith(c));
         
         if (isInteractive && !serial) {
-            throw new Error(`Device serial is required for interactive command: ${command}`);
+            throw new Error(`SECURITY_VIOLATION: Device serial is required for interactive command: ${command}`);
+        }
+
+        // Simple allowlist check
+        const isAllowed = this.allowedCommands.some(allowed => command.startsWith(allowed));
+        if (!isAllowed) {
+            throw new Error(`SECURITY_VIOLATION: Command not allowed: ${command}`);
         }
 
         const fullCommand = serial ? `"${this.adbPath}" -s ${serial} ${command}` : `"${this.adbPath}" ${command}`;

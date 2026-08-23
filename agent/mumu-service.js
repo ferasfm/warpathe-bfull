@@ -18,6 +18,8 @@ class MuMuService {
         // For Phase 14, we'll scan the standard MuMu port range: 7555, 7556, 7557...
         const commonPorts = [7555, 7556, 7557, 7558, 7559, 7560];
         const discovered = [];
+        // SECURITY_LIMIT: Only scan known safe ports to avoid probing alarms
+        const safePorts = [7555, 7556, 7557, 7558];
 
         // This is still a hybrid logic for the sandbox/Node agent
         return discovered; 
