@@ -1,10 +1,10 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 08: Operational Mission Engine
+Phase 09: Physical Automation Drivers (Physical Control)
 
 ## Status
-IN PROGRESS
+COMPLETED (Phase 08)
 
 ## Completed
 - **Phase 01 & 02**: RBAC, Auth, User Management, and Layout Foundation.
@@ -22,7 +22,16 @@ IN PROGRESS
     - Verified registration and telemetry against the live API.
 
 ## Next Phase
-Phase 08: Implementation of ADB and MuMu physical automation drivers.
+Phase 09: physical drivers and image recognition infrastructure.
+
+- **Phase 08**: MuMu Player and ADB Integration.
+    - Implemented `AdbService` and `MuMuService` in the Windows Agent.
+    - Extended Agent with background discovery of devices and emulators.
+    - Added secure ADB command dispatcher (allowlisted).
+    - Integrated discovery telemetry with the backend via events.
+    - Verified Admin UI displays real-time device/emulator data.
+    - Hardened command execution with security allowlists.
+
 
 
 

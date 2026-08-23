@@ -34,7 +34,7 @@ class AdbService {
             throw new Error(`Command not allowed: ${command}`);
         }
 
-        const fullCommand = serial ? `${this.adbPath} -s ${serial} ${command}` : `${this.adbPath} ${command}`;
+        const fullCommand = serial ? `"${this.adbPath}" -s ${serial} ${command}` : `"${this.adbPath}" ${command}`;
         
         try {
             this.logger.debug(`Executing ADB command: ${fullCommand}`);
@@ -56,8 +56,10 @@ class AdbService {
         for (let i = 1; i < lines.length; i++) {
             const line = lines[i].trim();
             if (!line) continue;
-            const [serial, state] = line.split(/\s+/);
-            if (serial && state) {
+            const parts = line.split(/\s+/);
+            if (parts.length >= 2) {
+                const serial = parts[0];
+                const state = parts[1];
                 devices.push({ serial, state });
             }
         }

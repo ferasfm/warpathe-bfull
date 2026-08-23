@@ -52,7 +52,7 @@ function AdminDevicesPage() {
                   <TableCell className="font-medium">{device.name || 'Unnamed Device'}</TableCell>
                   <TableCell>{device.agents?.name || 'Unknown Agent'}</TableCell>
                   <TableCell>
-                    <Badge variant={device.status === 'CONNECTED' ? 'default' : 'secondary'}>
+                    <Badge variant={device.status === 'ONLINE' ? 'default' : 'secondary'}>
                       {device.status || 'UNKNOWN'}
                     </Badge>
                   </TableCell>
