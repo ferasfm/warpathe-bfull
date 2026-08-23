@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useQuery } from '@tanstack/react-query';
-import { getAuditLogs, getAgentEvents } from '@/lib/admin-logs.functions';
+import { getAuditLogs, getAgentEvents, getAiVisionLogs } from '@/lib/admin-logs.functions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -13,6 +13,8 @@ export const Route = createFileRoute('/_authenticated/admin/logs')({
 function AdminLogsPage() {
   const [auditPage, setAuditPage] = useState(1);
   const [eventPage, setEventPage] = useState(1);
+  const [visionPage, setVisionPage] = useState(1);
+
 
   const { data: auditData, isLoading: isLoadingAudit } = useQuery({
     queryKey: ['audit-logs', auditPage],
@@ -24,6 +26,12 @@ function AdminLogsPage() {
     queryFn: () => getAgentEvents({ data: { page: eventPage } }),
   });
 
+  const { data: visionData, isLoading: isLoadingVision } = useQuery({
+    queryKey: ['ai-vision-logs', visionPage],
+    queryFn: () => getAiVisionLogs({ data: { page: visionPage } }),
+  });
+
+
   return (
     <div className="p-6 space-y-6">
       <h1 className="text-3xl font-bold">Logs & Events</h1>
@@ -32,7 +40,9 @@ function AdminLogsPage() {
         <TabsList>
           <TabsTrigger value="audit">Audit Logs</TabsTrigger>
           <TabsTrigger value="events">Agent Events</TabsTrigger>
+          <TabsTrigger value="ai-vision">AI Vision Logs</TabsTrigger>
         </TabsList>
+
 
         <TabsContent value="audit" className="mt-4">
           <Card>
