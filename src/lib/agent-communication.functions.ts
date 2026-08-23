@@ -264,31 +264,32 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
     agentId: z.string(),
     emulatorId: z.string(),
     missionId: z.string(),
-    version: z.number().optional(),
+    farmId: z.string(),
+    version: z.string().optional(),
   }).parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    // 1. Get Mission Version
+    // 1. Get Mission Template (Version)
     let query = supabaseAdmin
-      .from("mission_versions")
-      .select("id, version_number")
+      .from("mission_templates")
+      .select("id, version")
       .eq("mission_id", data.missionId);
     
     if (data.version) {
-      query = query.eq("version_number", data.version);
+      query = query.eq("version", data.version);
     } else {
-      query = query.order("version_number", { ascending: false }).limit(1);
+      query = query.order("version", { ascending: false }).limit(1);
     }
 
-    const { data: version } = await query.single();
-    if (!version) throw new Error("Mission version not found");
+    const { data: template } = await query.single();
+    if (!template) throw new Error("Mission template not found");
 
     // 2. Get Ordered Steps
     const { data: steps } = await supabaseAdmin
       .from("mission_steps")
       .select("*")
-      .eq("mission_version_id", version.id)
+      .eq("mission_template_id", template.id)
       .order("step_order", { ascending: true });
 
     if (!steps || steps.length === 0) throw new Error("Mission has no steps");
@@ -298,8 +299,7 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
       .from("mission_runs")
       .insert({
         mission_id: data.missionId,
-        mission_version_id: version.id,
-        emulator_id: data.emulatorId,
+        farm_id: data.farmId,
         status: "PENDING",
         started_at: new Date().toISOString(),
       })
