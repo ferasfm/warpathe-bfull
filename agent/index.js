@@ -175,8 +175,8 @@ class WarpathAgent {
                 const mappedDevices = this.mumu.mapAdbToMuMu(adbDevices);
 
                 for (const device of mappedDevices) {
+                    const info = await this.adb.getDeviceInfo(device.serial);
                     if (device.type === 'MUMU') {
-                        const info = await this.adb.getDeviceInfo(device.serial);
                         await this.sendEvent('EMULATOR_DISCOVERED', {
                             adbSerial: device.serial,
                             instanceName: device.instanceName,
@@ -185,7 +185,6 @@ class WarpathAgent {
                             dpi: info.dpi
                         });
                     } else {
-                        const info = await this.adb.getDeviceInfo(device.serial);
                         await this.sendEvent('DEVICE_DISCOVERED', {
                             serial: device.serial,
                             model: info.model,
@@ -308,17 +307,17 @@ class WarpathAgent {
                     break;
                 }
                 case 'EXECUTE_MISSION': {
-                    const { emulatorId, missionRunId, steps } = command.payload || {};
-                    if (!emulatorId || !missionRunId || !steps) {
+                    const { emulatorId, adbSerial, missionRunId, steps } = command.payload || {};
+                    if (!emulatorId || !adbSerial || !missionRunId || !steps) {
                         await this.reportCommandResult(command.id, 'FAILED', { error: 'Missing mission parameters' });
                         break;
                     }
-                    
+
                     // Respond SUCCESS immediately that the mission was accepted/started
                     await this.reportCommandResult(command.id, 'SUCCESS', { message: 'Mission execution started' });
-                    
+
                     // Run mission in background
-                    this.missionEngine.executeMission(emulatorId, missionRunId, steps).catch(err => {
+                    this.missionEngine.executeMission(emulatorId, adbSerial, missionRunId, steps).catch(err => {
                         logger.error('Background mission execution failed', { missionRunId, error: err.message });
                     });
                     break;

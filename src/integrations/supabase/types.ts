@@ -342,36 +342,48 @@ export type Database = {
       }
       emulators: {
         Row: {
+          adb_serial: string | null
           agent_id: string
           assigned_farm_id: string | null
           created_at: string | null
           device_id: string
           dpi: number | null
           id: string
+          instance_name: string | null
+          is_busy: boolean | null
+          last_error: string | null
           name: string | null
           resolution: string | null
           status: string | null
           updated_at: string | null
         }
         Insert: {
+          adb_serial?: string | null
           agent_id: string
           assigned_farm_id?: string | null
           created_at?: string | null
           device_id: string
           dpi?: number | null
           id?: string
+          instance_name?: string | null
+          is_busy?: boolean | null
+          last_error?: string | null
           name?: string | null
           resolution?: string | null
           status?: string | null
           updated_at?: string | null
         }
         Update: {
+          adb_serial?: string | null
           agent_id?: string
           assigned_farm_id?: string | null
           created_at?: string | null
           device_id?: string
           dpi?: number | null
           id?: string
+          instance_name?: string | null
+          is_busy?: boolean | null
+          last_error?: string | null
           name?: string | null
           resolution?: string | null
           status?: string | null

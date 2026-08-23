@@ -45,7 +45,7 @@ export const getEmulators = createServerFn({ method: "GET" })
     await checkAdmin();
     const { data, error } = await supabase
       .from('emulators')
-      .select('*, agents(name), devices(name, device_id), farms(name)')
+      .select('*, agents(name), devices(name, device_id), farms(name), current_run:mission_runs(status, mission:missions(name))')
       .order('name');
     if (error) throw error;
     return data;

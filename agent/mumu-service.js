@@ -11,24 +11,33 @@ class MuMuService {
     }
 
     async discoverInstances() {
-        // In a real Windows environment, we'd check registry or common paths
-        // For Phase 08, we implement the structure to detect running instances via process check or ADB mapping
         this.logger.info('MuMu discovery triggered');
         
-        // This is a placeholder for actual registry/process lookups on Windows
-        // In the sandbox/Node environment, we rely on mapping ADB devices that look like MuMu
-        return []; 
+        // In a real Windows environment, we'd check MuMu's Nemustar/MuMuPlayer installation
+        // or scan specific ADB ports.
+        // For Phase 14, we'll scan the standard MuMu port range: 7555, 7556, 7557...
+        const commonPorts = [7555, 7556, 7557, 7558, 7559, 7560];
+        const discovered = [];
+
+        // This is still a hybrid logic for the sandbox/Node agent
+        return discovered; 
     }
 
     mapAdbToMuMu(adbDevices) {
         // MuMu usually uses specific port ranges or serial formats
-        // Typically: 127.0.0.1:7555, 127.0.0.1:16384+
+        // Typically: 127.0.0.1:7555, 127.0.0.1:7556...
         return adbDevices.map(device => {
-            const isMuMu = device.serial.startsWith('127.0.0.1:7555') || device.serial.startsWith('127.0.0.1:16');
+            const serial = device.serial;
+            const isMuMu = serial.startsWith('127.0.0.1:7555') || 
+                           serial.startsWith('127.0.0.1:7556') ||
+                           serial.startsWith('127.0.0.1:16');
+            
             if (isMuMu) {
+                const port = serial.split(':')[1] || '7555';
+                const instanceIndex = parseInt(port) - 7555;
                 return {
                     ...device,
-                    instanceName: `MuMu-${device.serial.split(':')[1]}`,
+                    instanceName: `MuMuPlayer-${instanceIndex >= 0 ? instanceIndex : port}`,
                     type: 'MUMU'
                 };
             }

@@ -114,11 +114,11 @@ function AdminEmulatorsPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
+              <TableHead>Instance / Name</TableHead>
               <TableHead>Agent</TableHead>
-              <TableHead>Device</TableHead>
+              <TableHead>ADB Serial</TableHead>
               <TableHead>Farm</TableHead>
-              <TableHead>Resolution/DPI</TableHead>
+              <TableHead>Mission</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-left">Actions</TableHead>
             </TableRow>
@@ -138,15 +138,17 @@ function AdminEmulatorsPage() {
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       <Smartphone className="w-4 h-4 text-muted-foreground" />
-                      {emu.name}
+                      <div>
+                        <div>{emu.instance_name || emu.name}</div>
+                        <div className="text-[10px] text-muted-foreground">{emu.name}</div>
+                      </div>
                     </div>
                   </TableCell>
                   <TableCell>{emu.agents?.name}</TableCell>
                   <TableCell>
-                    <div className="text-sm">
-                      <div className="font-medium">{emu.devices?.name}</div>
-                      <div className="text-xs text-muted-foreground font-mono">{emu.devices?.device_id}</div>
-                    </div>
+                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded font-mono">
+                      {emu.adb_serial || 'N/A'}
+                    </code>
                   </TableCell>
                   <TableCell>
                     {emu.farms ? (
@@ -156,14 +158,28 @@ function AdminEmulatorsPage() {
                     )}
                   </TableCell>
                   <TableCell>
-                    <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                      {emu.resolution} @ {emu.dpi}
-                    </code>
+                    {emu.is_busy ? (
+                      <div className="flex flex-col gap-1">
+                        <Badge variant="default" className="w-fit">BUSY</Badge>
+                        <span className="text-[10px] text-muted-foreground truncate max-w-[120px]">
+                          {emu.current_run?.[0]?.mission?.name || 'Running...'}
+                        </span>
+                      </div>
+                    ) : (
+                      <Badge variant="secondary">IDLE</Badge>
+                    )}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={emu.status === 'ONLINE' ? 'default' : 'secondary'}>
-                      {emu.status || 'UNKNOWN'}
-                    </Badge>
+                    <div className="flex flex-col gap-1">
+                      <Badge variant={emu.status === 'ONLINE' ? 'default' : 'secondary'}>
+                        {emu.status || 'UNKNOWN'}
+                      </Badge>
+                      {emu.last_error && (
+                        <span className="text-[10px] text-destructive truncate max-w-[100px]" title={emu.last_error}>
+                          {emu.last_error}
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">

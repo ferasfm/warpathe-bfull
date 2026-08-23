@@ -11,8 +11,8 @@ class WatchdogService {
         this.isRecovering = new Set(); // mission_run_id
     }
 
-    async monitor(emulatorId, missionRunId, currentStep, missionSteps) {
-        this.logger.debug('Watchdog heartbeat', { missionRunId, emulatorId });
+    async monitor(adbSerial, missionRunId, currentStep, missionSteps) {
+        this.logger.debug('Watchdog heartbeat', { missionRunId, adbSerial });
 
         // 1. Check ADB Connectivity
         const adbAvailable = await this.agent.adb.isAvailable();
@@ -20,9 +20,9 @@ class WatchdogService {
             throw new Error('WATCHDOG_FATAL: ADB service disconnected');
         }
 
-        const deviceState = await this.agent.adb.execute('get-state', emulatorId);
+        const deviceState = await this.agent.adb.execute('get-state', adbSerial);
         if (!deviceState.success || deviceState.stdout !== 'device') {
-            return await this.handleRecovery(emulatorId, missionRunId, 'DEVICE_OFFLINE', currentStep, missionSteps);
+            return await this.handleRecovery(adbSerial, missionRunId, 'DEVICE_OFFLINE', currentStep, missionSteps);
         }
 
         // 2. Check for unexpected screens (Vision-based anomaly detection)
@@ -32,7 +32,7 @@ class WatchdogService {
         return { status: 'HEALTHY' };
     }
 
-    async handleRecovery(emulatorId, missionRunId, triggerType, currentStep, missionSteps) {
+    async handleRecovery(adbSerial, missionRunId, triggerType, currentStep, missionSteps) {
         if (this.isRecovering.has(missionRunId)) {
             return { status: 'RECOVERY_IN_PROGRESS' };
         }
@@ -61,7 +61,7 @@ class WatchdogService {
             // 2. Execute Recovery Actions
             for (const rule of rules) {
                 this.logger.info('Evaluating recovery rule', { ruleName: rule.name });
-                const success = await this.executeRecoveryRule(emulatorId, rule);
+                const success = await this.executeRecoveryRule(adbSerial, rule);
                 if (success) {
                     this.logger.info('Recovery rule successful', { ruleName: rule.name });
                     
@@ -97,7 +97,7 @@ class WatchdogService {
         }
     }
 
-    async executeRecoveryRule(emulatorId, rule) {
+    async executeRecoveryRule(adbSerial, rule) {
         const actions = rule.configuration?.actions || [];
         
         for (const action of actions) {
@@ -109,11 +109,11 @@ class WatchdogService {
                         await new Promise(resolve => setTimeout(resolve, action.duration || 2000));
                         break;
                     case 'TAP':
-                        await this.agent.adb.execute(`shell input tap ${action.x} ${action.y}`, emulatorId);
+                        await this.agent.adb.execute(`shell input tap ${action.x} ${action.y}`, adbSerial);
                         break;
                     case 'FIND_IMAGE':
                         // Use existing VisionService
-                        const buffer = await this.agent.screenshot.capture(emulatorId);
+                        const buffer = await this.agent.screenshot.capture(adbSerial);
                         const validation = await this.agent.screenshot.validate(buffer);
                         if (!validation.valid) return false;
                         
@@ -123,7 +123,7 @@ class WatchdogService {
                         if (!visionRes.detected) return false;
                         break;
                     case 'SCREENSHOT':
-                        await this.agent.screenshot.capture(emulatorId);
+                        await this.agent.screenshot.capture(adbSerial);
                         break;
                     default:
                         this.logger.warn('Unknown recovery action', { type: action.type });

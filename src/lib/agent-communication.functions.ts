@@ -177,6 +177,49 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
+    // Special handling for discovery events to upsert records
+    if (data.eventType === 'EMULATOR_DISCOVERED') {
+      const { adbSerial, instanceName, status, resolution, dpi } = data.payload;
+      
+      // 1. Ensure a device record exists for this serial
+      const { data: device } = await supabaseAdmin
+        .from("devices")
+        .upsert({
+          agent_id: data.agentId,
+          device_id: adbSerial,
+          name: instanceName || `MuMu-${adbSerial}`,
+          status: status,
+        } as any, { onConflict: 'agent_id, device_id' })
+        .select("id")
+        .single();
+
+      if (device) {
+        // 2. Upsert the emulator record
+        await supabaseAdmin
+          .from("emulators")
+          .upsert({
+            agent_id: data.agentId,
+            device_id: device.id,
+            adb_serial: adbSerial,
+            instance_name: instanceName,
+            name: instanceName || `MuMu-${adbSerial}`,
+            status: status,
+            resolution: resolution,
+            dpi: dpi,
+          } as any, { onConflict: 'agent_id, adb_serial' });
+      }
+    } else if (data.eventType === 'DEVICE_DISCOVERED') {
+      const { serial, model, status } = data.payload;
+      await supabaseAdmin
+        .from("devices")
+        .upsert({
+          agent_id: data.agentId,
+          device_id: serial,
+          name: model || `Device-${serial}`,
+          status: status,
+        }, { onConflict: 'agent_id, device_id' });
+    }
+
     await supabaseAdmin
       .from("agent_events")
       .insert({
@@ -201,8 +244,14 @@ export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Auth check - simplified for brevity, in prod use middleware
-    // This is a placeholder for the actual security check
     
+    // Fetch emulator to get ADB serial
+    const { data: emulator } = await supabaseAdmin
+      .from("emulators")
+      .select("adb_serial")
+      .eq("id", data.deviceId || "")
+      .single();
+
     const { data: command, error } = await supabaseAdmin
       .from("agent_commands")
       .insert({
@@ -210,7 +259,7 @@ export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
         device_id: data.deviceId,
         command_type: "TAKE_SCREENSHOT",
         status: "PENDING",
-        payload: { serial: data.deviceId } // Usually device_id is the serial in this context
+        payload: { serial: (emulator as any)?.adb_serial || data.deviceId } 
       })
       .select()
       .single();
@@ -244,6 +293,13 @@ export const requestVisionTest = createServerFn({ method: "POST" })
       .from("vision-assets")
       .getPublicUrl(rule.vision_assets.storage_path || "");
 
+    // Fetch emulator to get ADB serial
+    const { data: emulator } = await supabaseAdmin
+      .from("emulators")
+      .select("adb_serial")
+      .eq("id", data.deviceId)
+      .single();
+
     const { data: command, error } = await supabaseAdmin
       .from("agent_commands")
       .insert({
@@ -252,7 +308,7 @@ export const requestVisionTest = createServerFn({ method: "POST" })
         command_type: "TEST_VISION_RULE",
         status: "PENDING",
         payload: { 
-          serial: data.deviceId,
+          serial: (emulator as any)?.adb_serial || data.deviceId,
           rule: rule,
           assetUrl: publicUrl
         }
@@ -316,7 +372,16 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
 
     if (runError) throw new Error(`Failed to create mission run: ${runError.message}`);
 
-    // 4. Queue Command for Agent
+    // 4. Get Emulator details for ADB serial
+    const { data: emulator } = await supabaseAdmin
+      .from("emulators")
+      .select("adb_serial")
+      .eq("id", data.emulatorId)
+      .single();
+
+    if (!emulator || !(emulator as any).adb_serial) throw new Error("Emulator ADB serial not found");
+
+    // 5. Queue Command for Agent
     const { data: command, error: cmdError } = await supabaseAdmin
       .from("agent_commands")
       .insert({
@@ -326,6 +391,7 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
         status: "PENDING",
         payload: {
           emulatorId: data.emulatorId,
+          adbSerial: (emulator as any).adb_serial,
           missionRunId: run.id,
           steps: steps
         }
