@@ -1,28 +1,21 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 02: Users and Permissions
+Phase 03A: Database Core
 
 ## Status
 COMPLETED
 
 ## Completed
 - **Role-Based Access Control (RBAC)**: Implemented `SUPER_ADMIN`, `ADMIN`, and `USER` roles.
-- **Database & Security**: 
-    - Updated `app_role` enum and `user_roles` table.
-    - Implemented `has_role` and `get_user_role` security-definer functions.
-    - Added RLS policies to `profiles` and `user_roles` tables.
-    - Trigger-based automated profile creation and default role assignment ('user').
-    - Automated `super_admin` promotion for the first registered user.
 - **Authentication**: Verified Supabase Auth integration with session persistence and logout.
-- **Authorization**:
-    - Server-side route protection in `src/routes/_authenticated/route.tsx`.
-    - Protected server functions for user management with role-hierarchy validation.
-- **UI & UX**:
-    - Created `useRoles` hook for dynamic frontend authorization.
-    - Implemented Role-based Sidebar navigation.
-    - Built Admin User Management dashboard (`/admin/users`) with role modification capabilities.
-    - Integrated "Users" management card in the main Admin dashboard.
+- **Authorization**: Server-side route protection and server functions role-hierarchy validation.
+- **UI & UX**: Admin User Management dashboard (`/admin/users`) and role-based Sidebar.
+- **Database Core (Phase 03A)**:
+    - Created tables: `accounts`, `farms`, `farm_users`, `resources`, `resource_assets`, `fleets`, `fleet_assignments`.
+    - Implemented foreign keys, unique constraints, and indexes.
+    - Configured RLS policies ensuring isolation (users only see assigned farms/fleets).
+    - Inserted initial resource records: `WHEAT`, `IRON`, `STEEL`.
 
 ## Routes
 - `/auth`: Login & Signup (Public)
@@ -31,27 +24,26 @@ COMPLETED
 - `/admin/users`: User Management (Admin/Super Admin only)
 - `/settings`: User Preferences (Authenticated)
 
-## Database Changes
-- Table: `public.profiles` (id, full_name, email, created_at)
-- Table: `public.user_roles` (id, user_id, role)
-- Enum: `public.app_role` ('super_admin', 'admin', 'user')
-- Function: `public.has_role`
-- Function: `public.get_user_role`
-- Function: `public.handle_new_user` (trigger)
-- Function: `public.ensure_first_user_is_super_admin` (trigger)
+## Database Changes (Phase 03A)
+- `public.accounts`: System accounts.
+- `public.farms`: Individual farm instances belonging to accounts.
+- `public.farm_users`: Linking users to specific farms (RBAC at farm level).
+- `public.resources`: Definitions for automatable resources.
+- `public.resource_assets`: Versioned assets for resources (images/metadata).
+- `public.fleets`: Fleet groups within a farm.
+- `public.fleet_assignments`: Mapping fleets to specific resources/tasks.
 
 ## Tests
-- [x] USER can login/logout.
-- [x] USER cannot access `/admin` or `/admin/users` (redirects to `/dashboard`).
-- [x] ADMIN can access administrative routes.
-- [x] Role hierarchy enforced: ADMIN cannot promote to SUPER_ADMIN.
-- [x] Session persists on refresh.
+- [x] USER isolation: User cannot see farms they are not assigned to via RLS.
+- [x] ADMIN access: Admin/Super Admin can see all system records.
+- [x] Unique constraints: Verified for resource codes and fleet numbers within farms.
+- [x] Initial Data: `WHEAT`, `IRON`, `STEEL` exist in `resources`.
 - [x] Build succeeds without errors.
 
 ## Known Issues
-- None. All Phase 02 criteria satisfied.
+- None.
 
 ## Next Phase
-Phase 03: Windows Agent & ADB Integration (Agent heartbeat, command queue)
+Phase 03B: User Dashboard UI for Farms & Fleets
 
-STOP AFTER PHASE 02.
+STOP AFTER PHASE 03A.
