@@ -39,8 +39,8 @@ export function Sidebar() {
 
             <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4" />} label="Vision" />
             <NavItem to="/admin/recovery" icon={<ShieldCheck className="w-4 h-4" />} label="Recovery" />
-            <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4" />} label="Logs" />
-            <NavItem to="/admin/settings" icon={<Settings className="w-4 h-4" />} label="Settings" />
+            <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4" />} label="Audit Logs" />
+            <NavItem to="/admin/settings" icon={<Settings className="w-4 h-4" />} label="System Settings" />
           </>
         )}
         
