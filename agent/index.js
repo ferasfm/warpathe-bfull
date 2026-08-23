@@ -7,6 +7,8 @@ const { randomBytes } = require('crypto');
 const os = require('os');
 const AdbService = require('./adb-service');
 const MuMuService = require('./mumu-service');
+const ScreenshotService = require('./screenshot-service');
+const VisionService = require('./vision-service');
 require('dotenv').config();
 
 // CONFIGURATION & LOGGING
@@ -45,6 +47,8 @@ class WarpathAgent {
         
         this.adb = new AdbService(logger, { adbPath: process.env.ADB_PATH });
         this.mumu = new MuMuService(logger, { mumuPath: process.env.MUMU_PATH });
+        this.screenshot = new ScreenshotService(logger, this.adb);
+        this.vision = new VisionService(logger);
     }
 
     async init() {
@@ -215,6 +219,64 @@ class WarpathAgent {
                     await this.reportCommandResult(command.id, result.success ? 'SUCCESS' : 'FAILED', { 
                         dpi: result.stdout ? parseInt(result.stdout.replace('Physical density: ', '')) : null
                     });
+                    break;
+                }
+                case 'TAKE_SCREENSHOT': {
+                    const { serial } = command.payload || {};
+                    const buffer = await this.screenshot.capture(serial);
+                    const validation = await this.screenshot.validate(buffer);
+                    
+                    if (!validation.valid) {
+                        await this.reportCommandResult(command.id, 'FAILED', { 
+                            error: validation.error,
+                            actual: validation.actual
+                        });
+                    } else {
+                        // For diagnostic screenshots, we send base64 back in the result payload
+                        // This is ONLY for Admin manual requests.
+                        await this.reportCommandResult(command.id, 'SUCCESS', { 
+                            screenshot: buffer.toString('base64'),
+                            width: validation.width,
+                            height: validation.height
+                        });
+                    }
+                    break;
+                }
+                case 'TEST_VISION_RULE': {
+                    const { serial, rule, assetUrl } = command.payload || {};
+                    
+                    // 1. Capture & Validate
+                    const buffer = await this.screenshot.capture(serial);
+                    const validation = await this.screenshot.validate(buffer);
+                    if (!validation.valid) {
+                        await this.reportCommandResult(command.id, 'FAILED', { error: validation.error });
+                        break;
+                    }
+
+                    // 2. Fetch template
+                    const templateResponse = await axios.get(assetUrl, { responseType: 'arraybuffer' });
+                    const templateImage = await Jimp.read(templateResponse.data);
+
+                    // 3. Process
+                    const result = await this.vision.findTemplate(
+                        validation.image, 
+                        templateImage, 
+                        rule.threshold || 0.8
+                    );
+
+                    // 4. Report
+                    await this.reportCommandResult(command.id, 'SUCCESS', {
+                        ...result,
+                        screenshot: buffer.toString('base64') // Optional: return for UI visualization
+                    });
+
+                    // 5. Send telemetry event
+                    await this.sendEvent('VISION_RUN_COMPLETED', {
+                        rule_id: rule.id,
+                        device_serial: serial,
+                        ...result
+                    });
+
                     break;
                 }
                 default:

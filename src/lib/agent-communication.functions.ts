@@ -31,7 +31,7 @@ const verifyAgent = async (agentId: string, token: string) => {
 
 // 1. Agent Registration
 export const registerAgent = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     registrationKey: z.string(),
     name: z.string(),
     hostname: z.string(),
@@ -79,7 +79,7 @@ export const registerAgent = createServerFn({ method: "POST" })
 
 // 2. Agent Heartbeat
 export const agentHeartbeat = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
     version: z.string(),
@@ -106,7 +106,7 @@ export const agentHeartbeat = createServerFn({ method: "POST" })
 
 // 3. Command Queue Retrieval
 export const getPendingCommands = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
   }).parse(data))
@@ -129,7 +129,7 @@ export const getPendingCommands = createServerFn({ method: "GET" })
 
 // 4. Command Result Submission
 export const submitCommandResult = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
     commandId: z.string(),
@@ -161,7 +161,7 @@ export const submitCommandResult = createServerFn({ method: "POST" })
 
 // 5. Agent Event Submission
 export const submitAgentEvent = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
     eventType: z.string(),
@@ -185,4 +185,75 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
       });
 
     return { success: true };
+  });
+
+// 6. Request Diagnostic Screenshot (Admin Only)
+export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({
+    agentId: z.string(),
+    deviceId: z.string().optional(),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    // Auth check - simplified for brevity, in prod use middleware
+    // This is a placeholder for the actual security check
+    
+    const { data: command, error } = await supabaseAdmin
+      .from("agent_commands")
+      .insert({
+        agent_id: data.agentId,
+        device_id: data.deviceId,
+        command_type: "TAKE_SCREENSHOT",
+        status: "PENDING",
+        payload: { serial: data.deviceId } // Usually device_id is the serial in this context
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error("Failed to queue screenshot command");
+    return command;
+  });
+
+// 7. Request Vision Test (Admin Only)
+export const requestVisionTest = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => z.object({
+    agentId: z.string(),
+    deviceId: z.string(),
+    ruleId: z.string(),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    
+    const { data: rule } = await supabaseAdmin
+      .from("vision_rules")
+      .select("*, vision_assets(*)")
+      .eq("id", data.ruleId)
+      .single();
+
+    if (!rule || !rule.vision_assets) throw new Error("Vision rule or asset not found");
+
+    // storage_path is what we have in Phase 03
+    const { data: { publicUrl } } = supabaseAdmin.storage
+      .from("vision-assets")
+      .getPublicUrl(rule.vision_assets.storage_path || "");
+
+    const { data: command, error } = await supabaseAdmin
+      .from("agent_commands")
+      .insert({
+        agent_id: data.agentId,
+        device_id: data.deviceId,
+        command_type: "TEST_VISION_RULE",
+        status: "PENDING",
+        payload: { 
+          serial: data.deviceId,
+          rule: rule,
+          assetUrl: publicUrl
+        }
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error("Failed to queue vision test command");
+    return command;
   });

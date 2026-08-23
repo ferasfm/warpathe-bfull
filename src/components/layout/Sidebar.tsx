@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users, Sprout, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users, Sprout, ClipboardList, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
@@ -43,7 +43,8 @@ export function Sidebar() {
             <NavItem to="/admin/devices" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Devices" />
             <NavItem to="/admin/emulators" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Emulators" />
 
-            <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Vision" />
+            <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Vision Rules" />
+            <NavItem to="/admin/vision-test" icon={<Search className="w-4 h-4 ml-2" />} label="Vision Diagnostic" />
             <NavItem to="/admin/recovery" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Recovery" />
             <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Audit Logs" />
             <NavItem to="/admin/settings" icon={<Settings className="w-4 h-4 ml-2" />} label="System Settings" />

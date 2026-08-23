@@ -845,6 +845,70 @@ export type Database = {
         }
         Relationships: []
       }
+      vision_results: {
+        Row: {
+          confidence: number
+          created_at: string | null
+          detected: boolean
+          device_id: string | null
+          emulator_id: string | null
+          id: string
+          matches: Json | null
+          processing_time_ms: number | null
+          rule_id: string | null
+          screenshot_height: number | null
+          screenshot_width: number | null
+        }
+        Insert: {
+          confidence: number
+          created_at?: string | null
+          detected: boolean
+          device_id?: string | null
+          emulator_id?: string | null
+          id?: string
+          matches?: Json | null
+          processing_time_ms?: number | null
+          rule_id?: string | null
+          screenshot_height?: number | null
+          screenshot_width?: number | null
+        }
+        Update: {
+          confidence?: number
+          created_at?: string | null
+          detected?: boolean
+          device_id?: string | null
+          emulator_id?: string | null
+          id?: string
+          matches?: Json | null
+          processing_time_ms?: number | null
+          rule_id?: string | null
+          screenshot_height?: number | null
+          screenshot_width?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vision_results_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vision_results_emulator_id_fkey"
+            columns: ["emulator_id"]
+            isOneToOne: false
+            referencedRelation: "emulators"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vision_results_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "vision_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vision_rules: {
         Row: {
           active: boolean | null
