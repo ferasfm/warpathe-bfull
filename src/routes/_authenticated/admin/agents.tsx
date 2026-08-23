@@ -12,8 +12,9 @@ export const Route = createFileRoute('/_authenticated/admin/agents')({
 function AdminAgentsPage() {
   const { data: agents, isLoading } = useQuery({
     queryKey: ['admin', 'agents'],
-    queryFn: () => getAgents(),
+    queryFn: () => getAgents({}),
   });
+
 
   const getStatusColor = (status: string | null) => {
     switch (status) {

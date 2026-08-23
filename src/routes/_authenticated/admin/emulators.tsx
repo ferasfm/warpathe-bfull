@@ -24,23 +24,27 @@ function AdminEmulatorsPage() {
 
   const { data: emulators, isLoading } = useQuery({
     queryKey: ['admin', 'emulators'],
-    queryFn: () => getEmulators(),
+    queryFn: () => getEmulators({}),
   });
+
 
   const { data: agents } = useQuery({
     queryKey: ['admin', 'agents'],
-    queryFn: () => getAgents(),
+    queryFn: () => getAgents({}),
   });
+
 
   const { data: devices } = useQuery({
     queryKey: ['admin', 'devices'],
-    queryFn: () => getDevices(),
+    queryFn: () => getDevices({}),
   });
+
 
   const { data: farms } = useQuery({
     queryKey: ['admin', 'farms'],
-    queryFn: () => getFarms(),
+    queryFn: () => getFarms({}),
   });
+
 
   const createMutation = useMutation({
     mutationFn: createEmulator,

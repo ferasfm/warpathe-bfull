@@ -12,8 +12,9 @@ export const Route = createFileRoute('/_authenticated/admin/devices')({
 function AdminDevicesPage() {
   const { data: devices, isLoading } = useQuery({
     queryKey: ['admin', 'devices'],
-    queryFn: () => getDevices(),
+    queryFn: () => getDevices({}),
   });
+
 
   return (
     <div className="p-8 space-y-8">
