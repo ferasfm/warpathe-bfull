@@ -80,6 +80,10 @@ export type Database = {
     }
     Functions: {
       check_ip_blocked: { Args: { _ip: string }; Returns: boolean }
+      get_user_role: {
+        Args: { _user_id: string }
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
