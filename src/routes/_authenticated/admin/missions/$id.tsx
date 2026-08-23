@@ -135,8 +135,16 @@ function MissionBuilderPage() {
       <Tabs defaultValue="builder">
         <TabsList className="w-full justify-start">
           <TabsTrigger value="builder">بناء المهمة</TabsTrigger>
+          <TabsTrigger value="ai-builder" className="gap-2">
+            <Sparkles className="w-4 h-4" />
+            AI Builder
+          </TabsTrigger>
           <TabsTrigger value="history">سجل التنفيذ</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="ai-builder" className="pt-4">
+          <AiMissionBuilder missionId={mission.id} templateId={activeTemplate?.id || ''} />
+        </TabsContent>
 
         <TabsContent value="builder" className="space-y-4 pt-4">
           <Card>
