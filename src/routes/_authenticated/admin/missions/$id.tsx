@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2 } from 'lucide-react';
+import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import { AiMissionBuilder } from '@/components/admin/AiMissionBuilder';
 
 export const Route = createFileRoute('/_authenticated/admin/missions/$id')({
   component: MissionBuilderPage,
