@@ -1,51 +1,51 @@
-# Plan: Phase 12 - AI Vision Fallback
+# Phase 12: AI Vision Fallback Implementation
 
-Implement a secure, structured AI Vision fallback layer for the WARPATH platform. This adds an optional observation layer when deterministic matching fails, using an abstraction for AI providers while maintaining strict security boundaries.
+Implement an AI-powered vision fallback layer that triggers when deterministic template matching fails.
+
+## User Review Required
+
+> [!IMPORTANT]
+> The AI Vision feature requires a valid LLM API key (e.g., OpenAI, Anthropic). By default, I will configure it to use the **Lovable AI Gateway**. Please ensure you have configured any required secrets in the backend if you intend to use specific external providers.
 
 ## Proposed Changes
 
 ### Database & Security
-- Create `ai_vision_logs` table for auditing AI requests and results.
-- Add AI configuration fields to `system_settings` (e.g., `AI_VISION_ENABLED`, `AI_VISION_PROVIDER`, `AI_MIN_CONFIDENCE`).
-- Define `app_role` permissions for managing AI settings.
+- Add `ai_vision_logs` table for full auditing of AI calls.
+- Add AI configuration keys to `system_settings` (Enabled, Provider, Model, Thresholds, Limits).
+- Securely handle API calls through the server, never exposing keys to the agent.
 
-### Platform (Backend)
-- Implement `AiVisionProvider` abstraction in `src/lib/vision/`.
-- Create a dedicated server function `processAiVisionFallback` that:
-    - Validates AI provider secrets (server-side only).
-    - Sends screenshots and context to the configured provider (e.g., OpenAI/Anthropic via Lovable AI Gateway).
-    - Enforces strict JSON output schema validation using Zod.
-    - Implements rate limiting and mission-level call budgets.
+### Server-Side (TanStack Start)
+- Create `src/lib/ai-vision.functions.ts` for AI processing.
+- Implement `processAiVision` server function with:
+    - Input validation (Zod).
+    - Rate limiting (per device/mission).
+    - Lovable AI Gateway integration for image analysis.
+    - Strict JSON output validation (detected, confidence, coordinates).
+    - Logging to `ai_vision_logs`.
 
 ### Windows Agent
-- Modify `agent/vision-service.js` to include `AiVisionFallback` logic.
-- Update `agent/mission-engine.js` (`handleFindImage`):
-    - Try deterministic `findTemplate` first.
-    - If confidence is below threshold AND AI is enabled, request AI fallback from the platform.
-    - Validate and consume AI structured observations.
-- Implement short-lived caching for vision results in the agent.
+- Update `agent/vision-service.js` to include the fallback logic.
+- Update `agent/mission-engine.js` to trigger AI Vision if deterministic matching fails and AI is enabled.
+- Implement timeout and retry logic for AI calls.
 
-### Admin UI
-- Add "AI Vision" tab to the Admin Dashboard for global settings.
-- Update Vision Diagnostic tool to show AI fallback results and confidence scores.
+### Admin Dashboard
+- Add an "AI Vision" configuration section to the Admin Settings page.
+- Add an AI Vision logs viewer (optional, but good for diagnostics).
 
 ## Technical Details
 
-- **Vision Result Schema**:
-```json
-{
-  "detected": boolean,
-  "confidence": number,
-  "objects": [{ "label": "button", "center_x": 160, "center_y": 225, ... }]
+### AI Vision API Contract
+```typescript
+interface AiVisionResult {
+  detected: boolean;
+  confidence: number;
+  coordinates?: { x: number; y: number };
+  objects: string[];
+  error?: string;
 }
 ```
-- **Security**: AI never touches ADB. It only "sees" and "reports". The Agent decides what to do based on those reports.
-- **Limits**: Configurable `MAX_AI_CALLS_PER_MISSION` (default: 10) and `AI_RATE_LIMIT_MS` (default: 5000ms).
 
-## Acceptance Criteria
-- [ ] Deterministic Vision remains the primary layer.
-- [ ] AI fallback is only triggered when enabled and deterministic matching fails.
-- [ ] AI results are schema-validated and rejected if malformed.
-- [ ] Mission Engine continues mission based on AI observations.
-- [ ] AI usage is fully audited with cost/performance tracking.
-- [ ] Windows Agent re-builds successfully.
+### Safety Limits
+- `AI_VISION_MAX_CALLS_PER_MISSION`: Default 10.
+- `AI_VISION_MAX_CALLS_PER_DEVICE_HOUR`: Default 50.
+- AI cannot execute commands; it only provides coordinates to the `MissionEngine`.
