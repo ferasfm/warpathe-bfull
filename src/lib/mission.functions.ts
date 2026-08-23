@@ -1,43 +1,48 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-// Helper to check admin role
-const checkAdmin = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
-
+/**
+ * RBAC Helper
+ */
+const checkRole = async (supabase: any, userId: string, allowedRoles: string[]) => {
   const { data: roleData } = await supabase
     .from("user_roles")
     .select("role")
-    .eq("user_id", session.user.id);
+    .eq("user_id", userId);
   
-  const roles = (roleData?.map(r => r.role) || []) as string[];
-  if (!roles.includes('admin') && !roles.includes('super_admin')) {
-    throw new Error("Forbidden");
+  const roles = (roleData?.map((r: any) => r.role) || []) as string[];
+  const isAllowed = allowedRoles.some(role => roles.includes(role));
+  
+  if (!isAllowed) {
+    throw new Error("Forbidden: Insufficient permissions");
   }
-  return session;
 };
 
 // MISSIONS
-export const getMissions = createServerFn({ method: "GET" }).handler(async () => {
-  await checkAdmin();
-  const { data, error } = await supabase
-    .from("missions")
-    .select("*")
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return data;
-});
+export const getMissions = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
+    const { data, error } = await supabase
+      .from("missions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data;
+  });
 
 export const createMission = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { name: string, description?: string, status?: string }) => z.object({
     name: z.string().min(1),
     description: z.string().optional(),
     status: z.string().optional()
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data: result, error } = await supabase
       .from("missions")
       .insert({ ...data, version: "1.0.0" })
@@ -56,9 +61,11 @@ export const createMission = createServerFn({ method: "POST" })
   });
 
 export const getMissionDetails = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data: { id } }) => {
-    await checkAdmin();
+  .handler(async ({ data: { id }, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from("missions")
       .select("*, mission_templates(*, mission_steps(*))")
@@ -70,12 +77,14 @@ export const getMissionDetails = createServerFn({ method: "GET" })
 
 // TEMPLATES
 export const publishTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { templateId: string, missionId: string }) => z.object({
     templateId: z.string().uuid(),
     missionId: z.string().uuid()
   }).parse(data))
-  .handler(async ({ data: { templateId, missionId } }) => {
-    await checkAdmin();
+  .handler(async ({ data: { templateId, missionId }, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     
     // Deactivate others
     await supabase
@@ -104,6 +113,7 @@ export const publishTemplate = createServerFn({ method: "POST" })
 
 // STEPS
 export const upsertMissionStep = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { 
     id?: string,
     mission_template_id: string,
@@ -123,8 +133,9 @@ export const upsertMissionStep = createServerFn({ method: "POST" })
     timeout_ms: z.number().int().optional(),
     retry_count: z.number().int().optional()
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data: result, error } = await supabase
       .from("mission_steps")
       .upsert(data)
@@ -135,17 +146,22 @@ export const upsertMissionStep = createServerFn({ method: "POST" })
   });
 
 export const deleteMissionStep = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data: { id } }) => {
-    await checkAdmin();
+  .handler(async ({ data: { id }, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { error } = await supabase.from("mission_steps").delete().eq("id", id);
     if (error) throw error;
     return { success: true };
   });
 
 // RUNS
-export const getMissionRuns = createServerFn({ method: "GET" }).handler(async () => {
-    await checkAdmin();
+export const getMissionRuns = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
         .from("mission_runs")
         .select("*, missions(name), farms(name)")
