@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMissionDetails, upsertMissionStep, deleteMissionStep, publishTemplate } from '@/lib/mission.functions';
+import { getMissionRunsForMission } from '@/lib/monitoring.functions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2, Sparkles, ExternalLink, Clock, Activity, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AiMissionBuilder } from '@/components/admin/AiMissionBuilder';
+import { format } from 'date-fns';
 
 export const Route = createFileRoute('/_authenticated/admin/missions/$id')({
   component: MissionBuilderPage,
