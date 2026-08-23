@@ -291,7 +291,10 @@ function MissionHistory({ missionId }: { missionId: string }) {
                 </TableCell>
                 <TableCell>
                   <Button variant="ghost" size="sm" asChild>
-                    <Link to={`/admin/missions/runs/${run.id}`}>
+                    <Link 
+                      to="/admin/missions/runs/$runId"
+                      params={{ runId: run.id }}
+                    >
                       <ExternalLink className="w-4 h-4 ml-1" />
                       التفاصيل
                     </Link>
