@@ -23,13 +23,13 @@ export const Route = createFileRoute('/api/public/manifest')({
     handlers: {
       GET: async () => {
         const manifest = {
-          "name": "شركة الهدى للمحروقات",
-          "short_name": "الهدى",
-          "description": "تحديث فوري لحالة الوقود في محطات شركة الهدى بالضفة الغربية.",
+          "name": "WARPATH Automation Platform",
+          "short_name": "WARPATH",
+          "description": "Advanced automation platform for mobile gaming and mission control.",
           "start_url": "/",
           "display": "standalone",
-          "background_color": "#ffffff",
-          "theme_color": "#ef4444",
+          "background_color": "#000000",
+          "theme_color": "#000000",
           "prefer_related_applications": false,
           "icons": [
             {
