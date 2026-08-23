@@ -5,205 +5,111 @@ import { supabase } from "@/integrations/supabase/client";
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            WARPATH — PHASE 03D
+                                            WARPATH — PHASE 03E
 
-VISION, RECOVERY, COMMANDS AND LOGS DATABASE
+DATABASE FINAL VALIDATION
 
-Phase 03A, 03B and 03C are completed.
+Phases 03A, 03B, 03C and 03D are completed.
 
-Implement ONLY the remaining database structures required for Vision, Recovery, Agent Commands, Agent Events and Audit Logs.
+Do NOT create new features.
 
-CREATE THESE TABLES:
+Do NOT redesign the database.
 
-1. vision_assets
+This phase is ONLY for validation and fixing confirmed database problems.
 
-Fields:
+CHECK THE COMPLETE DATABASE:
 
-- id
+1. Authentication and user roles
 
-- name
+2. Accounts
 
-- asset_type
+3. Farms
 
-- storage_path
+4. Farm users
 
-- version
+5. Resources
 
-- active
+6. Resource assets
 
-- created_at
+7. Fleets
 
-- updated_at
+8. Fleet assignments
 
-2. vision_rules
+9. Missions
 
-Fields:
+10. Mission templates
 
-- id
+11. Mission steps
 
-- name
+12. Mission runs
 
-- asset_id
+13. Agents
 
-- configuration
+14. Devices
 
-- confidence_threshold
+15. Emulators
 
-- active
+16. Vision assets
 
-- created_at
+17. Vision rules
 
-- updated_at
+18. Recovery rules
 
-3. recovery_rules
+19. Agent commands
 
-Fields:
+20. Agent events
 
-- id
+21. Audit logs
 
-- name
+CHECK:
 
-- trigger_type
+- Foreign keys
 
-- configuration
+- Primary keys
 
-- priority
+- Unique constraints
 
-- active
+- NOT NULL constraints
 
-- created_at
+- Indexes
 
-- updated_at
+- Relationships
 
-4. agent_commands
+- RLS policies
 
-Fields:
+- Role permissions
 
-- id
+- Data isolation
 
-- agent_id
+- Cascade behavior
 
-- device_id
+- Migration consistency
 
-- command_type
+SECURITY TESTS:
 
-- payload
+USER must not be able to:
 
-- status
+- access another user's farms
 
-- created_at
+- modify another user's farms
 
-- started_at
+- modify roles
 
-- completed_at
+- access Agent administration
 
-- error_message
+- access Vision administration
 
-5. agent_events
+- access Recovery administration
 
-Fields:
+- modify Audit Logs
 
-- id
+- modify System configuration
 
-- agent_id
+ADMIN must have the intended administrative access.
 
-- device_id
-
-- event_type
-
-- payload
-
-- created_at
-
-6. audit_logs
-
-Fields:
-
-- id
-
-- user_id
-
-- action
-
-- entity_type
-
-- entity_id
-
-- metadata
-
-- created_at
-
-RELATIONSHIPS:
-
-vision_assets
-
-↓
-
-vision_rules
-
-agents
-
-↓
-
-agent_commands
-
-↓
-
-devices
-
-agents
-
-↓
-
-agent_events
-
-↓
-
-devices
-
-users
-
-↓
-
-audit_logs
-
-REQUIREMENTS:
-
-- Add proper foreign keys.
-
-- Add useful indexes.
-
-- Add appropriate unique constraints.
-
-- Use JSON/JSONB for configuration and payload fields where appropriate.
-
-- Add timestamps.
-
-- Preserve existing database structure.
-
-- Do not modify working Phase 01, Phase 02, 03A, 03B or 03C functionality.
-
-SECURITY:
-
-Preserve the existing authorization model.
-
-SUPER_ADMIN:
-
-Full access.
-
-ADMIN:
-
-Administrative access.
-
-USER:
-
-No access to Agent management, Vision configuration, Recovery configuration or Audit Logs unless explicitly authorized by existing security rules.
-
-Apply appropriate RLS.
+SUPER_ADMIN must have full administrative access.
 
 IMPORTANT:
-
-This is DATABASE ONLY.
 
 Do NOT implement:
 
@@ -223,39 +129,57 @@ Do NOT implement:
 
 - Recovery execution
 
-- Command execution
+- UI features
 
-- Screenshot
+Only fix confirmed database/security problems.
 
-- UI
+Do not change working functionality unnecessarily.
 
-Do not create fake data except what is necessary for database validation.
+After validation report:
 
-TEST:
+DATABASE STATUS:
 
-1. Migrations succeed.
+PASS / FAIL
 
-2. Foreign keys work.
+SECURITY STATUS:
 
-3. RLS works.
+PASS / FAIL
 
-4. JSON fields work.
+RLS STATUS:
 
-5. Existing database functionality remains intact.
+PASS / FAIL
 
-6. Existing authentication and authorization remain intact.
+RELATIONSHIPS:
 
-7. Application builds successfully.
+PASS / FAIL
+
+MIGRATIONS:
+
+PASS / FAIL
+
+BUILD:
+
+PASS / FAIL
+
+FIXES MADE:
+
+...
+
+REMAINING ISSUES:
+
+...
 
 Update:
 
 /docs/PROJECT_STATUS.md
 
-Mark:
+Set:
 
-Phase 03D = COMPLETED
+Phase 03 = COMPLETED
 
-STOP after Phase 03D.
+Next Phase = 04
+
+STOP AFTER PHASE 03E.
 */
 
 export const Route = createFileRoute("/")({
