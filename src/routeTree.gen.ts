@@ -33,6 +33,7 @@ import { Route as AuthenticatedAdminDevicesRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminAgentsRouteImport } from './routes/_authenticated/admin/agents'
 import { Route as AuthenticatedAdminAccountsRouteImport } from './routes/_authenticated/admin/accounts'
 import { Route as AuthenticatedAdminMissionsIndexRouteImport } from './routes/_authenticated/admin/missions/index'
+import { Route as ApiPublicAgentRpcRouteImport } from './routes/api/public/agent/rpc'
 import { Route as ApiPublicAgentRegisterRouteImport } from './routes/api/public/agent/register'
 import { Route as ApiPublicAgentHeartbeatRouteImport } from './routes/api/public/agent/heartbeat'
 import { Route as ApiPublicAgentEventsRouteImport } from './routes/api/public/agent/events'
@@ -171,6 +172,11 @@ const AuthenticatedAdminMissionsIndexRoute =
     path: '/admin/missions/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const ApiPublicAgentRpcRoute = ApiPublicAgentRpcRouteImport.update({
+  id: '/api/public/agent/rpc',
+  path: '/api/public/agent/rpc',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicAgentRegisterRoute = ApiPublicAgentRegisterRouteImport.update({
   id: '/api/public/agent/register',
   path: '/api/public/agent/register',
@@ -226,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/api/public/agent/events': typeof ApiPublicAgentEventsRoute
   '/api/public/agent/heartbeat': typeof ApiPublicAgentHeartbeatRoute
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
+  '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/api/public/agent/events': typeof ApiPublicAgentEventsRoute
   '/api/public/agent/heartbeat': typeof ApiPublicAgentHeartbeatRoute
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
+  '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/admin/missions': typeof AuthenticatedAdminMissionsIndexRoute
 }
 export interface FileRoutesById {
@@ -288,6 +296,7 @@ export interface FileRoutesById {
   '/api/public/agent/events': typeof ApiPublicAgentEventsRoute
   '/api/public/agent/heartbeat': typeof ApiPublicAgentHeartbeatRoute
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
+  '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/_authenticated/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
 }
 export interface FileRouteTypes {
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/events'
     | '/api/public/agent/heartbeat'
     | '/api/public/agent/register'
+    | '/api/public/agent/rpc'
     | '/admin/missions/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -350,6 +360,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/events'
     | '/api/public/agent/heartbeat'
     | '/api/public/agent/register'
+    | '/api/public/agent/rpc'
     | '/admin/missions'
   id:
     | '__root__'
@@ -381,6 +392,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/events'
     | '/api/public/agent/heartbeat'
     | '/api/public/agent/register'
+    | '/api/public/agent/rpc'
     | '/_authenticated/admin/missions/'
   fileRoutesById: FileRoutesById
 }
@@ -393,6 +405,7 @@ export interface RootRouteChildren {
   ApiPublicAgentEventsRoute: typeof ApiPublicAgentEventsRoute
   ApiPublicAgentHeartbeatRoute: typeof ApiPublicAgentHeartbeatRoute
   ApiPublicAgentRegisterRoute: typeof ApiPublicAgentRegisterRoute
+  ApiPublicAgentRpcRoute: typeof ApiPublicAgentRpcRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -565,6 +578,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMissionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/agent/rpc': {
+      id: '/api/public/agent/rpc'
+      path: '/api/public/agent/rpc'
+      fullPath: '/api/public/agent/rpc'
+      preLoaderRoute: typeof ApiPublicAgentRpcRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/agent/register': {
       id: '/api/public/agent/register'
       path: '/api/public/agent/register'
@@ -663,6 +683,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicAgentEventsRoute: ApiPublicAgentEventsRoute,
   ApiPublicAgentHeartbeatRoute: ApiPublicAgentHeartbeatRoute,
   ApiPublicAgentRegisterRoute: ApiPublicAgentRegisterRoute,
+  ApiPublicAgentRpcRoute: ApiPublicAgentRpcRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
