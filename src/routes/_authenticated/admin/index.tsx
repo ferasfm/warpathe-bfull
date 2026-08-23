@@ -46,9 +46,9 @@ function AdminDashboard() {
   const statusItems = [
     { label: "Database", status: "Operational", color: "text-green-500" },
     { label: "Authentication", status: "Operational", color: "text-green-500" },
-    { label: "Agents", status: stats.onlineAgents > 0 ? "Active" : "Idle", color: stats.onlineAgents > 0 ? "text-green-500" : "text-yellow-500" },
-    { label: "Devices", status: stats.devices > 0 ? "Connected" : "None", color: stats.devices > 0 ? "text-green-500" : "text-slate-500" },
-    { label: "Missions", status: stats.activeMissions > 0 ? "Processing" : "Waiting", color: stats.activeMissions > 0 ? "text-blue-500" : "text-slate-500" },
+    { label: "Agents", status: (stats.onlineAgents ?? 0) > 0 ? "Active" : "Idle", color: (stats.onlineAgents ?? 0) > 0 ? "text-green-500" : "text-yellow-500" },
+    { label: "Devices", status: (stats.devices ?? 0) > 0 ? "Connected" : "None", color: (stats.devices ?? 0) > 0 ? "text-green-500" : "text-slate-500" },
+    { label: "Missions", status: (stats.activeMissions ?? 0) > 0 ? "Processing" : "Waiting", color: (stats.activeMissions ?? 0) > 0 ? "text-blue-500" : "text-slate-500" },
   ];
 
   return (
