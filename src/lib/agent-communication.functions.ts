@@ -359,17 +359,26 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
 
     if (runError) throw new Error(`Failed to create mission run: ${runError.message}`);
 
-    // 4. Queue Command for Agent
+    // 4. Get Emulator details for ADB serial
+    const { data: emulator } = await supabaseAdmin
+      .from("emulators")
+      .select("adb_serial")
+      .eq("id", data.emulatorId)
+      .single();
+
+    if (!emulator || !(emulator as any).adb_serial) throw new Error("Emulator ADB serial not found");
+
+    // 5. Queue Command for Agent
     const { data: command, error: cmdError } = await supabaseAdmin
       .from("agent_commands")
       .insert({
         agent_id: data.agentId,
-        device_id: data.emulatorId, // This is used to look up the correct queue, but we need the serial in the payload
+        device_id: data.emulatorId,
         command_type: "EXECUTE_MISSION",
         status: "PENDING",
         payload: {
           emulatorId: data.emulatorId,
-          adbSerial: template.adb_serial, // We need to get this from the emulator table
+          adbSerial: (emulator as any).adb_serial,
           missionRunId: run.id,
           steps: steps
         }
