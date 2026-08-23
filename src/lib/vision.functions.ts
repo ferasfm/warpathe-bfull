@@ -1,27 +1,30 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-const checkAdmin = async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
-
+/**
+ * RBAC Helper
+ */
+const checkRole = async (supabase: any, userId: string, allowedRoles: string[]) => {
   const { data: roleData } = await supabase
     .from("user_roles")
     .select("role")
-    .eq("user_id", session.user.id);
+    .eq("user_id", userId);
   
-  const roles = (roleData?.map(r => r.role) || []) as string[];
-  if (!roles.includes('admin') && !roles.includes('super_admin')) {
-    throw new Error("Forbidden");
+  const roles = (roleData?.map((r: any) => r.role) || []) as string[];
+  const isAllowed = allowedRoles.some(role => roles.includes(role));
+  
+  if (!isAllowed) {
+    throw new Error("Forbidden: Insufficient permissions");
   }
-  return session;
 };
 
 // VISION ASSETS
 export const getVisionAssets = createServerFn({ method: "GET" })
-  .handler(async () => {
-    await checkAdmin();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from('vision_assets')
       .select('*')
@@ -31,6 +34,7 @@ export const getVisionAssets = createServerFn({ method: "GET" })
   });
 
 export const createVisionAsset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     name: string,
     asset_type: string,
@@ -44,8 +48,9 @@ export const createVisionAsset = createServerFn({ method: "POST" })
     version: z.string().default("1.0.0"),
     active: z.boolean().default(true)
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data: result, error } = await supabase
       .from('vision_assets')
       .insert(data)
@@ -56,6 +61,7 @@ export const createVisionAsset = createServerFn({ method: "POST" })
   });
 
 export const updateVisionAsset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     id: string,
     name?: string,
@@ -71,8 +77,9 @@ export const updateVisionAsset = createServerFn({ method: "POST" })
     version: z.string().optional(),
     active: z.boolean().optional()
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { id, ...updates } = data;
     const { data: result, error } = await supabase
       .from('vision_assets')
@@ -85,9 +92,11 @@ export const updateVisionAsset = createServerFn({ method: "POST" })
   });
 
 export const deleteVisionAsset = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { error } = await supabase
       .from('vision_assets')
       .delete()
@@ -98,8 +107,10 @@ export const deleteVisionAsset = createServerFn({ method: "POST" })
 
 // VISION RULES
 export const getVisionRules = createServerFn({ method: "GET" })
-  .handler(async () => {
-    await checkAdmin();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from('vision_rules')
       .select('*, vision_assets(name)')
@@ -109,6 +120,7 @@ export const getVisionRules = createServerFn({ method: "GET" })
   });
 
 export const createVisionRule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     name: string,
     asset_id: string,
@@ -122,8 +134,9 @@ export const createVisionRule = createServerFn({ method: "POST" })
     configuration: z.any().optional(),
     active: z.boolean().default(true)
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data: result, error } = await supabase
       .from('vision_rules')
       .insert(data)
@@ -134,6 +147,7 @@ export const createVisionRule = createServerFn({ method: "POST" })
   });
 
 export const updateVisionRule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     id: string,
     name?: string,
@@ -149,8 +163,9 @@ export const updateVisionRule = createServerFn({ method: "POST" })
     configuration: z.any().optional(),
     active: z.boolean().optional()
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { id, ...updates } = data;
     const { data: result, error } = await supabase
       .from('vision_rules')
@@ -163,9 +178,11 @@ export const updateVisionRule = createServerFn({ method: "POST" })
   });
 
 export const deleteVisionRule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { error } = await supabase
       .from('vision_rules')
       .delete()
@@ -176,8 +193,10 @@ export const deleteVisionRule = createServerFn({ method: "POST" })
 
 // RECOVERY RULES
 export const getRecoveryRules = createServerFn({ method: "GET" })
-  .handler(async () => {
-    await checkAdmin();
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data, error } = await supabase
       .from('recovery_rules')
       .select('*')
@@ -187,6 +206,7 @@ export const getRecoveryRules = createServerFn({ method: "GET" })
   });
 
 export const createRecoveryRule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     name: string,
     trigger_type: string,
@@ -200,8 +220,9 @@ export const createRecoveryRule = createServerFn({ method: "POST" })
     configuration: z.any().optional(),
     active: z.boolean().default(true)
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { data: result, error } = await supabase
       .from('recovery_rules')
       .insert(data)
@@ -212,6 +233,7 @@ export const createRecoveryRule = createServerFn({ method: "POST" })
   });
 
 export const updateRecoveryRule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: {
     id: string,
     name?: string,
@@ -227,8 +249,9 @@ export const updateRecoveryRule = createServerFn({ method: "POST" })
     configuration: z.any().optional(),
     active: z.boolean().optional()
   }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { id, ...updates } = data;
     const { data: result, error } = await supabase
       .from('recovery_rules')
@@ -241,9 +264,11 @@ export const updateRecoveryRule = createServerFn({ method: "POST" })
   });
 
 export const deleteRecoveryRule = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { id: string }) => z.object({ id: z.string().uuid() }).parse(data))
-  .handler(async ({ data }) => {
-    await checkAdmin();
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    await checkRole(supabase, userId, ['admin', 'super_admin']);
     const { error } = await supabase
       .from('recovery_rules')
       .delete()
