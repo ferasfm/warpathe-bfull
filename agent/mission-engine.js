@@ -208,13 +208,13 @@ class MissionEngine {
 
         if (tapX === undefined || tapY === undefined) throw new Error('MISSING_PARAMETER: x, y');
 
-        const result = await this.agent.adb.execute(`shell input tap ${tapX} ${tapY}`, emulatorId);
+        const result = await this.agent.adb.execute(`shell input tap ${tapX} ${tapY}`, adbSerial);
         if (!result.success) throw new Error(`ADB_TAP_FAILED: ${result.error}`);
 
         return { status: 'SUCCESS' };
     }
 
-    async handleCondition(emulatorId, params) {
+    async handleCondition(adbSerial, params) {
         // Simple example: if previous step found an image, go to step A, else step B
         const { check, ifTrue, ifFalse } = params;
         // This requires state tracking of the mission run, which we'll implement as needed.
