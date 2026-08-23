@@ -49,6 +49,7 @@ class WatchdogService {
 
         try {
             await this.agent.sendEvent('RECOVERY_STARTED', { missionRunId, triggerType, attempt: attempts });
+            await this.reportMissionEvent(missionRunId, 'RECOVERY_STARTED', 'WARN', `Watchdog recovery started: ${triggerType}`, { attempt: attempts });
 
             // 1. Fetch Recovery Rules from Platform
             const rules = await this.fetchRecoveryRules(triggerType);
@@ -64,6 +65,7 @@ class WatchdogService {
                 const success = await this.executeRecoveryRule(adbSerial, rule);
                 if (success) {
                     this.logger.info('Recovery rule successful', { ruleName: rule.name });
+                    await this.reportMissionEvent(missionRunId, 'RECOVERY_SUCCESS', 'INFO', `Recovery rule successful: ${rule.name}`);
                     
                     // Determine where to resume
                     const resumeAction = rule.configuration?.resumeAction || 'RETRY_CURRENT_STEP';
@@ -71,6 +73,7 @@ class WatchdogService {
                 }
             }
 
+            await this.reportMissionEvent(missionRunId, 'RECOVERY_FAILED', 'CRITICAL', `Watchdog recovery failed: ${error || 'All rules failed'}`);
             return { status: 'RECOVERY_FAILED', error: 'ALL_RULES_FAILED' };
         } catch (error) {
             this.logger.error('Recovery engine error', { error: error.message });
@@ -134,6 +137,15 @@ class WatchdogService {
             }
         }
         return true;
+    }
+    async reportMissionEvent(missionRunId, eventType, severity, message, payload = {}) {
+        await this.agent.sendEvent('MISSION_LOG_EVENT', {
+            missionRunId,
+            eventType,
+            severity,
+            message,
+            payload
+        });
     }
 }
 
