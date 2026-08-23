@@ -14,7 +14,8 @@ class AdbService {
             'shell wm size',
             'shell wm density',
             'shell getprop ro.product.model',
-            'shell getprop ro.build.version.release'
+            'shell getprop ro.build.version.release',
+            'exec-out screencap -p'
         ];
     }
 
@@ -38,11 +39,25 @@ class AdbService {
         
         try {
             this.logger.debug(`Executing ADB command: ${fullCommand}`);
-            const { stdout, stderr } = await execPromise(fullCommand, { timeout: 10000 });
-            return { stdout: stdout.trim(), stderr: stderr.trim(), success: true };
+            
+            // Handle binary output for screenshots
+            const isBinary = command.includes('exec-out');
+            const execOptions = { 
+                timeout: 30000, 
+                maxBuffer: 10 * 1024 * 1024, // 10MB
+                encoding: isBinary ? 'buffer' : 'utf8' 
+            };
+            
+            const { stdout, stderr } = await execPromise(fullCommand, execOptions);
+            
+            return { 
+                stdout: isBinary ? stdout : stdout.trim(), 
+                stderr: isBinary ? stderr : stderr.trim(), 
+                success: true 
+            };
         } catch (error) {
             this.logger.error(`ADB command failed: ${fullCommand}`, { error: error.message });
-            return { stdout: error.stdout?.trim(), stderr: error.stderr?.trim(), success: false, error: error.message };
+            return { stdout: error.stdout, stderr: error.stderr, success: false, error: error.message };
         }
     }
 
