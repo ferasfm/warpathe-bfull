@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users, Sprout, ClipboardList } from "lucide-react";
+import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users, Sprout, ClipboardList, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
