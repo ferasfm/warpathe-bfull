@@ -23,7 +23,7 @@ export function Sidebar() {
       
       <nav className="flex-1 p-4 space-y-2 text-right">
         <NavItem to="/dashboard" icon={<LayoutDashboard className="w-4 h-4 ml-2" />} label="لوحة التحكم" />
-        <NavItem to="/dashboard" icon={<Sprout className="w-4 h-4 ml-2" />} label="مزارعي" />
+        <NavItem to="/farms" icon={<Sprout className="w-4 h-4 ml-2" />} label="مزارعي" />
         <NavItem to="/dashboard" icon={<ClipboardList className="w-4 h-4 ml-2" />} label="المهام" />
         <NavItem to="/settings" icon={<Settings className="w-4 h-4 ml-2" />} label="الإعدادات" />
         

@@ -1,7 +1,7 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 05B: User Dashboard Refinement
+Phase 05C: User Farm Configuration
 
 ## Status
 ONGOING
@@ -11,12 +11,15 @@ ONGOING
 - **Phase 03**: Database Architecture (Finalized & Validated).
 - **Phase 04**: Admin Platform (Dashboard, Users, Accounts, Farms, Missions, Infrastructure, Logs, Settings).
 - **Phase 05A**: User Dashboard.
-    - Implemented `/dashboard` with real database connectivity.
-    - Restricted user view to assigned farms (via RLS and server functions).
-    - Added user-specific metrics: Assigned Farms, Active Farms, Fleet counts.
-    - Integrated clean WARPATH UI with automation status (IDLE).
-    - Updated Sidebar with user-focused navigation and admin separation.
+- **Phase 05B**: User Farm Management.
+    - Implemented `/farms` for viewing assigned farms.
+    - Created `/farms/:id` for detailed read-only farm views.
+    - Enforced server-side validation ensuring users only access farms assigned via `farm_users`.
+    - Added a quick farm selector for seamless navigation.
+    - Integrated real-time data for fleet counts and account associations.
+    - Maintained hierarchical security, denying unauthorized ID access.
 
 ## Next Phase
-Phase 05B
+Phase 05C
+
 
