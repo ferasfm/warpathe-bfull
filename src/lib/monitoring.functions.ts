@@ -102,3 +102,26 @@ export const getMissionTimeline = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return events;
   });
+
+// 4. Get Mission Runs for a Mission (Admin Only)
+export const getMissionRunsForMission = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => z.object({
+    missionId: z.string(),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: runs, error } = await supabaseAdmin
+      .from("mission_runs")
+      .select(`
+        *,
+        farms (name),
+        emulators (instance_name)
+      `)
+      .eq("mission_id", data.missionId)
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (error) throw new Error(error.message);
+    return runs;
+  });
