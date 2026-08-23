@@ -218,6 +218,33 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
           name: model || `Device-${serial}`,
           status: status,
         }, { onConflict: 'agent_id, device_id' });
+    } else if (data.eventType === 'MISSION_LOG_EVENT') {
+      const { missionRunId, eventType, severity, message, payload } = data.payload;
+      await supabaseAdmin
+        .from("mission_events")
+        .insert({
+          mission_run_id: missionRunId,
+          event_type: eventType,
+          severity: severity || 'INFO',
+          message: message,
+          payload: payload,
+        });
+      
+      // Update mission_run summary if needed
+      if (eventType === 'STEP_STARTED') {
+        await supabaseAdmin
+          .from("mission_runs")
+          .update({ 
+            last_event_type: eventType,
+            current_step_index: data.payload.stepIndex
+          })
+          .eq("id", missionRunId);
+      } else {
+        await supabaseAdmin
+          .from("mission_runs")
+          .update({ last_event_type: eventType })
+          .eq("id", missionRunId);
+      }
     }
 
     await supabaseAdmin
