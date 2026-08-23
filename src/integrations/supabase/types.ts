@@ -142,9 +142,11 @@ export type Database = {
           created_at: string | null
           hostname: string | null
           id: string
+          installation_id: string | null
           last_heartbeat: string | null
           name: string
           status: string | null
+          token_hash: string | null
           updated_at: string | null
           version: string | null
         }
@@ -152,9 +154,11 @@ export type Database = {
           created_at?: string | null
           hostname?: string | null
           id?: string
+          installation_id?: string | null
           last_heartbeat?: string | null
           name: string
           status?: string | null
+          token_hash?: string | null
           updated_at?: string | null
           version?: string | null
         }
@@ -162,9 +166,11 @@ export type Database = {
           created_at?: string | null
           hostname?: string | null
           id?: string
+          installation_id?: string | null
           last_heartbeat?: string | null
           name?: string
           status?: string | null
+          token_hash?: string | null
           updated_at?: string | null
           version?: string | null
         }
