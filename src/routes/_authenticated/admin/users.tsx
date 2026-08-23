@@ -153,8 +153,7 @@ function UserManagementPage() {
                               }
                               disabled={
                                 updateRoleMutation.isPending || 
-                                (!isSuperAdmin && currentRole === 'super_admin') ||
-                                (!isSuperAdmin && val === 'super_admin') // Front-end guard
+                                (!isSuperAdmin && currentRole === 'super_admin')
                               }
                             >
                               <SelectTrigger className="w-[130px] h-8 text-xs">
