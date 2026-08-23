@@ -16,7 +16,7 @@ export const Route = createFileRoute("/_authenticated")({
 
     // Server-side check for /admin route
     if (location.pathname.startsWith('/admin')) {
-      const { data: roles, error } = await supabase
+      const { data: roles } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', session.user.id);
@@ -25,7 +25,8 @@ export const Route = createFileRoute("/_authenticated")({
       const isAdmin = roleList.includes('admin') || roleList.includes('super_admin');
       
       if (!isAdmin) {
-        console.warn("Access denied to admin route for user:", session.user.id, "Roles:", roleList);
+        // Fallback check: if the standard select fails due to RLS/cache, we might still be admin
+        // But for now, let's keep it simple and just redirect if not in list.
         throw redirect({ to: '/dashboard' });
       }
     }
