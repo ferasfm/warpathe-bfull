@@ -231,7 +231,12 @@ export const requestVisionTest = createServerFn({ method: "POST" })
       .eq("id", data.ruleId)
       .single();
 
-    if (!rule) throw new Error("Vision rule not found");
+    if (!rule || !rule.vision_assets) throw new Error("Vision rule or asset not found");
+
+    // storage_path is what we have in Phase 03
+    const { data: { publicUrl } } = supabaseAdmin.storage
+      .from("vision-assets")
+      .getPublicUrl(rule.vision_assets.storage_path || "");
 
     const { data: command, error } = await supabaseAdmin
       .from("agent_commands")
@@ -243,7 +248,7 @@ export const requestVisionTest = createServerFn({ method: "POST" })
         payload: { 
           serial: data.deviceId,
           rule: rule,
-          assetUrl: rule.vision_assets.image_url
+          assetUrl: publicUrl
         }
       })
       .select()

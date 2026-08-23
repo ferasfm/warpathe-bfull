@@ -4,7 +4,7 @@ import { getEmulators, getAgents } from '@/lib/agent.functions';
 import { requestDiagnosticScreenshot, requestVisionTest } from '@/lib/agent-communication.functions';
 import { supabase } from '@/integrations/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useState, useEffect } from 'react';
@@ -38,7 +38,7 @@ function VisionTestPage() {
   });
 
   const screenshotMutation = useMutation({
-    mutationFn: requestDiagnosticScreenshot,
+    mutationFn: (vars: { agentId: string, deviceId?: string }) => requestDiagnosticScreenshot({ data: vars }),
     onSuccess: (data: any) => {
       setActiveCommandId(data.id);
       setIsPolling(true);
@@ -48,7 +48,7 @@ function VisionTestPage() {
   });
 
   const visionTestMutation = useMutation({
-    mutationFn: requestVisionTest,
+    mutationFn: (vars: { agentId: string, deviceId: string, ruleId: string }) => requestVisionTest({ data: vars }),
     onSuccess: (data: any) => {
       setActiveCommandId(data.id);
       setIsPolling(true);
@@ -78,12 +78,13 @@ function VisionTestPage() {
           setActiveCommandId(null);
           toast.success('Agent responded successfully');
           
-          if (data.payload?.screenshot) {
-            setScreenshot(`data:image/png;base64,${data.payload.screenshot}`);
+          const payload = data.payload as any;
+          if (payload?.screenshot) {
+            setScreenshot(`data:image/png;base64,${payload.screenshot}`);
           }
           
           if (data.command_type === 'TEST_VISION_RULE') {
-            setVisionResult(data.payload);
+            setVisionResult(payload);
           }
         } else if (data.status === 'FAILED') {
           setIsPolling(false);
