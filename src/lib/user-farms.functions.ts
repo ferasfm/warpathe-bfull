@@ -144,3 +144,36 @@ export const saveFarmConfiguration = createServerFn({ method: "POST" })
     return { success: true };
   });
 
+export const getUserTasks = createServerFn({ method: "GET" }).handler(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error("Unauthorized");
+
+  // Get missions (runs) for farms assigned to the user
+  const { data: farmUsers } = await supabase
+    .from("farm_users")
+    .select("farm_id")
+    .eq("user_id", session.user.id);
+
+  const farmIds = farmUsers?.map(fu => fu.farm_id) || [];
+
+  if (farmIds.length === 0) return [];
+
+  const { data: runs, error } = await supabase
+    .from("mission_runs")
+    .select(`
+      *,
+      farms (name),
+      missions (name)
+    `)
+    .in("farm_id", farmIds)
+    .order("created_at", { ascending: false })
+    .limit(50);
+
+  if (error) throw error;
+
+  return runs?.map((run: any) => ({
+    ...run,
+    farmName: run.farms?.name || "Unknown",
+    missionName: run.missions?.name || "Unknown Task"
+  })) || [];
+});
