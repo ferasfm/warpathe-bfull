@@ -7,6 +7,7 @@ class MissionEngine {
         this.logger = logger;
         this.agent = agent;
         this.runningMissions = new Map(); // emulator_id -> mission_run_id
+        this.watchdog = new WatchdogService(logger, agent);
     }
 
     async executeMission(emulatorId, missionRunId, steps) {
@@ -21,6 +22,25 @@ class MissionEngine {
             let currentStepIndex = 0;
             while (currentStepIndex < steps.length) {
                 const step = steps[currentStepIndex];
+                
+                // Watchdog Monitor before step
+                const health = await this.watchdog.monitor(emulatorId, missionRunId, step, steps);
+                if (health.status === 'RECOVERED') {
+                    if (health.resumeAction === 'RESTART_MISSION') {
+                        currentStepIndex = 0;
+                        continue;
+                    }
+                    if (health.resumeAction === 'RETURN_TO_STEP' && health.targetStepId) {
+                        const targetIndex = steps.findIndex(s => s.id === health.targetStepId);
+                        if (targetIndex !== -1) {
+                            currentStepIndex = targetIndex;
+                            continue;
+                        }
+                    }
+                } else if (health.status === 'RECOVERY_FAILED') {
+                    throw new Error(`WATCHDOG_RECOVERY_FAILED: ${health.error}`);
+                }
+
                 this.logger.info(`Executing step ${currentStepIndex + 1}/${steps.length}`, { stepType: step.step_type });
 
                 await this.reportStepProgress(missionRunId, step.id, 'RUNNING');
@@ -47,6 +67,19 @@ class MissionEngine {
                     }
                 } catch (stepError) {
                     this.logger.error(`Step execution failed`, { stepId: step.id, error: stepError.message });
+                    
+                    // Attempt recovery on step failure
+                    const recovery = await this.watchdog.handleRecovery(emulatorId, missionRunId, 'STEP_FAILURE', step, steps);
+                    if (recovery.status === 'RECOVERED') {
+                        if (recovery.resumeAction === 'RETRY_CURRENT_STEP') {
+                            continue; // Retry same index
+                        }
+                        if (recovery.resumeAction === 'RESTART_CURRENT_STEP') {
+                            // Logic depends on mission structure, but usually same index
+                            continue;
+                        }
+                    }
+
                     await this.reportStepProgress(missionRunId, step.id, 'FAILED', { error: stepError.message });
                     throw stepError;
                 }

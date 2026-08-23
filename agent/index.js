@@ -281,6 +281,20 @@ class WarpathAgent {
 
                     break;
                 }
+                case 'GET_RECOVERY_RULES': {
+                    const { triggerType } = command.payload || {};
+                    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+                    
+                    const { data: rules } = await supabaseAdmin
+                      .from("recovery_rules")
+                      .select("*")
+                      .eq("trigger_type", triggerType)
+                      .eq("active", true)
+                      .order("priority", { ascending: false });
+
+                    await this.reportCommandResult(command.id, 'SUCCESS', { rules: rules || [] });
+                    break;
+                }
                 case 'EXECUTE_MISSION': {
                     const { emulatorId, missionRunId, steps } = command.payload || {};
                     if (!emulatorId || !missionRunId || !steps) {
