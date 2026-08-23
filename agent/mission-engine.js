@@ -1,5 +1,6 @@
 const Jimp = require('jimp-compact');
 const axios = require('axios');
+const WatchdogService = require('./watchdog-service');
 
 class MissionEngine {
     constructor(logger, agent) {
