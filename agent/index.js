@@ -9,6 +9,7 @@ const AdbService = require('./adb-service');
 const MuMuService = require('./mumu-service');
 const ScreenshotService = require('./screenshot-service');
 const VisionService = require('./vision-service');
+const MissionEngine = require('./mission-engine');
 require('dotenv').config();
 
 // CONFIGURATION & LOGGING
@@ -49,6 +50,7 @@ class WarpathAgent {
         this.mumu = new MuMuService(logger, { mumuPath: process.env.MUMU_PATH });
         this.screenshot = new ScreenshotService(logger, this.adb);
         this.vision = new VisionService(logger);
+        this.missionEngine = new MissionEngine(logger, this);
     }
 
     async init() {
@@ -277,6 +279,22 @@ class WarpathAgent {
                         ...result
                     });
 
+                    break;
+                }
+                case 'EXECUTE_MISSION': {
+                    const { emulatorId, missionRunId, steps } = command.payload || {};
+                    if (!emulatorId || !missionRunId || !steps) {
+                        await this.reportCommandResult(command.id, 'FAILED', { error: 'Missing mission parameters' });
+                        break;
+                    }
+                    
+                    // Respond SUCCESS immediately that the mission was accepted/started
+                    await this.reportCommandResult(command.id, 'SUCCESS', { message: 'Mission execution started' });
+                    
+                    // Run mission in background
+                    this.missionEngine.executeMission(emulatorId, missionRunId, steps).catch(err => {
+                        logger.error('Background mission execution failed', { missionRunId, error: err.message });
+                    });
                     break;
                 }
                 default:

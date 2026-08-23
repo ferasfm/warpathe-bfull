@@ -15,7 +15,9 @@ class AdbService {
             'shell wm density',
             'shell getprop ro.product.model',
             'shell getprop ro.build.version.release',
-            'exec-out screencap -p'
+            'exec-out screencap -p',
+            'shell input tap',
+            'shell input swipe'
         ];
     }
 
