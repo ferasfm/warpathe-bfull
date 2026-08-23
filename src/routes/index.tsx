@@ -42,7 +42,163 @@ function formatDistance(km: number): string {
 '''Do not make any visual modifications. The phrases I write are commands to understand what I want, not to be written down. Understand their content well, then execute what is required.'''
                                         
                                             
-                                            لم تجاوبني
+                                            WARPATH AUTOMATION PLATFORM
+
+PHASE 01 — FOUNDATION
+
+Build ONLY the foundation of the project.
+
+This is a real software project, not a visual mockup.
+
+TECHNOLOGY
+
+Frontend:
+
+React + TypeScript
+
+Backend:
+
+Supabase
+
+Authentication:
+
+Supabase Auth
+
+The final architecture will eventually be:
+
+Web Application
+
+↓
+
+Supabase
+
+↓
+
+Windows Agent
+
+↓
+
+ADB
+
+↓
+
+MuMu Player
+
+For this phase, build ONLY the Web Application foundation.
+
+CREATE
+
+1. Login page
+
+2. User dashboard
+
+3. Admin dashboard
+
+4. Protected routes
+
+5. Basic application layout
+
+6. Sidebar
+
+7. Header
+
+8. Supabase connection
+
+9. Basic project structure
+
+ROUTES
+
+/login
+
+/dashboard
+
+/admin
+
+The /admin route must be protected.
+
+Do not implement the following yet:
+
+- Windows Agent
+
+- ADB
+
+- MuMu Player
+
+- Image Recognition
+
+- AI
+
+- Mission Engine
+
+- Watchdog
+
+- Recovery
+
+- Multiple MuMu
+
+- Automation
+
+Do not create fake automation functionality.
+
+Create clean modular code that can be extended later.
+
+Create:
+
+/docs/PROJECT_STATUS.md
+
+The status file must contain:
+
+Current Phase
+
+Completed
+
+In Progress
+
+Known Issues
+
+Next Phase
+
+ACCEPTANCE TESTS
+
+The phase is complete only if:
+
+1. The application starts correctly.
+
+2. Login page works.
+
+3. Supabase connection works.
+
+4. Authenticated users can access /dashboard.
+
+5. /admin is protected.
+
+6. The project builds successfully.
+
+7. No automation functionality has been implemented yet.
+
+IMPORTANT:
+
+Do not continue automatically to another phase.
+
+Do not redesign the architecture.
+
+Do not add features that are not requested in this phase.
+
+When finished, report:
+
+- What was implemented
+
+- Files created/changed
+
+- Database changes
+
+- Tests performed
+
+- Problems found
+
+- Current project status
+
+STOP AFTER PHASE 01.
 */
 
 import { NewsTicker } from "@/components/news-ticker";
