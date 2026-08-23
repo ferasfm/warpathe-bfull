@@ -1,10 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export const getAssignedFarms = createServerFn({ method: "GET" }).handler(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
+export const getAssignedFarms = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
 
   const { data: farmUsers, error } = await supabase
     .from("farm_users")
@@ -15,7 +16,7 @@ export const getAssignedFarms = createServerFn({ method: "GET" }).handler(async 
         fleets (id)
       )
     `)
-    .eq("user_id", session.user.id);
+    .eq("user_id", userId);
 
   if (error) throw error;
 
@@ -28,17 +29,17 @@ export const getAssignedFarms = createServerFn({ method: "GET" }).handler(async 
 });
 
 export const getFarmDetails = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
   .validator((id: string) => z.string().uuid().parse(id))
-  .handler(async ({ data: farmId }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Unauthorized");
+  .handler(async ({ data: farmId, context }) => {
+    const { supabase, userId } = context;
 
     // Security check: Verify user is assigned to this farm
     const { data: assignment, error: authError } = await supabase
       .from("farm_users")
       .select("id")
       .eq("farm_id", farmId)
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .single();
 
     if (authError || !assignment) {
@@ -72,9 +73,10 @@ export const getFarmDetails = createServerFn({ method: "GET" })
     };
   });
 
-export const getActiveResources = createServerFn({ method: "GET" }).handler(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
+export const getActiveResources = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
 
   const { data, error } = await supabase
     .from("resources")
@@ -87,6 +89,7 @@ export const getActiveResources = createServerFn({ method: "GET" }).handler(asyn
 });
 
 export const saveFarmConfiguration = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { 
     farmId: string, 
     assignments: { fleetId: string, resourceId: string }[] 
@@ -97,16 +100,15 @@ export const saveFarmConfiguration = createServerFn({ method: "POST" })
       resourceId: z.string().uuid()
     }))
   }).parse(data))
-  .handler(async ({ data: { farmId, assignments } }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Unauthorized");
+  .handler(async ({ data: { farmId, assignments }, context }) => {
+    const { supabase, userId } = context;
 
     // 1. Verify farm ownership
     const { data: farmUser } = await supabase
       .from("farm_users")
       .select("id")
       .eq("farm_id", farmId)
-      .eq("user_id", session.user.id)
+      .eq("user_id", userId)
       .single();
 
     if (!farmUser) throw new Error("Unauthorized: Farm access denied");
@@ -144,15 +146,16 @@ export const saveFarmConfiguration = createServerFn({ method: "POST" })
     return { success: true };
   });
 
-export const getUserTasks = createServerFn({ method: "GET" }).handler(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
+export const getUserTasks = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
 
   // Get missions (runs) for farms assigned to the user
   const { data: farmUsers } = await supabase
     .from("farm_users")
     .select("farm_id")
-    .eq("user_id", session.user.id);
+    .eq("user_id", userId);
 
   const farmIds = farmUsers?.map(fu => fu.farm_id) || [];
 

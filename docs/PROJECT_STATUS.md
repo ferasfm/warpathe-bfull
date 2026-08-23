@@ -60,3 +60,8 @@ Phase 12: Infrastructure Scaling & MuMu Multi-Instance
     - Added safety mechanisms: max attempts, mission pausing, and infinite loop prevention.
     - Verified telemetry for `RECOVERY_STARTED` events.
     - Hardened platform orchestration for recovery rule distribution.
+
+- **Bug Fix**: Resolved runtime authorization error (`Unauthorized`) in dashboard and farm management routes by correctly applying `requireSupabaseAuth` middleware to all server functions.
+    - Switched from client-side `supabase.auth.getSession()` (which lacks session headers in server functions) to the platform's secure server-side middleware.
+    - Verified unauthenticated redirection and preserved RLS security boundaries across USER, ADMIN, and SUPER_ADMIN roles.
+    - Verified production build and route protection.

@@ -1,31 +1,31 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 export const getUserRoles = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return { roles: [] };
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
 
     const { data, error } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", session.user.id);
+      .eq("user_id", userId);
 
     if (error) throw error;
     return { roles: data.map((r) => r.role) };
   });
 
 export const getAllUsers = createServerFn({ method: "GET" })
-  .handler(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Unauthorized");
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
 
     // Check if admin/super_admin
     const { data: roleData } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", session.user.id);
+      .eq("user_id", userId);
     
     const roles = (roleData?.map(r => r.role) || []) as string[];
     if (!roles.includes('admin') && !roles.includes('super_admin')) {
@@ -48,21 +48,21 @@ export const getAllUsers = createServerFn({ method: "GET" })
   });
 
 export const updateUserRole = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .validator((data: { userId: string, newRole: 'super_admin' | 'admin' | 'user' }) => 
     z.object({
       userId: z.string(),
       newRole: z.enum(['super_admin', 'admin', 'user'])
     }).parse(data)
   )
-  .handler(async ({ data: { userId, newRole } }) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) throw new Error("Unauthorized");
+  .handler(async ({ data: { userId, newRole }, context }) => {
+    const { supabase, userId: requesterId } = context;
 
     // Get requester's role
     const { data: requesterRoleData } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", session.user.id);
+      .eq("user_id", requesterId);
     
     const requesterRoles = (requesterRoleData?.map(r => r.role) || []) as string[];
     const isSuperAdmin = requesterRoles.includes('super_admin');
@@ -91,7 +91,7 @@ export const updateUserRole = createServerFn({ method: "POST" })
     // In our case, an Admin can change their own role to 'user' (demotion), but can they change to 'super_admin'? No, blocked by hierarchy.
     // Can they change from 'admin' to 'admin'? NOP.
     // The requirement is "Must NOT promote themselves". If they are ADMIN, they can't become SUPER_ADMIN anyway.
-    if (userId === session.user.id && !isSuperAdmin && newRole === 'super_admin') {
+    if (userId === requesterId && !isSuperAdmin && newRole === 'super_admin') {
         throw new Error("You cannot promote yourself to Super Admin");
     }
 

@@ -1,18 +1,18 @@
 import { createServerFn } from "@tanstack/react-start";
-import { supabase } from "@/integrations/supabase/client";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export const getUserDashboardData = createServerFn({ method: "GET" }).handler(async () => {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Unauthorized");
+export const getUserDashboardData = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId, claims } = context;
+    const userEmail = claims.email;
 
-  const userId = session.user.id;
-
-  // 1. Get user profile
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("*")
-    .eq("id", userId)
-    .single();
+    // 1. Get user profile
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
 
   // 2. Get assigned farms (via farm_users)
   const { data: farmUsers, error: farmsError } = await supabase
@@ -67,8 +67,8 @@ export const getUserDashboardData = createServerFn({ method: "GET" }).handler(as
 
   return {
     user: {
-      fullName: profile?.full_name || session.user.email,
-      email: session.user.email,
+      fullName: profile?.full_name || userEmail,
+      email: userEmail,
     },
     stats: {
       totalFarms: farms.length,
