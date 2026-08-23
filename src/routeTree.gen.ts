@@ -18,6 +18,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
+import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
 import { Route as AuthenticatedAdminFarmsRouteImport } from './routes/_authenticated/admin/farms'
 import { Route as AuthenticatedAdminAccountsRouteImport } from './routes/_authenticated/admin/accounts'
 
@@ -68,6 +69,12 @@ const AuthenticatedAdminResourcesRoute =
     path: '/admin/resources',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminFleetsRoute =
+  AuthenticatedAdminFleetsRouteImport.update({
+    id: '/admin/fleets',
+    path: '/admin/fleets',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminFarmsRoute = AuthenticatedAdminFarmsRouteImport.update({
   id: '/admin/farms',
   path: '/admin/farms',
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/admin/accounts': typeof AuthenticatedAdminAccountsRoute
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
+  '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -97,6 +105,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/admin/accounts': typeof AuthenticatedAdminAccountsRoute
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
+  '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -111,6 +120,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/admin/accounts': typeof AuthenticatedAdminAccountsRoute
   '/_authenticated/admin/farms': typeof AuthenticatedAdminFarmsRoute
+  '/_authenticated/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/_authenticated/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin/accounts'
     | '/admin/farms'
+    | '/admin/fleets'
     | '/admin/resources'
     | '/admin/users'
     | '/api/public/manifest'
@@ -137,6 +148,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/admin/accounts'
     | '/admin/farms'
+    | '/admin/fleets'
     | '/admin/resources'
     | '/admin/users'
     | '/api/public/manifest'
@@ -150,6 +162,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/admin/accounts'
     | '/_authenticated/admin/farms'
+    | '/_authenticated/admin/fleets'
     | '/_authenticated/admin/resources'
     | '/_authenticated/admin/users'
     | '/api/public/manifest'
@@ -230,6 +243,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminResourcesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/fleets': {
+      id: '/_authenticated/admin/fleets'
+      path: '/admin/fleets'
+      fullPath: '/admin/fleets'
+      preLoaderRoute: typeof AuthenticatedAdminFleetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/farms': {
       id: '/_authenticated/admin/farms'
       path: '/admin/farms'
@@ -250,6 +270,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminAccountsRoute: typeof AuthenticatedAdminAccountsRoute
   AuthenticatedAdminFarmsRoute: typeof AuthenticatedAdminFarmsRoute
+  AuthenticatedAdminFleetsRoute: typeof AuthenticatedAdminFleetsRoute
   AuthenticatedAdminResourcesRoute: typeof AuthenticatedAdminResourcesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
@@ -260,6 +281,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminAccountsRoute: AuthenticatedAdminAccountsRoute,
   AuthenticatedAdminFarmsRoute: AuthenticatedAdminFarmsRoute,
+  AuthenticatedAdminFleetsRoute: AuthenticatedAdminFleetsRoute,
   AuthenticatedAdminResourcesRoute: AuthenticatedAdminResourcesRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,

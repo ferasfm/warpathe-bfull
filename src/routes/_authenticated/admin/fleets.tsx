@@ -33,7 +33,7 @@ function FleetsPage() {
 
   const { data: fleets, isLoading: fleetsLoading } = useQuery({
     queryKey: ['fleets', selectedFarmId],
-    queryFn: () => getFleetsByFarm({ farmId: selectedFarmId }),
+    queryFn: () => getFleetsByFarm({ data: { farmId: selectedFarmId } }),
     enabled: !!selectedFarmId,
   });
 
@@ -68,9 +68,11 @@ function FleetsPage() {
   const handleAddFleet = () => {
     if (!selectedFarmId || !newFleetNumber) return;
     createFleetMutation.mutate({
-      farm_id: selectedFarmId,
-      fleet_number: parseInt(newFleetNumber),
-      status: 'active'
+      data: {
+        farm_id: selectedFarmId,
+        fleet_number: parseInt(newFleetNumber),
+        status: 'active'
+      }
     });
   };
 
@@ -138,9 +140,11 @@ function FleetsPage() {
                         <Select
                           value={fleet.fleet_assignments?.[0]?.resource_id || ''}
                           onValueChange={(val) => assignResourceMutation.mutate({
-                            fleetId: fleet.id,
-                            farmId: selectedFarmId,
-                            resourceId: val
+                            data: {
+                              fleetId: fleet.id,
+                              farmId: selectedFarmId,
+                              resourceId: val
+                            }
                           })}
                         >
                           <SelectTrigger className="w-[200px]">
@@ -162,7 +166,7 @@ function FleetsPage() {
                           className="text-destructive hover:text-destructive hover:bg-destructive/10"
                           onClick={() => {
                             if (confirm('هل أنت متأكد من حذف هذا الأسطول؟')) {
-                                deleteFleetMutation.mutate({ id: fleet.id });
+                                deleteFleetMutation.mutate({ data: { id: fleet.id } });
                             }
                           }}
                         >

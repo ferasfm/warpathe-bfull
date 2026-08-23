@@ -1,10 +1,10 @@
 # Project Status: WARPATH AUTOMATION PLATFORM
 
 ## Current Phase
-Phase 04: Mission Engine Core (Foundation)
+Phase 04D: Resources and Fleets Management
 
 ## Status
-IN PROGRESS
+COMPLETED
 
 ## Completed
 - **Phase 01 & 02**: RBAC, Auth, User Management, and Layout Foundation.
@@ -16,8 +16,13 @@ IN PROGRESS
     - Implemented user-to-farm assignment system with many-to-many relationships.
     - Enforced relational integrity and secure server-side operations.
     - Verified RLS ensures users only see assigned farms.
+- **Phase 04D**: Resources and Fleets Management.
+    - Implemented Resources (WHEAT, IRON, STEEL) with status and images.
+    - Built Fleet management system per farm.
+    - Implemented Fleet Resource Assignment.
+    - Secured all operations with server-side admin checks and RLS.
 
 ## Next Phase
-Phase 04B: Mission Management UI
+Phase 04E: Mission Engine Integration
 
-STOP AFTER PHASE 04A.
+STOP AFTER PHASE 04D.
