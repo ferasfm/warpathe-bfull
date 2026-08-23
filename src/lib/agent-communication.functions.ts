@@ -31,7 +31,7 @@ const verifyAgent = async (agentId: string, token: string) => {
 
 // 1. Agent Registration
 export const registerAgent = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     registrationKey: z.string(),
     name: z.string(),
     hostname: z.string(),
@@ -79,7 +79,7 @@ export const registerAgent = createServerFn({ method: "POST" })
 
 // 2. Agent Heartbeat
 export const agentHeartbeat = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
     version: z.string(),
@@ -106,7 +106,7 @@ export const agentHeartbeat = createServerFn({ method: "POST" })
 
 // 3. Command Queue Retrieval
 export const getPendingCommands = createServerFn({ method: "GET" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
   }).parse(data))
@@ -129,7 +129,7 @@ export const getPendingCommands = createServerFn({ method: "GET" })
 
 // 4. Command Result Submission
 export const submitCommandResult = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
     commandId: z.string(),
@@ -161,7 +161,7 @@ export const submitCommandResult = createServerFn({ method: "POST" })
 
 // 5. Agent Event Submission
 export const submitAgentEvent = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     token: z.string(),
     eventType: z.string(),
@@ -189,7 +189,7 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
 
 // 6. Request Diagnostic Screenshot (Admin Only)
 export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     deviceId: z.string().optional(),
   }).parse(data))
@@ -217,7 +217,7 @@ export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
 
 // 7. Request Vision Test (Admin Only)
 export const requestVisionTest = createServerFn({ method: "POST" })
-  .inputValidator((data) => z.object({
+  .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     deviceId: z.string(),
     ruleId: z.string(),
