@@ -10,7 +10,7 @@ WARPATH is a professional automation platform designed for MuMu Player and ADB-b
 | TEST | STATUS | DETAILS |
 | :--- | :--- | :--- |
 | **1. Security Audit** | PASS | RLS, RBAC, and Agent Auth verified. Command allowlist enforced. |
-| **2. Build Systems** | PASS | Web production and Windows Agent builds successful. |
+| **2. Build Systems** | PASS | Web production and Windows Agent builds successful (`agent/dist/warpath-agent.exe` verified). |
 | **3. TypeScript Validation** | PASS | 0 errors in manual `tsc --noEmit` check. |
 | **4. Auth & RBAC** | PASS | Multi-role protection (User/Admin/SuperAdmin) verified via Playwright. |
 | **5. Mission Engine Core** | PASS | Steps (WAIT, TAP, etc.) and recovery logic audited in code. |
