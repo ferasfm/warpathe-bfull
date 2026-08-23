@@ -229,6 +229,7 @@ function MissionBuilderPage() {
       </Tabs>
     </div>
   );
+}
 
 function MissionHistory({ missionId }: { missionId: string }) {
   const { data: runs, isLoading } = useQuery({
