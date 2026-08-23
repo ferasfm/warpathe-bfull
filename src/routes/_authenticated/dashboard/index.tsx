@@ -115,19 +115,36 @@ function UserDashboard() {
                     </Badge>
                   </div>
                 </CardHeader>
-                <CardContent className="flex justify-between items-center text-sm">
-                  <div className="flex gap-4 text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <Box className="w-4 h-4" />
-                      {farm.fleetCount} Fleets
-                    </span>
+                <CardContent className="space-y-4">
+                  <div className="flex justify-between items-center text-sm">
+                    <div className="flex gap-4 text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Box className="w-4 h-4" />
+                        {farm.fleetCount} Fleets
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs block text-muted-foreground uppercase mb-1">Automation</span>
+                      <Badge variant="outline" className={`text-[10px] font-bold ${farm.activeMission ? 'text-primary border-primary animate-pulse' : ''}`}>
+                        {farm.activeMission ? 'RUNNING' : 'IDLE'}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <span className="text-xs block text-muted-foreground uppercase mb-1">Automation</span>
-                    <Badge variant="outline" className="text-[10px] font-bold">
-                      {farm.automationStatus}
-                    </Badge>
-                  </div>
+                  
+                  {farm.activeMission && (
+                    <div className="pt-2 border-t space-y-2">
+                      <div className="flex justify-between items-center text-xs">
+                        <span className="font-medium">Current: {farm.activeMission.missions?.name}</span>
+                        <span className="text-muted-foreground uppercase text-[10px]">{farm.activeMission.last_event_type || 'STARTING'}</span>
+                      </div>
+                      <div className="w-full bg-secondary h-1.5 rounded-full overflow-hidden">
+                        <div 
+                          className="bg-primary h-full transition-all duration-500" 
+                          style={{ width: `${Math.min(100, Math.max(5, (farm.activeMission.current_step_index / (farm.activeMission.total_steps || 10)) * 100))}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))}
