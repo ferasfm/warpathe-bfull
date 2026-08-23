@@ -16,6 +16,7 @@ import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as AuthenticatedAdminVisionRouteImport } from './routes/_authenticated/admin/vision'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
 import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
@@ -63,6 +64,12 @@ const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAdminVisionRoute =
+  AuthenticatedAdminVisionRouteImport.update({
+    id: '/admin/vision',
+    path: '/admin/vision',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/admin/users',
   path: '/admin/users',
@@ -133,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/vision': typeof AuthenticatedAdminVisionRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -151,6 +159,7 @@ export interface FileRoutesByTo {
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/vision': typeof AuthenticatedAdminVisionRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
@@ -171,6 +180,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/_authenticated/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/vision': typeof AuthenticatedAdminVisionRoute
   '/api/public/manifest': typeof ApiPublicManifestRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/admin/fleets'
     | '/admin/resources'
     | '/admin/users'
+    | '/admin/vision'
     | '/api/public/manifest'
     | '/admin/'
     | '/dashboard/'
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/admin/fleets'
     | '/admin/resources'
     | '/admin/users'
+    | '/admin/vision'
     | '/api/public/manifest'
     | '/admin'
     | '/dashboard'
@@ -228,6 +240,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/fleets'
     | '/_authenticated/admin/resources'
     | '/_authenticated/admin/users'
+    | '/_authenticated/admin/vision'
     | '/api/public/manifest'
     | '/_authenticated/admin/'
     | '/_authenticated/dashboard/'
@@ -293,6 +306,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/public/manifest'
       preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/vision': {
+      id: '/_authenticated/admin/vision'
+      path: '/admin/vision'
+      fullPath: '/admin/vision'
+      preLoaderRoute: typeof AuthenticatedAdminVisionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
@@ -376,6 +396,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminFleetsRoute: typeof AuthenticatedAdminFleetsRoute
   AuthenticatedAdminResourcesRoute: typeof AuthenticatedAdminResourcesRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminVisionRoute: typeof AuthenticatedAdminVisionRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
@@ -392,6 +413,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminFleetsRoute: AuthenticatedAdminFleetsRoute,
   AuthenticatedAdminResourcesRoute: AuthenticatedAdminResourcesRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminVisionRoute: AuthenticatedAdminVisionRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
