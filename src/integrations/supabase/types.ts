@@ -41,6 +41,102 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_commands: {
+        Row: {
+          agent_id: string
+          command_type: string
+          completed_at: string | null
+          created_at: string | null
+          device_id: string | null
+          error_message: string | null
+          id: string
+          payload: Json | null
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          agent_id: string
+          command_type: string
+          completed_at?: string | null
+          created_at?: string | null
+          device_id?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          agent_id?: string
+          command_type?: string
+          completed_at?: string | null
+          created_at?: string | null
+          device_id?: string | null
+          error_message?: string | null
+          id?: string
+          payload?: Json | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_commands_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_commands_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_events: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          device_id: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          device_id?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          device_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_events_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_events_device_id_fkey"
+            columns: ["device_id"]
+            isOneToOne: false
+            referencedRelation: "devices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agents: {
         Row: {
           created_at: string | null
@@ -71,6 +167,36 @@ export type Database = {
           status?: string | null
           updated_at?: string | null
           version?: string | null
+        }
+        Relationships: []
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -528,6 +654,39 @@ export type Database = {
         }
         Relationships: []
       }
+      recovery_rules: {
+        Row: {
+          active: boolean | null
+          configuration: Json | null
+          created_at: string | null
+          id: string
+          name: string
+          priority: number | null
+          trigger_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          name: string
+          priority?: number | null
+          trigger_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          priority?: number | null
+          trigger_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       resource_assets: {
         Row: {
           active: boolean | null
@@ -613,6 +772,80 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      vision_assets: {
+        Row: {
+          active: boolean | null
+          asset_type: string
+          created_at: string | null
+          id: string
+          name: string
+          storage_path: string | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          asset_type: string
+          created_at?: string | null
+          id?: string
+          name: string
+          storage_path?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          asset_type?: string
+          created_at?: string | null
+          id?: string
+          name?: string
+          storage_path?: string | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: []
+      }
+      vision_rules: {
+        Row: {
+          active: boolean | null
+          asset_id: string | null
+          confidence_threshold: number | null
+          configuration: Json | null
+          created_at: string | null
+          id: string
+          name: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          asset_id?: string | null
+          confidence_threshold?: number | null
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          name: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          asset_id?: string | null
+          confidence_threshold?: number | null
+          configuration?: Json | null
+          created_at?: string | null
+          id?: string
+          name?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vision_rules_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "vision_assets"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
