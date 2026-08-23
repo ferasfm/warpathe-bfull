@@ -176,6 +176,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_mission_generation_logs: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          error_message: string | null
+          generated_json: Json | null
+          id: string
+          model: string | null
+          prompt: string
+          provider: string | null
+          status: string
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          generated_json?: Json | null
+          id?: string
+          model?: string | null
+          prompt: string
+          provider?: string | null
+          status: string
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          error_message?: string | null
+          generated_json?: Json | null
+          id?: string
+          model?: string | null
+          prompt?: string
+          provider?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       ai_vision_logs: {
         Row: {
           agent_id: string | null
