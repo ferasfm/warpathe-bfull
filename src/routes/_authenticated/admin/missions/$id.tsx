@@ -89,10 +89,22 @@ function MissionBuilderPage() {
     
     // Swap orders
     upsertStepMutation.mutate({
-      data: { ...step, step_order: otherStep.step_order }
+      data: { 
+        ...step, 
+        step_order: otherStep.step_order,
+        timeout_ms: step.timeout_ms ?? undefined,
+        retry_count: step.retry_count ?? undefined,
+        configuration: step.configuration ?? undefined
+      }
     });
     upsertStepMutation.mutate({
-      data: { ...otherStep, step_order: step.step_order }
+      data: { 
+        ...otherStep, 
+        step_order: step.step_order,
+        timeout_ms: otherStep.timeout_ms ?? undefined,
+        retry_count: otherStep.retry_count ?? undefined,
+        configuration: otherStep.configuration ?? undefined
+      }
     });
   };
 
