@@ -83,8 +83,7 @@ function UserManagementPage() {
                           }
                           disabled={
                             updateRoleMutation.isPending || 
-                            (!isSuperAdmin && currentRole === 'super_admin') ||
-                            (!isSuperAdmin && val === 'super_admin')
+                            (!isSuperAdmin && currentRole === 'super_admin')
                           }
                         >
                           <SelectTrigger className="w-[180px]">
