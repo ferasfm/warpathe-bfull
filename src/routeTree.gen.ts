@@ -25,6 +25,7 @@ import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
 import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
 import { Route as AuthenticatedAdminRecoveryRouteImport } from './routes/_authenticated/admin/recovery'
+import { Route as AuthenticatedAdminMonitoringRouteImport } from './routes/_authenticated/admin/monitoring'
 import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin/logs'
 import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
 import { Route as AuthenticatedAdminFarmsRouteImport } from './routes/_authenticated/admin/farms'
@@ -39,6 +40,7 @@ import { Route as ApiPublicAgentHeartbeatRouteImport } from './routes/api/public
 import { Route as ApiPublicAgentEventsRouteImport } from './routes/api/public/agent/events'
 import { Route as ApiPublicAgentCommandsRouteImport } from './routes/api/public/agent/commands'
 import { Route as AuthenticatedAdminMissionsIdRouteImport } from './routes/_authenticated/admin/missions/$id'
+import { Route as AuthenticatedAdminMissionsRunsRunIdRouteImport } from './routes/_authenticated/admin/missions/runs/$runId'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -126,6 +128,12 @@ const AuthenticatedAdminRecoveryRoute =
     path: '/admin/recovery',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminMonitoringRoute =
+  AuthenticatedAdminMonitoringRouteImport.update({
+    id: '/admin/monitoring',
+    path: '/admin/monitoring',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
   id: '/admin/logs',
   path: '/admin/logs',
@@ -203,6 +211,12 @@ const AuthenticatedAdminMissionsIdRoute =
     path: '/admin/missions/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAdminMissionsRunsRunIdRoute =
+  AuthenticatedAdminMissionsRunsRunIdRouteImport.update({
+    id: '/admin/missions/runs/$runId',
+    path: '/admin/missions/runs/$runId',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -215,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
+  '/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/admin/recovery': typeof AuthenticatedAdminRecoveryRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -234,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
   '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
+  '/admin/missions/runs/$runId': typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -246,6 +262,7 @@ export interface FileRoutesByTo {
   '/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/admin/logs': typeof AuthenticatedAdminLogsRoute
+  '/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/admin/recovery': typeof AuthenticatedAdminRecoveryRoute
   '/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -265,6 +282,7 @@ export interface FileRoutesByTo {
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
   '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/admin/missions': typeof AuthenticatedAdminMissionsIndexRoute
+  '/admin/missions/runs/$runId': typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -279,6 +297,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/farms': typeof AuthenticatedAdminFarmsRoute
   '/_authenticated/admin/fleets': typeof AuthenticatedAdminFleetsRoute
   '/_authenticated/admin/logs': typeof AuthenticatedAdminLogsRoute
+  '/_authenticated/admin/monitoring': typeof AuthenticatedAdminMonitoringRoute
   '/_authenticated/admin/recovery': typeof AuthenticatedAdminRecoveryRoute
   '/_authenticated/admin/resources': typeof AuthenticatedAdminResourcesRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
@@ -298,6 +317,7 @@ export interface FileRoutesById {
   '/api/public/agent/register': typeof ApiPublicAgentRegisterRoute
   '/api/public/agent/rpc': typeof ApiPublicAgentRpcRoute
   '/_authenticated/admin/missions/': typeof AuthenticatedAdminMissionsIndexRoute
+  '/_authenticated/admin/missions/runs/$runId': typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -312,6 +332,7 @@ export interface FileRouteTypes {
     | '/admin/farms'
     | '/admin/fleets'
     | '/admin/logs'
+    | '/admin/monitoring'
     | '/admin/recovery'
     | '/admin/resources'
     | '/admin/settings'
@@ -331,6 +352,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/register'
     | '/api/public/agent/rpc'
     | '/admin/missions/'
+    | '/admin/missions/runs/$runId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -343,6 +365,7 @@ export interface FileRouteTypes {
     | '/admin/farms'
     | '/admin/fleets'
     | '/admin/logs'
+    | '/admin/monitoring'
     | '/admin/recovery'
     | '/admin/resources'
     | '/admin/settings'
@@ -362,6 +385,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/register'
     | '/api/public/agent/rpc'
     | '/admin/missions'
+    | '/admin/missions/runs/$runId'
   id:
     | '__root__'
     | '/'
@@ -375,6 +399,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/farms'
     | '/_authenticated/admin/fleets'
     | '/_authenticated/admin/logs'
+    | '/_authenticated/admin/monitoring'
     | '/_authenticated/admin/recovery'
     | '/_authenticated/admin/resources'
     | '/_authenticated/admin/settings'
@@ -394,6 +419,7 @@ export interface FileRouteTypes {
     | '/api/public/agent/register'
     | '/api/public/agent/rpc'
     | '/_authenticated/admin/missions/'
+    | '/_authenticated/admin/missions/runs/$runId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -522,6 +548,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRecoveryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/monitoring': {
+      id: '/_authenticated/admin/monitoring'
+      path: '/admin/monitoring'
+      fullPath: '/admin/monitoring'
+      preLoaderRoute: typeof AuthenticatedAdminMonitoringRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/logs': {
       id: '/_authenticated/admin/logs'
       path: '/admin/logs'
@@ -620,6 +653,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMissionsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/admin/missions/runs/$runId': {
+      id: '/_authenticated/admin/missions/runs/$runId'
+      path: '/admin/missions/runs/$runId'
+      fullPath: '/admin/missions/runs/$runId'
+      preLoaderRoute: typeof AuthenticatedAdminMissionsRunsRunIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -632,6 +672,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAdminFarmsRoute: typeof AuthenticatedAdminFarmsRoute
   AuthenticatedAdminFleetsRoute: typeof AuthenticatedAdminFleetsRoute
   AuthenticatedAdminLogsRoute: typeof AuthenticatedAdminLogsRoute
+  AuthenticatedAdminMonitoringRoute: typeof AuthenticatedAdminMonitoringRoute
   AuthenticatedAdminRecoveryRoute: typeof AuthenticatedAdminRecoveryRoute
   AuthenticatedAdminResourcesRoute: typeof AuthenticatedAdminResourcesRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
@@ -645,6 +686,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
   AuthenticatedAdminMissionsIdRoute: typeof AuthenticatedAdminMissionsIdRoute
   AuthenticatedAdminMissionsIndexRoute: typeof AuthenticatedAdminMissionsIndexRoute
+  AuthenticatedAdminMissionsRunsRunIdRoute: typeof AuthenticatedAdminMissionsRunsRunIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -656,6 +698,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAdminFarmsRoute: AuthenticatedAdminFarmsRoute,
   AuthenticatedAdminFleetsRoute: AuthenticatedAdminFleetsRoute,
   AuthenticatedAdminLogsRoute: AuthenticatedAdminLogsRoute,
+  AuthenticatedAdminMonitoringRoute: AuthenticatedAdminMonitoringRoute,
   AuthenticatedAdminRecoveryRoute: AuthenticatedAdminRecoveryRoute,
   AuthenticatedAdminResourcesRoute: AuthenticatedAdminResourcesRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
@@ -669,6 +712,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
   AuthenticatedAdminMissionsIdRoute: AuthenticatedAdminMissionsIdRoute,
   AuthenticatedAdminMissionsIndexRoute: AuthenticatedAdminMissionsIndexRoute,
+  AuthenticatedAdminMissionsRunsRunIdRoute:
+    AuthenticatedAdminMissionsRunsRunIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =

@@ -1,14 +1,16 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getMissionDetails, upsertMissionStep, deleteMissionStep, publishTemplate } from '@/lib/mission.functions';
+import { getMissionRunsForMission } from '@/lib/monitoring.functions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2, Sparkles } from 'lucide-react';
+import { Plus, Trash2, Save, ArrowUp, ArrowDown, CheckCircle2, Sparkles, ExternalLink, Clock, Activity, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { AiMissionBuilder } from '@/components/admin/AiMissionBuilder';
+import { format } from 'date-fns';
 
 export const Route = createFileRoute('/_authenticated/admin/missions/$id')({
   component: MissionBuilderPage,
@@ -222,19 +224,94 @@ function MissionBuilderPage() {
         </TabsContent>
 
         <TabsContent value="history">
-          <Card>
-            <CardHeader>
-              <CardTitle>سجل التنفيذ التاريخي</CardTitle>
-              <CardDescription>عرض حالة المهمة في المزارع المختلفة</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-8 text-muted-foreground">
-                لا يوجد سجل تنفيذ متوفر حالياً.
-              </div>
-            </CardContent>
-          </Card>
+          <MissionHistory missionId={mission.id} />
         </TabsContent>
       </Tabs>
     </div>
+  );
+}
+
+function MissionHistory({ missionId }: { missionId: string }) {
+  const { data: runs, isLoading } = useQuery({
+    queryKey: ['mission-runs', missionId],
+    queryFn: () => getMissionRunsForMission({ data: { missionId } }),
+    refetchInterval: 10000,
+  });
+
+  if (isLoading) return <div className="text-center py-8">جاري التحميل...</div>;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>سجل التنفيذ التاريخي</CardTitle>
+        <CardDescription>أحدث 50 عملية تشغيل لهذه المهمة عبر جميع المزارع</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>التاريخ</TableHead>
+              <TableHead>المزرعة</TableHead>
+              <TableHead>المحاكي</TableHead>
+              <TableHead>الحالة</TableHead>
+              <TableHead>التقدم</TableHead>
+              <TableHead>الإجراءات</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {runs?.map((run: any) => (
+              <TableRow key={run.id}>
+                <TableCell className="text-xs">
+                  {format(new Date(run.created_at), 'yyyy-MM-dd HH:mm')}
+                </TableCell>
+                <TableCell className="font-medium">{(run.farms as any)?.name}</TableCell>
+                <TableCell className="text-xs">{(run.emulators as any)?.instance_name}</TableCell>
+                <TableCell>
+                  <Badge 
+                    variant={
+                      run.status === 'COMPLETED' ? 'default' : 
+                      run.status === 'FAILED' ? 'destructive' : 
+                      'outline'
+                    }
+                    className={run.status === 'RUNNING' ? 'animate-pulse' : ''}
+                  >
+                    {run.status}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    <div className="w-16 bg-secondary h-1.5 rounded-full overflow-hidden">
+                      <div 
+                        className="bg-primary h-full" 
+                        style={{ width: `${(run.current_step_index / (run.total_steps || 1)) * 100}%` }}
+                      />
+                    </div>
+                    <span className="text-[10px]">{run.current_step_index}/{run.total_steps}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link 
+                      to="/admin/missions/runs/$runId"
+                      params={{ runId: run.id }}
+                    >
+                      <ExternalLink className="w-4 h-4 ml-1" />
+                      التفاصيل
+                    </Link>
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {(!runs || runs.length === 0) && (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                  لا توجد سجلات تنفيذ حالياً
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }
