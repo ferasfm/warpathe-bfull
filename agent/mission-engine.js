@@ -113,7 +113,8 @@ class MissionEngine {
                 return { status: 'SUCCESS', payload: { screenshot: buffer.toString('base64') } };
 
             case 'FIND_IMAGE':
-                return await this.handleFindImage(emulatorId, params);
+                return await this.handleFindImage(emulatorId, params, step.missionRunId);
+
 
             case 'TAP':
                 return await this.handleTap(emulatorId, params);
@@ -129,9 +130,17 @@ class MissionEngine {
         }
     }
 
-    async handleFindImage(emulatorId, params) {
-        const { assetUrl, threshold = 0.8, timeout = 10000, retries = 3 } = params;
-        if (!assetUrl) throw new Error('MISSING_PARAMETER: assetUrl');
+    async handleFindImage(emulatorId, params, missionRunId) {
+        const { 
+            assetUrl, 
+            threshold = 0.8, 
+            timeout = 10000, 
+            retries = 3,
+            aiFallback = false,
+            aiPrompt = "Find the specified object in the screen."
+        } = params;
+        
+        if (!assetUrl && !aiFallback) throw new Error('MISSING_PARAMETER: assetUrl or aiFallback');
 
         let attempt = 0;
         const start = Date.now();
@@ -142,13 +151,36 @@ class MissionEngine {
                 const validation = await this.agent.screenshot.validate(buffer);
                 if (!validation.valid) throw new Error(validation.error);
 
-                const templateResponse = await axios.get(assetUrl, { responseType: 'arraybuffer' });
-                const templateImage = await Jimp.read(templateResponse.data);
+                // 1. Try Deterministic Vision first if assetUrl is provided
+                if (assetUrl) {
+                    const templateResponse = await axios.get(assetUrl, { responseType: 'arraybuffer' });
+                    const templateImage = await Jimp.read(templateResponse.data);
+                    const result = await this.agent.vision.findTemplate(validation.image, templateImage, threshold);
 
-                const result = await this.agent.vision.findTemplate(validation.image, templateImage, threshold);
+                    if (result.detected) {
+                        return { status: 'SUCCESS', payload: result };
+                    }
+                }
 
-                if (result.detected) {
-                    return { status: 'SUCCESS', payload: result };
+                // 2. AI Fallback if enabled and deterministic failed
+                if (aiFallback) {
+                    const screenshotBase64 = buffer.toString('base64');
+                    const aiResult = await this.agent.vision.analyzeWithAi(
+                        screenshotBase64, 
+                        aiPrompt, 
+                        missionRunId, 
+                        emulatorId
+                    );
+
+                    if (aiResult.detected && aiResult.confidence >= (params.aiThreshold || 0.7)) {
+                        return { 
+                            status: 'SUCCESS', 
+                            payload: {
+                                ...aiResult,
+                                source: 'AI_VISION'
+                            } 
+                        };
+                    }
                 }
 
                 if (Date.now() - start > timeout) break;
@@ -162,6 +194,7 @@ class MissionEngine {
 
         return { status: 'FAILED', error: 'IMAGE_NOT_FOUND' };
     }
+
 
     async handleTap(emulatorId, params) {
         const { x, y, useVisionResult } = params;
