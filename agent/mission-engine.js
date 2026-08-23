@@ -17,6 +17,8 @@ class MissionEngine {
 
         this.runningMissions.set(emulatorId, missionRunId);
         this.logger.info('Starting mission execution', { emulatorId, adbSerial, missionRunId, stepCount: steps.length });
+        
+        await this.reportMissionEvent(missionRunId, 'MISSION_STARTED', 'INFO', `Started mission with ${steps.length} steps`, { emulatorId, adbSerial });
 
         try {
             let currentStepIndex = 0;
@@ -44,12 +46,14 @@ class MissionEngine {
                 this.logger.info(`Executing step ${currentStepIndex + 1}/${steps.length}`, { stepType: step.step_type });
 
                 await this.reportStepProgress(missionRunId, step.id, 'RUNNING');
+                await this.reportMissionEvent(missionRunId, 'STEP_STARTED', 'INFO', `Executing step: ${step.step_type}`, { stepIndex: currentStepIndex });
 
                 try {
                     const result = await this.executeStep(adbSerial, step);
                     
                     if (result.status === 'SUCCESS') {
                         await this.reportStepProgress(missionRunId, step.id, 'COMPLETED', result.payload);
+                        await this.reportMissionEvent(missionRunId, 'STEP_COMPLETED', 'INFO', `Successfully completed ${step.step_type}`);
                         
                         // Handle conditional branching
                         if (step.step_type === 'CONDITION' && result.nextStepId) {
@@ -231,12 +235,23 @@ class MissionEngine {
         });
     }
 
+    async reportMissionEvent(missionRunId, eventType, severity, message, payload = {}) {
+        await this.agent.sendEvent('MISSION_LOG_EVENT', {
+            missionRunId,
+            eventType,
+            severity,
+            message,
+            payload
+        });
+    }
+
     async reportMissionResult(missionRunId, status, error = null) {
         await this.agent.sendEvent('MISSION_COMPLETED', {
             missionRunId,
             status,
             error
         });
+        await this.reportMissionEvent(missionRunId, 'MISSION_FINISHED', status === 'FAILED' ? 'ERROR' : 'INFO', `Mission ${status}`, { error });
     }
 }
 
