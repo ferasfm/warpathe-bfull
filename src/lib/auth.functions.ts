@@ -39,22 +39,23 @@ export const getAllUsers = createServerFn({ method: "GET" })
         id,
         full_name,
         email,
-        created_at,
-        updated_at
+        created_at
       `);
 
     if (profileError) throw profileError;
+    if (!profiles) return [];
 
     const { data: allRoles, error: roleError } = await supabase
       .from("user_roles")
       .select("user_id, role");
 
     if (roleError) throw roleError;
+    const rolesList = allRoles || [];
 
     // Map roles to profiles
     const usersWithRoles = profiles.map(profile => ({
       ...profile,
-      user_roles: allRoles.filter(r => r.user_id === profile.id)
+      user_roles: rolesList.filter(r => r.user_id === profile.id)
     }));
 
     return usersWithRoles;
