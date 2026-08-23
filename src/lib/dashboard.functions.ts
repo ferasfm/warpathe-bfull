@@ -59,9 +59,9 @@ export const getUserDashboardData = createServerFn({ method: "GET" }).handler(as
     });
   }
 
-  // 4. Available Mission Templates (Global or specific if implemented later)
+  // 4. Available Missions (based on the `missions` table)
   const { data: missions } = await supabase
-    .from("mission_templates")
+    .from("missions")
     .select("id, name, description")
     .eq("status", "ACTIVE");
 

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users } from "lucide-react";
+import { LayoutDashboard, Settings, ShieldCheck, LogOut, Users, Sprout, ClipboardList } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "@tanstack/react-router";
@@ -21,30 +21,34 @@ export function Sidebar() {
         <h1 className="text-xl font-black tracking-tighter">WARPATH</h1>
       </div>
       
-      <nav className="flex-1 p-4 space-y-2">
-        <NavItem to="/dashboard" icon={<LayoutDashboard className="w-4 h-4" />} label="لوحة التحكم" />
+      <nav className="flex-1 p-4 space-y-2 text-right">
+        <NavItem to="/dashboard" icon={<LayoutDashboard className="w-4 h-4 ml-2" />} label="لوحة التحكم" />
+        <NavItem to="/dashboard" icon={<Sprout className="w-4 h-4 ml-2" />} label="مزارعي" />
+        <NavItem to="/dashboard" icon={<ClipboardList className="w-4 h-4 ml-2" />} label="المهام" />
+        <NavItem to="/settings" icon={<Settings className="w-4 h-4 ml-2" />} label="الإعدادات" />
         
         {isAdmin && (
-          <>
-            <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4" />} label="Dashboard" />
-            <NavItem to="/admin/users" icon={<Users className="w-4 h-4" />} label="Users" />
-            <NavItem to="/admin/accounts" icon={<ShieldCheck className="w-4 h-4" />} label="Accounts" />
-            <NavItem to="/admin/farms" icon={<ShieldCheck className="w-4 h-4" />} label="Farms" />
-            <NavItem to="/admin/resources" icon={<ShieldCheck className="w-4 h-4" />} label="Resources" />
-            <NavItem to="/admin/fleets" icon={<ShieldCheck className="w-4 h-4" />} label="Fleets" />
-            <NavItem to="/admin/missions" icon={<ShieldCheck className="w-4 h-4" />} label="Missions" />
-            <NavItem to="/admin/agents" icon={<ShieldCheck className="w-4 h-4" />} label="Agents" />
-            <NavItem to="/admin/devices" icon={<ShieldCheck className="w-4 h-4" />} label="Devices" />
-            <NavItem to="/admin/emulators" icon={<ShieldCheck className="w-4 h-4" />} label="Emulators" />
+          <div className="pt-4 mt-4 border-t space-y-2">
+            <div className="px-4 mb-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Admin Panel</span>
+            </div>
+            <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Dashboard" />
+            <NavItem to="/admin/users" icon={<Users className="w-4 h-4 ml-2" />} label="Users" />
+            <NavItem to="/admin/accounts" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Accounts" />
+            <NavItem to="/admin/farms" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Farms" />
+            <NavItem to="/admin/resources" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Resources" />
+            <NavItem to="/admin/fleets" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Fleets" />
+            <NavItem to="/admin/missions" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Missions" />
+            <NavItem to="/admin/agents" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Agents" />
+            <NavItem to="/admin/devices" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Devices" />
+            <NavItem to="/admin/emulators" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Emulators" />
 
-            <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4" />} label="Vision" />
-            <NavItem to="/admin/recovery" icon={<ShieldCheck className="w-4 h-4" />} label="Recovery" />
-            <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4" />} label="Audit Logs" />
-            <NavItem to="/admin/settings" icon={<Settings className="w-4 h-4" />} label="System Settings" />
-          </>
+            <NavItem to="/admin/vision" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Vision" />
+            <NavItem to="/admin/recovery" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Recovery" />
+            <NavItem to="/admin/logs" icon={<ShieldCheck className="w-4 h-4 ml-2" />} label="Audit Logs" />
+            <NavItem to="/admin/settings" icon={<Settings className="w-4 h-4 ml-2" />} label="System Settings" />
+          </div>
         )}
-        
-        <NavItem to="/settings" icon={<Settings className="w-4 h-4" />} label="الإعدادات" />
       </nav>
 
       <div className="p-4 border-t">
@@ -66,7 +70,7 @@ function NavItem({ to, icon, label }: { to: string, icon: React.ReactNode, label
     <Link 
       to={to} 
       activeProps={{ className: "bg-primary/10 text-primary" }}
-      className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-accent"
+      className="flex items-center justify-start flex-row-reverse gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-colors hover:bg-accent"
     >
       {icon}
       <span>{label}</span>
