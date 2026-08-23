@@ -4,7 +4,7 @@
 Phase 05D: User Task Monitoring
 
 ## Status
-ONGOING
+COMPLETED
 
 ## Completed
 - **Phase 01 & 02**: RBAC, Auth, User Management, and Layout Foundation.
@@ -13,15 +13,17 @@ ONGOING
 - **Phase 05A**: User Dashboard.
 - **Phase 05B**: User Farm Management.
 - **Phase 05C**: User Fleet and Resource Configuration.
-    - Implemented interactive resource assignment UI on `/farms/:id`.
-    - Created `saveFarmConfiguration` server function with strict multi-layer validation (Ownership, Farm-Fleet link, Resource existence).
-    - Enabled real-time fleet-to-resource mapping using `fleet_assignments` table with `upsert` logic.
-    - Integrated `sonner` for transactional feedback (Success/Error toasts).
-    - Verified configuration persistence across sessions and reloads.
-    - Enforced read-only resource lists to prevent unauthorized injection.
+- **Phase 05D**: User Task Monitoring.
+    - Implemented `/tasks` for monitoring mission runs across user-assigned farms.
+    - Created `getUserTasks` server function with farm-level authorization.
+    - Developed mission status indicators (RUNNING, COMPLETED, FAILED) with real-time feedback.
+    - Integrated search and manual refresh for operational monitoring.
+    - Verified strict data isolation (users only see tasks for their farms).
+    - Mapped Sidebar link "المهام" correctly to the monitoring interface.
 
 ## Next Phase
-Phase 05D
+Phase 06: Windows Agent Connectivity (Preliminary)
+
 
 
 
