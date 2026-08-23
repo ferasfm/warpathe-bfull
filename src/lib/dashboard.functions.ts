@@ -44,18 +44,28 @@ export const getUserDashboardData = createServerFn({ method: "GET" })
     };
   }) || [];
 
-  // 3. Get fleet counts for each farm
+  // 3. Get fleet counts and active missions for each farm
   const farmIds = farms.map(f => f.id);
   let fleetCounts: Record<string, number> = {};
+  let activeMissions: Record<string, any> = {};
 
   if (farmIds.length > 0) {
-    const { data: fleets } = await supabase
-      .from("fleets")
-      .select("farm_id")
-      .in("farm_id", farmIds);
+    const [ { data: fleets }, { data: runs } ] = await Promise.all([
+      supabase.from("fleets").select("farm_id").in("farm_id", farmIds),
+      supabase.from("mission_runs")
+        .select("*, missions(name)")
+        .in("farm_id", farmIds)
+        .order("created_at", { ascending: false })
+    ]);
 
     fleets?.forEach(fleet => {
       fleetCounts[fleet.farm_id] = (fleetCounts[fleet.farm_id] || 0) + 1;
+    });
+
+    runs?.forEach(run => {
+      if (!activeMissions[run.farm_id]) {
+        activeMissions[run.farm_id] = run;
+      }
     });
   }
 
@@ -76,9 +86,10 @@ export const getUserDashboardData = createServerFn({ method: "GET" })
     },
     farms: farms.map(f => ({
       ...f,
-      fleetCount: fleetCounts[f.id] || 0
+      fleetCount: fleetCounts[f.id] || 0,
+      activeMission: activeMissions[f.id] || null
     })),
     missions: missions || [],
-    automationStatus: "IDLE"
+    automationStatus: Object.keys(activeMissions).length > 0 ? "RUNNING" : "IDLE"
   };
 });
