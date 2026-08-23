@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createHash, randomBytes } from "crypto";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 /**
  * AGENT COMMUNICATION CORE
@@ -190,11 +191,13 @@ export const submitAgentEvent = createServerFn({ method: "POST" })
 
 // 6. Request Diagnostic Screenshot (Admin Only)
 export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     deviceId: z.string().optional(),
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { supabase: userSupabase } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     // Auth check - simplified for brevity, in prod use middleware
@@ -218,12 +221,14 @@ export const requestDiagnosticScreenshot = createServerFn({ method: "POST" })
 
 // 7. Request Vision Test (Admin Only)
 export const requestVisionTest = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     deviceId: z.string(),
     ruleId: z.string(),
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { supabase: userSupabase } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     
     const { data: rule } = await supabaseAdmin
@@ -261,6 +266,7 @@ export const requestVisionTest = createServerFn({ method: "POST" })
 
 // 8. Trigger Mission Execution (Admin/System)
 export const triggerMissionExecution = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => z.object({
     agentId: z.string(),
     emulatorId: z.string(),
@@ -268,7 +274,8 @@ export const triggerMissionExecution = createServerFn({ method: "POST" })
     farmId: z.string(),
     version: z.string().optional(),
   }).parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { supabase: userSupabase } = context;
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
     // 1. Get Mission Template (Version)
