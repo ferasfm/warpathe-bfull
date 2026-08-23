@@ -11,9 +11,11 @@ IN PROGRESS
 - **Phase 03**: Database Architecture (Finalized & Validated).
 - **Phase 04A**: Admin Dashboard.
 - **Phase 04B**: Admin User Management.
-    - Built comprehensive users table with search and filtering.
-    - Implemented secure server-side role management with hierarchy enforcement.
-    - Protected administrative routes and actions for Admin/Super Admin.
+- **Phase 04C**: Admin Accounts and Farms Management.
+    - Built management interfaces for Game Accounts and Farms.
+    - Implemented user-to-farm assignment system with many-to-many relationships.
+    - Enforced relational integrity and secure server-side operations.
+    - Verified RLS ensures users only see assigned farms.
 
 ## Next Phase
 Phase 04B: Mission Management UI

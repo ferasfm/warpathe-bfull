@@ -28,7 +28,8 @@ export function Sidebar() {
           <>
             <NavItem to="/admin" icon={<ShieldCheck className="w-4 h-4" />} label="Dashboard" />
             <NavItem to="/admin/users" icon={<Users className="w-4 h-4" />} label="Users" />
-            <NavItem to="/admin/accounts" icon={<ShieldCheck className="w-4 h-4" />} label="Accounts & Farms" />
+            <NavItem to="/admin/accounts" icon={<ShieldCheck className="w-4 h-4" />} label="Accounts" />
+            <NavItem to="/admin/farms" icon={<ShieldCheck className="w-4 h-4" />} label="Farms" />
             <NavItem to="/admin/resources" icon={<ShieldCheck className="w-4 h-4" />} label="Resources & Fleets" />
             <NavItem to="/admin/missions" icon={<ShieldCheck className="w-4 h-4" />} label="Missions" />
             <NavItem to="/admin/agents" icon={<ShieldCheck className="w-4 h-4" />} label="Agents & Devices" />
