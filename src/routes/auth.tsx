@@ -115,6 +115,18 @@ function AuthPage() {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="password">كلمة المرور</Label>
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:underline"
+                      onClick={async () => {
+                        if (!email) { toast.error("اكتب بريدك الإلكتروني أولاً"); return; }
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password` });
+                        if (error) toast.error(error.message);
+                        else toast.success("تم إرسال رابط استعادة كلمة المرور إلى بريدك");
+                      }}
+                    >
+                      نسيت كلمة المرور؟
+                    </button>
                   </div>
                   <Input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} dir="ltr" />
                 </div>
