@@ -25,7 +25,8 @@ function ResetPasswordPage() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password.length < 8) { toast.error("كلمة المرور يجب أن تكون 8 أحرف على الأقل"); return; }
+    const strong = password.length >= 12 && /[a-z]/.test(password) && /[A-Z]/.test(password) && /\d/.test(password) && /[^A-Za-z0-9]/.test(password) && !/admin/i.test(password);
+    if (!strong) { toast.error("كلمة المرور يجب أن تكون 12 حرفاً على الأقل، وتحتوي حرفاً كبيراً وصغيراً ورقماً ورمزاً، ولا تحتوي كلمة admin"); return; }
     setLoading(true);
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
