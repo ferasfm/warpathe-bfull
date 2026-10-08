@@ -5,9 +5,42 @@ const util = require('util');
 const execPromise = util.promisify(exec);
 
 class AdbService {
+    // Locate adb.exe bundled with MuMu Player (or Android SDK) when it's not on PATH.
+    static findAdb() {
+        if (process.platform !== 'win32') return null;
+        const roots = [
+            process.env.ProgramFiles, process.env['ProgramFiles(x86)'],
+            'C:\\Program Files', 'C:\\Program Files (x86)', 'D:\\Program Files', 'D:\\',
+            'C:\\', process.env.LOCALAPPDATA
+        ].filter(Boolean);
+        const rel = [
+            'Netease\\MuMuPlayer-12.0\\shell\\adb.exe',
+            'Netease\\MuMuPlayer-12.0\\nx_main\\adb.exe',
+            'Netease\\MuMuPlayerGlobal-12.0\\shell\\adb.exe',
+            'Netease\\MuMuPlayerGlobal-12.0\\nx_main\\adb.exe',
+            'Netease\\MuMu Player 12\\shell\\adb.exe',
+            'Netease\\MuMu Player 12\\nx_main\\adb.exe',
+            'MuMuPlayerGlobal-12.0\\shell\\adb.exe',
+            'MuMuPlayer-12.0\\shell\\adb.exe',
+            'MuMu Player 12\\shell\\adb.exe',
+            'MuMu Player 12\\nx_main\\adb.exe',
+            'Netease\\MuMu\\emulator\\nemu\\vmonitor\\bin\\adb_server.exe',
+            'Android\\Sdk\\platform-tools\\adb.exe',
+            'platform-tools\\adb.exe'
+        ];
+        for (const r of roots) {
+            for (const p of rel) {
+                const full = path.join(r, p);
+                try { if (fs.existsSync(full)) return full; } catch (_) {}
+            }
+        }
+        return null;
+    }
+
     constructor(logger, config = {}) {
         this.logger = logger;
-        this.adbPath = config.adbPath || 'adb';
+        this.adbPath = config.adbPath || AdbService.findAdb() || 'adb';
+        this.logger.info(`Using ADB at: ${this.adbPath}`);
         this.allowedCommands = [
             'devices',
             'get-state',
