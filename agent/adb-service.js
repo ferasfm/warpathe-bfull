@@ -56,7 +56,7 @@ class AdbService {
 
     async isAvailable() {
         try {
-            await execPromise(`${this.adbPath} version`);
+            await execPromise(`"${this.adbPath}" version`);
             return true;
         } catch (error) {
             return false;
