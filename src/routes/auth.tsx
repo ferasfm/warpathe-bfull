@@ -9,6 +9,7 @@ import { ShieldAlert, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { trackLoginAttempt, checkIpStatus } from "@/lib/auth-security.functions";
+import { adminUsernameSignIn } from "@/lib/admin-login.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -25,6 +26,7 @@ function AuthPage() {
   const nav = useNavigate();
   const trackAttempt = useServerFn(trackLoginAttempt);
   const checkIp = useServerFn(checkIpStatus);
+  const adminSignIn = useServerFn(adminUsernameSignIn);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -57,7 +59,18 @@ function AuthPage() {
         return;
       }
 
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      let error: { message: string } | null = null;
+      if (!email.includes("@")) {
+        const r = await adminSignIn({ data: { username: email, password } });
+        if (!r.ok) error = { message: r.error };
+        else {
+          const s = await supabase.auth.setSession({ access_token: r.access_token, refresh_token: r.refresh_token });
+          if (s.error) error = s.error;
+        }
+      } else {
+        const r = await supabase.auth.signInWithPassword({ email, password });
+        error = r.error;
+      }
       
       if (error) {
         await trackAttempt({ data: { is_successful: false } });
@@ -109,8 +122,8 @@ function AuthPage() {
             ) : (
               <form onSubmit={onSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">البريد الإلكتروني</Label>
-                  <Input id="email" type="email" placeholder="name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
+                  <Label htmlFor="email">البريد الإلكتروني أو اسم المستخدم</Label>
+                  <Input id="email" type="text" autoComplete="username" placeholder="admin أو name@example.com" required value={email} onChange={(e) => setEmail(e.target.value)} dir="ltr" />
                 </div>
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
