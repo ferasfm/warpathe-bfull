@@ -9,158 +9,56 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTasksRouteImport } from './routes/_authenticated/tasks'
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
-import { Route as AuthenticatedAdminAccountsRouteImport } from './routes/_authenticated/admin/accounts'
-import { Route as AuthenticatedAdminAgentsRouteImport } from './routes/_authenticated/admin/agents'
-import { Route as AuthenticatedAdminDevicesRouteImport } from './routes/_authenticated/admin/devices'
-import { Route as AuthenticatedAdminEmulatorsRouteImport } from './routes/_authenticated/admin/emulators'
-import { Route as AuthenticatedAdminFarmsRouteImport } from './routes/_authenticated/admin/farms'
-import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
-import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin/logs'
-import { Route as AuthenticatedAdminMonitoringRouteImport } from './routes/_authenticated/admin/monitoring'
-import { Route as AuthenticatedAdminRecoveryRouteImport } from './routes/_authenticated/admin/recovery'
-import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
-import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
-import { Route as AuthenticatedAdminVisionRouteImport } from './routes/_authenticated/admin/vision'
-import { Route as AuthenticatedAdminVisionTestRouteImport } from './routes/_authenticated/admin/vision-test'
-import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
-import { Route as AuthenticatedFarmsIndexRouteImport } from './routes/_authenticated/farms/index'
-import { Route as AuthenticatedFarmsIdRouteImport } from './routes/_authenticated/farms/$id'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedFarmsIndexRouteImport } from './routes/_authenticated/farms/index'
+import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as ApiPublicManifestRouteImport } from './routes/api/public/manifest'
+import { Route as AuthenticatedFarmsIdRouteImport } from './routes/_authenticated/farms/$id'
+import { Route as AuthenticatedAdminVisionTestRouteImport } from './routes/_authenticated/admin/vision-test'
+import { Route as AuthenticatedAdminVisionRouteImport } from './routes/_authenticated/admin/vision'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin/settings'
+import { Route as AuthenticatedAdminResourcesRouteImport } from './routes/_authenticated/admin/resources'
+import { Route as AuthenticatedAdminRecoveryRouteImport } from './routes/_authenticated/admin/recovery'
+import { Route as AuthenticatedAdminMonitoringRouteImport } from './routes/_authenticated/admin/monitoring'
+import { Route as AuthenticatedAdminLogsRouteImport } from './routes/_authenticated/admin/logs'
+import { Route as AuthenticatedAdminFleetsRouteImport } from './routes/_authenticated/admin/fleets'
+import { Route as AuthenticatedAdminFarmsRouteImport } from './routes/_authenticated/admin/farms'
+import { Route as AuthenticatedAdminEmulatorsRouteImport } from './routes/_authenticated/admin/emulators'
+import { Route as AuthenticatedAdminDevicesRouteImport } from './routes/_authenticated/admin/devices'
+import { Route as AuthenticatedAdminAgentsRouteImport } from './routes/_authenticated/admin/agents'
+import { Route as AuthenticatedAdminAccountsRouteImport } from './routes/_authenticated/admin/accounts'
 import { Route as AuthenticatedAdminMissionsIndexRouteImport } from './routes/_authenticated/admin/missions/index'
-import { Route as AuthenticatedAdminMissionsIdRouteImport } from './routes/_authenticated/admin/missions/$id'
-import { Route as ApiPublicAgentCommandsRouteImport } from './routes/api/public/agent/commands'
-import { Route as ApiPublicAgentEventsRouteImport } from './routes/api/public/agent/events'
-import { Route as ApiPublicAgentHeartbeatRouteImport } from './routes/api/public/agent/heartbeat'
-import { Route as ApiPublicAgentRegisterRouteImport } from './routes/api/public/agent/register'
 import { Route as ApiPublicAgentRpcRouteImport } from './routes/api/public/agent/rpc'
+import { Route as ApiPublicAgentRegisterRouteImport } from './routes/api/public/agent/register'
+import { Route as ApiPublicAgentHeartbeatRouteImport } from './routes/api/public/agent/heartbeat'
+import { Route as ApiPublicAgentEventsRouteImport } from './routes/api/public/agent/events'
+import { Route as ApiPublicAgentCommandsRouteImport } from './routes/api/public/agent/commands'
+import { Route as AuthenticatedAdminMissionsIdRouteImport } from './routes/_authenticated/admin/missions/$id'
 import { Route as AuthenticatedAdminMissionsRunsRunIdRouteImport } from './routes/_authenticated/admin/missions/runs/$runId'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTasksRoute = AuthenticatedTasksRouteImport.update({
   id: '/tasks',
   path: '/tasks',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/admin/',
-  path: '/admin/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminAccountsRoute =
-  AuthenticatedAdminAccountsRouteImport.update({
-    id: '/admin/accounts',
-    path: '/admin/accounts',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminAgentsRoute =
-  AuthenticatedAdminAgentsRouteImport.update({
-    id: '/admin/agents',
-    path: '/admin/agents',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminDevicesRoute =
-  AuthenticatedAdminDevicesRouteImport.update({
-    id: '/admin/devices',
-    path: '/admin/devices',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminEmulatorsRoute =
-  AuthenticatedAdminEmulatorsRouteImport.update({
-    id: '/admin/emulators',
-    path: '/admin/emulators',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminFarmsRoute = AuthenticatedAdminFarmsRouteImport.update({
-  id: '/admin/farms',
-  path: '/admin/farms',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminFleetsRoute =
-  AuthenticatedAdminFleetsRouteImport.update({
-    id: '/admin/fleets',
-    path: '/admin/fleets',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
-  id: '/admin/logs',
-  path: '/admin/logs',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminMonitoringRoute =
-  AuthenticatedAdminMonitoringRouteImport.update({
-    id: '/admin/monitoring',
-    path: '/admin/monitoring',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminRecoveryRoute =
-  AuthenticatedAdminRecoveryRouteImport.update({
-    id: '/admin/recovery',
-    path: '/admin/recovery',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminResourcesRoute =
-  AuthenticatedAdminResourcesRouteImport.update({
-    id: '/admin/resources',
-    path: '/admin/resources',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminSettingsRoute =
-  AuthenticatedAdminSettingsRouteImport.update({
-    id: '/admin/settings',
-    path: '/admin/settings',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
-  id: '/admin/users',
-  path: '/admin/users',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedAdminVisionRoute =
-  AuthenticatedAdminVisionRouteImport.update({
-    id: '/admin/vision',
-    path: '/admin/vision',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAdminVisionTestRoute =
-  AuthenticatedAdminVisionTestRouteImport.update({
-    id: '/admin/vision-test',
-    path: '/admin/vision-test',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedDashboardIndexRoute =
-  AuthenticatedDashboardIndexRouteImport.update({
-    id: '/dashboard/',
-    path: '/dashboard/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedFarmsIndexRoute = AuthenticatedFarmsIndexRouteImport.update({
-  id: '/farms/',
-  path: '/farms/',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const AuthenticatedFarmsIdRoute = AuthenticatedFarmsIdRouteImport.update({
-  id: '/farms/$id',
-  path: '/farms/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsIndexRoute =
@@ -169,36 +67,122 @@ const AuthenticatedSettingsIndexRoute =
     path: '/settings/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedFarmsIndexRoute = AuthenticatedFarmsIndexRouteImport.update({
+  id: '/farms/',
+  path: '/farms/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedDashboardIndexRoute =
+  AuthenticatedDashboardIndexRouteImport.update({
+    id: '/dashboard/',
+    path: '/dashboard/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicManifestRoute = ApiPublicManifestRouteImport.update({
   id: '/api/public/manifest',
   path: '/api/public/manifest',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedFarmsIdRoute = AuthenticatedFarmsIdRouteImport.update({
+  id: '/farms/$id',
+  path: '/farms/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminVisionTestRoute =
+  AuthenticatedAdminVisionTestRouteImport.update({
+    id: '/admin/vision-test',
+    path: '/admin/vision-test',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminVisionRoute =
+  AuthenticatedAdminVisionRouteImport.update({
+    id: '/admin/vision',
+    path: '/admin/vision',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/admin/users',
+  path: '/admin/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/admin/settings',
+    path: '/admin/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminResourcesRoute =
+  AuthenticatedAdminResourcesRouteImport.update({
+    id: '/admin/resources',
+    path: '/admin/resources',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminRecoveryRoute =
+  AuthenticatedAdminRecoveryRouteImport.update({
+    id: '/admin/recovery',
+    path: '/admin/recovery',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminMonitoringRoute =
+  AuthenticatedAdminMonitoringRouteImport.update({
+    id: '/admin/monitoring',
+    path: '/admin/monitoring',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminLogsRoute = AuthenticatedAdminLogsRouteImport.update({
+  id: '/admin/logs',
+  path: '/admin/logs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminFleetsRoute =
+  AuthenticatedAdminFleetsRouteImport.update({
+    id: '/admin/fleets',
+    path: '/admin/fleets',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminFarmsRoute = AuthenticatedAdminFarmsRouteImport.update({
+  id: '/admin/farms',
+  path: '/admin/farms',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAdminEmulatorsRoute =
+  AuthenticatedAdminEmulatorsRouteImport.update({
+    id: '/admin/emulators',
+    path: '/admin/emulators',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminDevicesRoute =
+  AuthenticatedAdminDevicesRouteImport.update({
+    id: '/admin/devices',
+    path: '/admin/devices',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminAgentsRoute =
+  AuthenticatedAdminAgentsRouteImport.update({
+    id: '/admin/agents',
+    path: '/admin/agents',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAdminAccountsRoute =
+  AuthenticatedAdminAccountsRouteImport.update({
+    id: '/admin/accounts',
+    path: '/admin/accounts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMissionsIndexRoute =
   AuthenticatedAdminMissionsIndexRouteImport.update({
     id: '/admin/missions/',
     path: '/admin/missions/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminMissionsIdRoute =
-  AuthenticatedAdminMissionsIdRouteImport.update({
-    id: '/admin/missions/$id',
-    path: '/admin/missions/$id',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const ApiPublicAgentCommandsRoute = ApiPublicAgentCommandsRouteImport.update({
-  id: '/api/public/agent/commands',
-  path: '/api/public/agent/commands',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicAgentEventsRoute = ApiPublicAgentEventsRouteImport.update({
-  id: '/api/public/agent/events',
-  path: '/api/public/agent/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPublicAgentHeartbeatRoute = ApiPublicAgentHeartbeatRouteImport.update({
-  id: '/api/public/agent/heartbeat',
-  path: '/api/public/agent/heartbeat',
+const ApiPublicAgentRpcRoute = ApiPublicAgentRpcRouteImport.update({
+  id: '/api/public/agent/rpc',
+  path: '/api/public/agent/rpc',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicAgentRegisterRoute = ApiPublicAgentRegisterRouteImport.update({
@@ -206,11 +190,27 @@ const ApiPublicAgentRegisterRoute = ApiPublicAgentRegisterRouteImport.update({
   path: '/api/public/agent/register',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicAgentRpcRoute = ApiPublicAgentRpcRouteImport.update({
-  id: '/api/public/agent/rpc',
-  path: '/api/public/agent/rpc',
+const ApiPublicAgentHeartbeatRoute = ApiPublicAgentHeartbeatRouteImport.update({
+  id: '/api/public/agent/heartbeat',
+  path: '/api/public/agent/heartbeat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicAgentEventsRoute = ApiPublicAgentEventsRouteImport.update({
+  id: '/api/public/agent/events',
+  path: '/api/public/agent/events',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicAgentCommandsRoute = ApiPublicAgentCommandsRouteImport.update({
+  id: '/api/public/agent/commands',
+  path: '/api/public/agent/commands',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAdminMissionsIdRoute =
+  AuthenticatedAdminMissionsIdRouteImport.update({
+    id: '/admin/missions/$id',
+    path: '/admin/missions/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAdminMissionsRunsRunIdRoute =
   AuthenticatedAdminMissionsRunsRunIdRouteImport.update({
     id: '/admin/missions/runs/$runId',
@@ -436,11 +436,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -450,11 +450,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/tasks': {
@@ -464,116 +464,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTasksRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/': {
-      id: '/_authenticated/admin/'
-      path: '/admin'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/accounts': {
-      id: '/_authenticated/admin/accounts'
-      path: '/admin/accounts'
-      fullPath: '/admin/accounts'
-      preLoaderRoute: typeof AuthenticatedAdminAccountsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/agents': {
-      id: '/_authenticated/admin/agents'
-      path: '/admin/agents'
-      fullPath: '/admin/agents'
-      preLoaderRoute: typeof AuthenticatedAdminAgentsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/devices': {
-      id: '/_authenticated/admin/devices'
-      path: '/admin/devices'
-      fullPath: '/admin/devices'
-      preLoaderRoute: typeof AuthenticatedAdminDevicesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/emulators': {
-      id: '/_authenticated/admin/emulators'
-      path: '/admin/emulators'
-      fullPath: '/admin/emulators'
-      preLoaderRoute: typeof AuthenticatedAdminEmulatorsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/farms': {
-      id: '/_authenticated/admin/farms'
-      path: '/admin/farms'
-      fullPath: '/admin/farms'
-      preLoaderRoute: typeof AuthenticatedAdminFarmsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/fleets': {
-      id: '/_authenticated/admin/fleets'
-      path: '/admin/fleets'
-      fullPath: '/admin/fleets'
-      preLoaderRoute: typeof AuthenticatedAdminFleetsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/logs': {
-      id: '/_authenticated/admin/logs'
-      path: '/admin/logs'
-      fullPath: '/admin/logs'
-      preLoaderRoute: typeof AuthenticatedAdminLogsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/monitoring': {
-      id: '/_authenticated/admin/monitoring'
-      path: '/admin/monitoring'
-      fullPath: '/admin/monitoring'
-      preLoaderRoute: typeof AuthenticatedAdminMonitoringRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/recovery': {
-      id: '/_authenticated/admin/recovery'
-      path: '/admin/recovery'
-      fullPath: '/admin/recovery'
-      preLoaderRoute: typeof AuthenticatedAdminRecoveryRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/resources': {
-      id: '/_authenticated/admin/resources'
-      path: '/admin/resources'
-      fullPath: '/admin/resources'
-      preLoaderRoute: typeof AuthenticatedAdminResourcesRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/admin/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/users': {
-      id: '/_authenticated/admin/users'
-      path: '/admin/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/vision': {
-      id: '/_authenticated/admin/vision'
-      path: '/admin/vision'
-      fullPath: '/admin/vision'
-      preLoaderRoute: typeof AuthenticatedAdminVisionRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/admin/vision-test': {
-      id: '/_authenticated/admin/vision-test'
-      path: '/admin/vision-test'
-      fullPath: '/admin/vision-test'
-      preLoaderRoute: typeof AuthenticatedAdminVisionTestRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/dashboard/': {
-      id: '/_authenticated/dashboard/'
-      path: '/dashboard'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/farms/': {
@@ -583,18 +478,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFarmsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/farms/$id': {
-      id: '/_authenticated/farms/$id'
-      path: '/farms/$id'
-      fullPath: '/farms/$id'
-      preLoaderRoute: typeof AuthenticatedFarmsIdRouteImport
+    '/_authenticated/dashboard/': {
+      id: '/_authenticated/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof AuthenticatedDashboardIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/settings/': {
-      id: '/_authenticated/settings/'
-      path: '/settings'
-      fullPath: '/settings/'
-      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/admin'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/manifest': {
@@ -604,6 +499,111 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicManifestRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/farms/$id': {
+      id: '/_authenticated/farms/$id'
+      path: '/farms/$id'
+      fullPath: '/farms/$id'
+      preLoaderRoute: typeof AuthenticatedFarmsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/vision-test': {
+      id: '/_authenticated/admin/vision-test'
+      path: '/admin/vision-test'
+      fullPath: '/admin/vision-test'
+      preLoaderRoute: typeof AuthenticatedAdminVisionTestRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/vision': {
+      id: '/_authenticated/admin/vision'
+      path: '/admin/vision'
+      fullPath: '/admin/vision'
+      preLoaderRoute: typeof AuthenticatedAdminVisionRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/admin/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/admin/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/resources': {
+      id: '/_authenticated/admin/resources'
+      path: '/admin/resources'
+      fullPath: '/admin/resources'
+      preLoaderRoute: typeof AuthenticatedAdminResourcesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/recovery': {
+      id: '/_authenticated/admin/recovery'
+      path: '/admin/recovery'
+      fullPath: '/admin/recovery'
+      preLoaderRoute: typeof AuthenticatedAdminRecoveryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/monitoring': {
+      id: '/_authenticated/admin/monitoring'
+      path: '/admin/monitoring'
+      fullPath: '/admin/monitoring'
+      preLoaderRoute: typeof AuthenticatedAdminMonitoringRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/logs': {
+      id: '/_authenticated/admin/logs'
+      path: '/admin/logs'
+      fullPath: '/admin/logs'
+      preLoaderRoute: typeof AuthenticatedAdminLogsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/fleets': {
+      id: '/_authenticated/admin/fleets'
+      path: '/admin/fleets'
+      fullPath: '/admin/fleets'
+      preLoaderRoute: typeof AuthenticatedAdminFleetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/farms': {
+      id: '/_authenticated/admin/farms'
+      path: '/admin/farms'
+      fullPath: '/admin/farms'
+      preLoaderRoute: typeof AuthenticatedAdminFarmsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/emulators': {
+      id: '/_authenticated/admin/emulators'
+      path: '/admin/emulators'
+      fullPath: '/admin/emulators'
+      preLoaderRoute: typeof AuthenticatedAdminEmulatorsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/devices': {
+      id: '/_authenticated/admin/devices'
+      path: '/admin/devices'
+      fullPath: '/admin/devices'
+      preLoaderRoute: typeof AuthenticatedAdminDevicesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/agents': {
+      id: '/_authenticated/admin/agents'
+      path: '/admin/agents'
+      fullPath: '/admin/agents'
+      preLoaderRoute: typeof AuthenticatedAdminAgentsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/admin/accounts': {
+      id: '/_authenticated/admin/accounts'
+      path: '/admin/accounts'
+      fullPath: '/admin/accounts'
+      preLoaderRoute: typeof AuthenticatedAdminAccountsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/admin/missions/': {
       id: '/_authenticated/admin/missions/'
       path: '/admin/missions'
@@ -611,32 +611,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminMissionsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/missions/$id': {
-      id: '/_authenticated/admin/missions/$id'
-      path: '/admin/missions/$id'
-      fullPath: '/admin/missions/$id'
-      preLoaderRoute: typeof AuthenticatedAdminMissionsIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/api/public/agent/commands': {
-      id: '/api/public/agent/commands'
-      path: '/api/public/agent/commands'
-      fullPath: '/api/public/agent/commands'
-      preLoaderRoute: typeof ApiPublicAgentCommandsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/agent/events': {
-      id: '/api/public/agent/events'
-      path: '/api/public/agent/events'
-      fullPath: '/api/public/agent/events'
-      preLoaderRoute: typeof ApiPublicAgentEventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/public/agent/heartbeat': {
-      id: '/api/public/agent/heartbeat'
-      path: '/api/public/agent/heartbeat'
-      fullPath: '/api/public/agent/heartbeat'
-      preLoaderRoute: typeof ApiPublicAgentHeartbeatRouteImport
+    '/api/public/agent/rpc': {
+      id: '/api/public/agent/rpc'
+      path: '/api/public/agent/rpc'
+      fullPath: '/api/public/agent/rpc'
+      preLoaderRoute: typeof ApiPublicAgentRpcRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/agent/register': {
@@ -646,12 +625,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicAgentRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/agent/rpc': {
-      id: '/api/public/agent/rpc'
-      path: '/api/public/agent/rpc'
-      fullPath: '/api/public/agent/rpc'
-      preLoaderRoute: typeof ApiPublicAgentRpcRouteImport
+    '/api/public/agent/heartbeat': {
+      id: '/api/public/agent/heartbeat'
+      path: '/api/public/agent/heartbeat'
+      fullPath: '/api/public/agent/heartbeat'
+      preLoaderRoute: typeof ApiPublicAgentHeartbeatRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/events': {
+      id: '/api/public/agent/events'
+      path: '/api/public/agent/events'
+      fullPath: '/api/public/agent/events'
+      preLoaderRoute: typeof ApiPublicAgentEventsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/agent/commands': {
+      id: '/api/public/agent/commands'
+      path: '/api/public/agent/commands'
+      fullPath: '/api/public/agent/commands'
+      preLoaderRoute: typeof ApiPublicAgentCommandsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/admin/missions/$id': {
+      id: '/_authenticated/admin/missions/$id'
+      path: '/admin/missions/$id'
+      fullPath: '/admin/missions/$id'
+      preLoaderRoute: typeof AuthenticatedAdminMissionsIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/admin/missions/runs/$runId': {
       id: '/_authenticated/admin/missions/runs/$runId'
