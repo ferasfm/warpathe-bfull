@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -42,6 +43,11 @@ import { Route as ApiPublicAgentCommandsRouteImport } from './routes/api/public/
 import { Route as AuthenticatedAdminMissionsIdRouteImport } from './routes/_authenticated/admin/missions/$id'
 import { Route as AuthenticatedAdminMissionsRunsRunIdRouteImport } from './routes/_authenticated/admin/missions/runs/$runId'
 
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -221,6 +227,7 @@ const AuthenticatedAdminMissionsRunsRunIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/admin/accounts': typeof AuthenticatedAdminAccountsRoute
   '/admin/agents': typeof AuthenticatedAdminAgentsRoute
@@ -254,6 +261,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tasks': typeof AuthenticatedTasksRoute
   '/admin/accounts': typeof AuthenticatedAdminAccountsRoute
   '/admin/agents': typeof AuthenticatedAdminAgentsRoute
@@ -289,6 +297,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/tasks': typeof AuthenticatedTasksRoute
   '/_authenticated/admin/accounts': typeof AuthenticatedAdminAccountsRoute
   '/_authenticated/admin/agents': typeof AuthenticatedAdminAgentsRoute
@@ -324,6 +333,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/reset-password'
     | '/tasks'
     | '/admin/accounts'
     | '/admin/agents'
@@ -357,6 +367,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/reset-password'
     | '/tasks'
     | '/admin/accounts'
     | '/admin/agents'
@@ -391,6 +402,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/reset-password'
     | '/_authenticated/tasks'
     | '/_authenticated/admin/accounts'
     | '/_authenticated/admin/agents'
@@ -426,6 +438,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   ApiPublicManifestRoute: typeof ApiPublicManifestRoute
   ApiPublicAgentCommandsRoute: typeof ApiPublicAgentCommandsRoute
   ApiPublicAgentEventsRoute: typeof ApiPublicAgentEventsRoute
@@ -436,6 +449,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -723,6 +743,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   ApiPublicManifestRoute: ApiPublicManifestRoute,
   ApiPublicAgentCommandsRoute: ApiPublicAgentCommandsRoute,
   ApiPublicAgentEventsRoute: ApiPublicAgentEventsRoute,
